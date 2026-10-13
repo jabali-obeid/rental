@@ -5,6 +5,7 @@ import { Header } from './components/Header';
 import { RentalDashboard } from './components/RentalDashboard';
 import { NewRentalModal } from './components/NewRentalModal';
 import { FinishRentalModal } from './components/FinishRentalModal';
+import { ReserveActiveVehicleModal } from './components/ReserveActiveVehicleModal';
 import { InventoryModule } from './components/InventoryModule';
 import { CashRegisterModule } from './components/CashRegisterModule';
 import { StatsReportsModule } from './components/StatsReportsModule';
@@ -22,6 +23,7 @@ export function App() {
   // Modals state
   const [isNewRentalOpen, setIsNewRentalOpen] = useState<boolean>(false);
   const [finishRentalTarget, setFinishRentalTarget] = useState<Rental | null>(null);
+  const [reserveRentalTarget, setReserveRentalTarget] = useState<Rental | null>(null);
   const [isSettingsOpen, setIsSettingsOpen] = useState<boolean>(false);
 
   // Subscribe to real-time data mutations
@@ -70,6 +72,7 @@ export function App() {
             units={units}
             onOpenNewRental={() => setIsNewRentalOpen(true)}
             onFinishRental={handleFinishRentalClick}
+            onReserveRental={(rental) => setReserveRentalTarget(rental)}
           />
         )}
 
@@ -110,6 +113,16 @@ export function App() {
         unit={finishUnit}
         onClose={() => setFinishRentalTarget(null)}
       />
+
+      {/* Reserve Modal for active vehicle */}
+      {reserveRentalTarget && (
+        <ReserveActiveVehicleModal
+          rental={reserveRentalTarget}
+          category={categories.find((c) => c.id === reserveRentalTarget.categoryId)}
+          unit={units.find((u) => u.id === reserveRentalTarget.unitId)}
+          onClose={() => setReserveRentalTarget(null)}
+        />
+      )}
 
       <SettingsModal
         isOpen={isSettingsOpen}

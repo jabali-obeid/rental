@@ -2,14 +2,16 @@ import React from 'react';
 import { Rental, Category, Unit } from '../types';
 import { useRentalTimer } from '../hooks/useRentalTimer';
 import { CategoryIcon } from './CategoryIcon';
-import { Phone, AlertTriangle, Clock, PlusCircle } from 'lucide-react';
+import { Phone, AlertTriangle, Clock, PlusCircle, BookmarkPlus, Printer, Play } from 'lucide-react';
 import { dataService } from '../services/dataService';
+import { printThermalTicket } from '../services/printerService';
 
 interface Props {
   rental: Rental;
   category?: Category;
   unit?: Unit;
   onFinishClick: (rental: Rental) => void;
+  onReserveClick?: (rental: Rental) => void;
 }
 
 export const RentalCard: React.FC<Props> = ({
@@ -17,7 +19,9 @@ export const RentalCard: React.FC<Props> = ({
   category,
   unit,
   onFinishClick,
+  onReserveClick,
 }) => {
+  const pendingReservation = unit ? dataService.getPendingReservationForUnit(unit.id) : undefined;
   const {
     trafficLight,
     isExpired,
@@ -169,21 +173,83 @@ export const RentalCard: React.FC<Props> = ({
               <span className="text-[#d5cbbb]">{rental.docType}</span>
             </span>
           </div>
+
+          {/* Pending Next Reservation Banner */}
+          {pendingReservation && (
+            <div className="p-2.5 rounded-xl bg-amber-400/15 border border-amber-400/40 text-amber-200 flex items-center justify-between">
+              <div>
+                <span className="text-[10px] uppercase font-bold text-amber-300 block">Siguiente turno reservado:</span>
+                <span className="font-extrabold text-[#f3ebd6]">{pendingReservation.customerName} ({pendingReservation.durationMinutes}m)</span>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  printThermalTicket({
+                    type: 'RESERVA',
+                    unitCode: unit?.codeNumber || 'U-00',
+                    unitName: unit?.name || 'Vehículo',
+                    categoryName: category?.name || 'Rodado',
+                    customerName: pendingReservation.customerName,
+                    customerPhone: pendingReservation.customerPhone,
+                    durationMinutes: pendingReservation.durationMinutes,
+                    expectedTime: new Date(rental.expectedEndTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                    docLocker: pendingReservation.docLocker,
+                    docType: pendingReservation.docType,
+                    totalPrice: pendingReservation.totalPrice,
+                    paymentMethod: pendingReservation.paymentMethod,
+                    ticketId: pendingReservation.id,
+                    createdAt: pendingReservation.createdAt,
+                  });
+                }}
+                className="p-1.5 rounded-lg bg-[#02110c] hover:bg-[#1a422f] border border-amber-400/30 text-amber-300 active:scale-95 transition-all"
+                title="Reimprimir ticket de reserva"
+              >
+                <Printer className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          )}
         </div>
       </div>
 
-      {/* Card Bottom: Big Finalize Rental CTA */}
-      <div className="pt-2 border-t border-[#1a422f]/60">
+      {/* Card Bottom Actions: Finalizar Alquiler & Reservar */}
+      <div className="pt-2 border-t border-[#1a422f]/60 grid grid-cols-2 gap-2">
+        {/* Reservar Button (if not already reserved) */}
+        {!pendingReservation ? (
+          <button
+            type="button"
+            onClick={() => onReserveClick && onReserveClick(rental)}
+            className="py-3 px-3 rounded-2xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 font-black text-xs tracking-wider transition-all shadow active:scale-[0.98] flex items-center justify-center gap-1.5"
+          >
+            <BookmarkPlus className="w-4 h-4 text-amber-400" />
+            <span>Reservar</span>
+          </button>
+        ) : (
+          <button
+            type="button"
+            onClick={() => {
+              if (window.confirm(`¿Deseas despachar inmediatamente la reserva de ${pendingReservation.customerName}?`)) {
+                dataService.dispatchReservation(pendingReservation.id);
+              }
+            }}
+            className="py-3 px-3 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-black text-xs tracking-wider transition-all shadow active:scale-[0.98] flex items-center justify-center gap-1.5"
+          >
+            <Play className="w-4 h-4" />
+            <span>Despachar</span>
+          </button>
+        )}
+
+        {/* Finalize Rental Button */}
         <button
+          type="button"
           onClick={() => onFinishClick(rental)}
-          className={`w-full py-3.5 px-4 rounded-2xl font-black text-sm tracking-wide transition-all shadow-md active:scale-[0.98] flex items-center justify-center gap-2 ${
+          className={`py-3 px-3 rounded-2xl font-black text-xs tracking-wider transition-all shadow-md active:scale-[0.98] flex items-center justify-center gap-1.5 ${
             isExpired
               ? 'bg-rose-600 hover:bg-rose-500 text-white shadow-rose-950/50 animate-bounce'
               : 'bg-[#1a422f] hover:bg-[#265e43] text-[#f3ebd6] border border-[#f3ebd6]/25 shadow-lg shadow-[#02110c]/80'
           }`}
         >
           <Clock className="w-4 h-4" />
-          <span>Finalizar Alquiler</span>
+          <span>Finalizar</span>
         </button>
       </div>
     </div>

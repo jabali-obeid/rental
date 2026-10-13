@@ -1,4 +1,4 @@
-import { Category, Unit, Rental, CashMovement, CashShiftSummary, UnitStatus, DailyClosing } from '../types';
+import { Category, Unit, Rental, CashMovement, CashShiftSummary, UnitStatus, DailyClosing, Reservation } from '../types';
 import { getSupabase, isSupabaseConfigured } from './supabaseClient';
 
 const STORAGE_KEY_CATEGORIES = 'rentflow_data_categories';
@@ -6,6 +6,7 @@ const STORAGE_KEY_UNITS = 'rentflow_data_units';
 const STORAGE_KEY_RENTALS = 'rentflow_data_rentals';
 const STORAGE_KEY_CASH = 'rentflow_data_cash';
 const STORAGE_KEY_CLOSINGS = 'rentflow_data_daily_closings';
+const STORAGE_KEY_RESERVATIONS = 'rentflow_data_reservations';
 
 // Seed Initial Data
 const INITIAL_CATEGORIES: Category[] = [
@@ -620,6 +621,108 @@ class DataService {
     }
 
     return movements;
+  }
+
+  // Reservations
+  public getReservations(): Reservation[] {
+    const raw = localStorage.getItem(STORAGE_KEY_RESERVATIONS);
+    return raw ? JSON.parse(raw) : [];
+  }
+
+  public getPendingReservationForUnit(unitId: string): Reservation | undefined {
+    return this.getReservations().find((res) => res.unitId === unitId && res.status === 'pendiente');
+  }
+
+  public createReservation(data: Omit<Reservation, 'id' | 'createdAt' | 'status'>): Reservation {
+    const reservations = this.getReservations();
+    const id = 'res-' + Date.now();
+    const reservation: Reservation = {
+      ...data,
+      id,
+      status: 'pendiente',
+      createdAt: new Date().toISOString(),
+    };
+
+    reservations.unshift(reservation);
+    localStorage.setItem(STORAGE_KEY_RESERVATIONS, JSON.stringify(reservations));
+
+    // Cobro anticipado: Registrar inmediatamente en la caja del día
+    this.addCashMovement({
+      type: 'ingreso_alquiler',
+      category: 'Reserva Anticipada',
+      amount: reservation.totalPrice,
+      paymentMethod: reservation.paymentMethod,
+      rentalId: null,
+      description: `Reserva ${this.getUnitCode(reservation.unitId)} - ${reservation.customerName} (${reservation.durationMinutes}m)`,
+      registeredBy: 'Operador',
+    });
+
+    this.notify();
+    return reservation;
+  }
+
+  public dispatchReservation(reservationId: string): Rental | null {
+    const reservations = this.getReservations();
+    const target = reservations.find((r) => r.id === reservationId);
+    if (!target) return null;
+
+    // Actualizar estado de la reserva
+    const updatedReservations = reservations.map((r) =>
+      r.id === reservationId ? { ...r, status: 'despachado' as const, dispatchedAt: new Date().toISOString() } : r
+    );
+    localStorage.setItem(STORAGE_KEY_RESERVATIONS, JSON.stringify(updatedReservations));
+
+    // Iniciar alquiler oficial (el cobro ya se computó en caja al reservar)
+    const rentals = this.getRentals();
+    const units = this.getUnits();
+    const now = new Date();
+    const expectedEnd = new Date(now.getTime() + target.durationMinutes * 60 * 1000);
+    const rentalId = 'r-' + Date.now();
+
+    const rental: Rental = {
+      id: rentalId,
+      unitId: target.unitId,
+      categoryId: target.categoryId,
+      customerName: target.customerName,
+      customerPhone: target.customerPhone,
+      startTime: now.toISOString(),
+      durationMinutes: target.durationMinutes,
+      expectedEndTime: expectedEnd.toISOString(),
+      status: 'activo',
+      docType: target.docType,
+      docLocker: target.docLocker,
+      basePrice: target.basePrice,
+      penaltyPrice: 0,
+      discount: 0,
+      totalPrice: target.totalPrice,
+      paymentMethod: target.paymentMethod,
+      notes: `Despachado de reserva anticipada #${target.id.slice(-6)}`,
+      createdAt: now.toISOString(),
+    };
+
+    rentals.unshift(rental);
+    localStorage.setItem(STORAGE_KEY_RENTALS, JSON.stringify(rentals));
+
+    // Marcar unidad alquilada
+    const updatedUnits = units.map((u) => {
+      if (u.id === target.unitId) {
+        return { ...u, status: 'alquilado' as UnitStatus, currentRentalId: rentalId };
+      }
+      return u;
+    });
+    localStorage.setItem(STORAGE_KEY_UNITS, JSON.stringify(updatedUnits));
+
+    this.pushRentalToSupabase(rental);
+    this.notify();
+    return rental;
+  }
+
+  public cancelReservation(reservationId: string): void {
+    const reservations = this.getReservations().map((r) =>
+      r.id === reservationId ? { ...r, status: 'cancelado' as const } : r
+    );
+    localStorage.setItem(STORAGE_KEY_RESERVATIONS, JSON.stringify(reservations));
+    this.notify();
   }
 
   public addCashMovement(data: Omit<CashMovement, 'id' | 'createdAt'>): CashMovement {

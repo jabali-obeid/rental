@@ -99,3 +99,22 @@ export interface DailyClosing {
   createdAt: string;
 }
 
+export type ReservationStatus = 'pendiente' | 'despachado' | 'cancelado';
+
+export interface Reservation {
+  id: string;
+  unitId: string;
+  categoryId: string;
+  customerName: string;
+  customerPhone?: string;
+  durationMinutes: number;
+  basePrice: number;
+  totalPrice: number;
+  paymentMethod: PaymentMethod;
+  docType: DocType;
+  docLocker: string;
+  status: ReservationStatus;
+  createdAt: string;
+  dispatchedAt?: string;
+}
+

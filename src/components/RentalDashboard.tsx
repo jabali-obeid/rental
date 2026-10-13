@@ -9,6 +9,7 @@ interface Props {
   units: Unit[];
   onOpenNewRental: () => void;
   onFinishRental: (rental: Rental) => void;
+  onReserveRental?: (rental: Rental) => void;
 }
 
 export const RentalDashboard: React.FC<Props> = ({
@@ -17,6 +18,7 @@ export const RentalDashboard: React.FC<Props> = ({
   units,
   onOpenNewRental,
   onFinishRental,
+  onReserveRental,
 }) => {
   const [search, setSearch] = useState<string>('');
   const [filterState, setFilterState] = useState<'all' | 'green' | 'yellow' | 'red'>('all');
@@ -175,6 +177,7 @@ export const RentalDashboard: React.FC<Props> = ({
                 category={category}
                 unit={unit}
                 onFinishClick={onFinishRental}
+                onReserveClick={onReserveRental}
               />
             );
           })}
