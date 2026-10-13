@@ -571,7 +571,55 @@ class DataService {
   // Cash Movements
   public getCashMovements(): CashMovement[] {
     const raw = localStorage.getItem(STORAGE_KEY_CASH);
-    return raw ? JSON.parse(raw) : INITIAL_CASH;
+    let movements: CashMovement[] = raw ? JSON.parse(raw) : [];
+
+    // AUTO-RECUPERACIÓN: Si hay alquileres registrados pero por el error 400 anterior no se guardaron en caja,
+    // vincularlos automáticamente para que nunca se pierda una venta en la caja del día.
+    const rentals = this.getRentals();
+    const existingRentalIds = new Set(movements.filter((m) => m.rentalId).map((m) => m.rentalId));
+    let hasRecovered = false;
+
+    rentals.forEach((r) => {
+      if (!existingRentalIds.has(r.id)) {
+        const item: CashMovement = {
+          id: 'c-mv-' + r.id,
+          type: 'ingreso_alquiler',
+          category: 'Alquiler',
+          amount: r.basePrice || r.totalPrice,
+          paymentMethod: r.paymentMethod,
+          rentalId: r.id,
+          description: `Alquiler ${this.getUnitCode(r.unitId)} - ${r.customerName} (${r.durationMinutes}m)`,
+          registeredBy: 'Operador',
+          createdAt: r.createdAt || new Date().toISOString(),
+        };
+        movements.push(item);
+        hasRecovered = true;
+      }
+      if (r.penaltyPrice && r.penaltyPrice > 0) {
+        const penaltyId = 'c-mv-penalty-' + r.id;
+        if (!movements.some((m) => m.id === penaltyId)) {
+          movements.push({
+            id: penaltyId,
+            type: 'ingreso_recargo',
+            category: 'Recargo por mora',
+            amount: r.penaltyPrice,
+            paymentMethod: r.paymentMethod,
+            rentalId: r.id,
+            description: `Recargo demora ${this.getUnitCode(r.unitId)} - ${r.customerName}`,
+            registeredBy: 'Operador',
+            createdAt: r.actualEndTime || r.createdAt || new Date().toISOString(),
+          });
+          hasRecovered = true;
+        }
+      }
+    });
+
+    if (hasRecovered) {
+      movements.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+      localStorage.setItem(STORAGE_KEY_CASH, JSON.stringify(movements));
+    }
+
+    return movements;
   }
 
   public addCashMovement(data: Omit<CashMovement, 'id' | 'createdAt'>): CashMovement {
