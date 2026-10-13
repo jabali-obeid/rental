@@ -982,22 +982,36 @@ class DataService {
       }
 
       if (categoriesRes.data && categoriesRes.data.length > 0) {
-        const remoteCategories: Category[] = categoriesRes.data.map((cat: any) => ({
-          id: cat.id,
-          name: cat.name,
-          slug: cat.slug,
-          icon: cat.icon,
-          color: cat.color,
-          defaultRate30m: Number(cat.default_rate_30m),
-          defaultRate60m: Number(cat.default_rate_60m),
-          cashRate30m: cat.cash_rate_30m !== undefined && cat.cash_rate_30m !== null ? Number(cat.cash_rate_30m) : Number(cat.default_rate_30m),
-          cashRate60m: cat.cash_rate_60m !== undefined && cat.cash_rate_60m !== null ? Number(cat.cash_rate_60m) : Number(cat.default_rate_60m),
-          digitalRate30m: cat.digital_rate_30m !== undefined && cat.digital_rate_30m !== null ? Number(cat.digital_rate_30m) : undefined,
-          digitalRate60m: cat.digital_rate_60m !== undefined && cat.digital_rate_60m !== null ? Number(cat.digital_rate_60m) : undefined,
-          penaltyRate10Min: Number(cat.penalty_rate_10min),
-          penaltyRatePerMin: cat.penalty_rate_per_min ? Number(cat.penalty_rate_per_min) : undefined,
-          isActive: Boolean(cat.is_active),
-        }));
+        // Enlazar con las tarifas oficiales base si la tabla remota en Supabase no tiene columnas de tarifa dual
+        const initialMap = new Map(INITIAL_CATEGORIES.map((c) => [c.id, c]));
+
+        const remoteCategories: Category[] = categoriesRes.data.map((cat: any) => {
+          const defaultRef = initialMap.get(cat.id);
+          const def30 = Number(cat.default_rate_30m) || defaultRef?.defaultRate30m || 18000;
+          const def60 = Number(cat.default_rate_60m) || defaultRef?.defaultRate60m || 32000;
+
+          const cash30 = cat.cash_rate_30m ? Number(cat.cash_rate_30m) : defaultRef?.cashRate30m || def30;
+          const cash60 = cat.cash_rate_60m ? Number(cat.cash_rate_60m) : defaultRef?.cashRate60m || def60;
+          const dig30 = cat.digital_rate_30m ? Number(cat.digital_rate_30m) : defaultRef?.digitalRate30m || def30;
+          const dig60 = cat.digital_rate_60m ? Number(cat.digital_rate_60m) : defaultRef?.digitalRate60m || def60;
+
+          return {
+            id: cat.id,
+            name: cat.name,
+            slug: cat.slug,
+            icon: cat.icon,
+            color: cat.color,
+            defaultRate30m: def30,
+            defaultRate60m: def60,
+            cashRate30m: cash30,
+            cashRate60m: cash60,
+            digitalRate30m: dig30,
+            digitalRate60m: dig60,
+            penaltyRate10Min: Number(cat.penalty_rate_10min) || defaultRef?.penaltyRate10Min || 6000,
+            penaltyRatePerMin: cat.penalty_rate_per_min ? Number(cat.penalty_rate_per_min) : defaultRef?.penaltyRatePerMin,
+            isActive: Boolean(cat.is_active),
+          };
+        });
         localStorage.setItem(STORAGE_KEY_CATEGORIES, JSON.stringify(remoteCategories));
         hasChanges = true;
       }
