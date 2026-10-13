@@ -1,0 +1,57 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  *, ::before, ::after {
+    -webkit-tap-highlight-color: transparent;
+    box-sizing: border-box;
+  }
+
+  html, body, #root {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  body {
+    background-color: #02110c;
+    color: #f3ebd6;
+    overscroll-behavior-y: none;
+    overscroll-behavior-x: none;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  input, textarea, select {
+    user-select: auto;
+    -webkit-user-select: auto;
+  }
+}
+
+/* Custom Scrollbar for Eco Aventura */
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(243, 235, 214, 0.15);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(243, 235, 214, 0.35);
+}
+
+/* Safe area padding utilities for notched phones */
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom, 1rem);
+}
+.pt-safe {
+  padding-top: env(safe-area-inset-top, 0.5rem);
+}

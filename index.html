@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="es" class="h-full">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    
+    <!-- PWA Primary Tags -->
+    <title>Eco Aventura - Gestión de Alquileres en Tiempo Real</title>
+    <meta name="title" content="Eco Aventura - Gestión de Alquileres en Tiempo Real" />
+    <meta name="description" content="Gestor PWA Mobile-First en tiempo real para alquiler temporal de rodados y bienes náuticos en Eco Aventura." />
+    <meta name="theme-color" content="#02110c" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+
+    <!-- Apple Web App Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Eco Aventura" />
+    <link rel="apple-touch-icon" href="/favicon.svg" />
+
+    <!-- Typography (Plus Jakarta Sans) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  </head>
+  <body class="h-full bg-[#02110c] text-[#f3ebd6] antialiased selection:bg-[#1a422f] selection:text-[#f3ebd6] font-['Plus_Jakarta_Sans',sans-serif]">
+    <div id="root" class="h-full"></div>
+    <script type="module" src="/src/main.tsx"></script>
+    <script>
+      if ('serviceWorker' in navigator && window.location.protocol.startsWith('http')) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js').catch(err => {
+            console.log('SW registration note:', err);
+          });
+        });
+      }
+    </script>
+  </body>
+</html>

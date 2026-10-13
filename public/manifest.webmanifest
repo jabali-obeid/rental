@@ -1,0 +1,18 @@
+{
+  "name": "Eco Aventura - Gestión Alquileres",
+  "short_name": "Eco Aventura",
+  "description": "Control en tiempo real de alquileres rodantes y náuticos para smartphone - Eco Aventura",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#02110c",
+  "theme_color": "#02110c",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
