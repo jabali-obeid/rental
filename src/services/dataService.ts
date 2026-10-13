@@ -10,35 +10,51 @@ const STORAGE_KEY_CLOSINGS = 'rentflow_data_daily_closings';
 // Seed Initial Data
 const INITIAL_CATEGORIES: Category[] = [
   {
-    id: 'c-kartings',
-    name: 'Kartings a Pedal',
-    slug: 'kartings',
-    icon: 'Car',
-    color: '#f97316',
+    id: 'c-carritos-simples',
+    name: 'Carritos Familiares Simples (Chico)',
+    slug: 'carritos-simples',
+    icon: 'Users',
+    color: '#10b981',
     defaultRate30m: 18000,
     defaultRate60m: 32000,
     cashRate30m: 18000,
     cashRate60m: 32000,
     digitalRate30m: 20000,
-    digitalRate60m: 35000,
-    penaltyRate10Min: 6000, // $6.000 por cada bloque de 10 min de mora
+    digitalRate60m: 36000,
+    penaltyRate10Min: 6000,
     penaltyRatePerMin: 600,
     isActive: true,
   },
   {
-    id: 'c-carritos-simples',
-    name: 'Carritos Familiares Simples',
-    slug: 'carritos-simples',
+    id: 'c-carritos-dobles',
+    name: 'Carritos Familiares Dobles (Grande)',
+    slug: 'carritos-dobles',
     icon: 'Users',
-    color: '#10b981',
-    defaultRate30m: 22000,
-    defaultRate60m: 38000,
-    cashRate30m: 22000,
-    cashRate60m: 38000,
-    digitalRate30m: 24000,
-    digitalRate60m: 42000,
-    penaltyRate10Min: 7500, // $7.500 por cada bloque de 10 min de mora
-    penaltyRatePerMin: 750,
+    color: '#eab308',
+    defaultRate30m: 24000,
+    defaultRate60m: 42000,
+    cashRate30m: 24000,
+    cashRate60m: 42000,
+    digitalRate30m: 26000,
+    digitalRate60m: 46000,
+    penaltyRate10Min: 8000,
+    penaltyRatePerMin: 800,
+    isActive: true,
+  },
+  {
+    id: 'c-kartings',
+    name: 'Kartings a Pedal',
+    slug: 'kartings',
+    icon: 'Car',
+    color: '#f97316',
+    defaultRate30m: 16000,
+    defaultRate60m: 28000,
+    cashRate30m: 16000,
+    cashRate60m: 28000,
+    digitalRate30m: 18000,
+    digitalRate60m: 32000,
+    penaltyRate10Min: 5500,
+    penaltyRatePerMin: 550,
     isActive: true,
   },
   {
@@ -47,46 +63,46 @@ const INITIAL_CATEGORIES: Category[] = [
     slug: 'monopatines',
     icon: 'Zap',
     color: '#8b5cf6',
-    defaultRate30m: 22000,
-    defaultRate60m: 38000,
-    cashRate30m: 22000,
-    cashRate60m: 38000,
-    digitalRate30m: 24000,
-    digitalRate60m: 42000,
-    penaltyRate10Min: 7500, // $7.500 por cada bloque de 10 min de mora
-    penaltyRatePerMin: 750,
+    defaultRate30m: 20000,
+    defaultRate60m: 36000,
+    cashRate30m: 20000,
+    cashRate60m: 36000,
+    digitalRate30m: 22000,
+    digitalRate60m: 40000,
+    penaltyRate10Min: 7000,
+    penaltyRatePerMin: 700,
     isActive: true,
   },
   {
-    id: 'c-carritos-dobles',
-    name: 'Carritos Familiares Dobles',
-    slug: 'carritos-dobles',
-    icon: 'Users',
-    color: '#eab308',
-    defaultRate30m: 28000,
-    defaultRate60m: 48000,
-    cashRate30m: 28000,
-    cashRate60m: 48000,
-    digitalRate30m: 31000,
-    digitalRate60m: 53000,
-    penaltyRate10Min: 9500, // $9.500 por cada bloque de 10 min de mora
-    penaltyRatePerMin: 950,
-    isActive: true,
-  },
-  {
-    id: 'c-kayaks',
-    name: 'Kayaks (Dobles/Simples)',
-    slug: 'kayaks',
+    id: 'c-kayaks-simples',
+    name: 'Kayaks Simples',
+    slug: 'kayaks-simples',
     icon: 'Ship',
     color: '#06b6d4',
-    defaultRate30m: 20000,
-    defaultRate60m: 35000,
-    cashRate30m: 20000,
-    cashRate60m: 35000,
-    digitalRate30m: 22000,
-    digitalRate60m: 38000,
-    penaltyRate10Min: 7000, // $7.000 por cada bloque de 10 min de mora
-    penaltyRatePerMin: 700,
+    defaultRate30m: 18000,
+    defaultRate60m: 30000,
+    cashRate30m: 18000,
+    cashRate60m: 30000,
+    digitalRate30m: 18000,
+    digitalRate60m: 30000,
+    penaltyRate10Min: 6000,
+    penaltyRatePerMin: 600,
+    isActive: true,
+  },
+  {
+    id: 'c-kayaks-dobles',
+    name: 'Kayaks Dobles',
+    slug: 'kayaks-dobles',
+    icon: 'Ship',
+    color: '#0284c7',
+    defaultRate30m: 35000,
+    defaultRate60m: 60000,
+    cashRate30m: 35000,
+    cashRate60m: 60000,
+    digitalRate30m: 35000,
+    digitalRate60m: 60000,
+    penaltyRate10Min: 10000,
+    penaltyRatePerMin: 1000,
     isActive: true,
   },
 ];
@@ -112,10 +128,10 @@ const INITIAL_UNITS: Unit[] = [
   { id: 'u-cd1', categoryId: 'c-carritos-dobles', codeNumber: 'CD-01', name: 'Carrito Doble 1', status: 'disponible', currentRentalId: null },
   { id: 'u-cd2', categoryId: 'c-carritos-dobles', codeNumber: 'CD-02', name: 'Carrito Doble 2', status: 'disponible', currentRentalId: null },
 
-  // Kayaks
-  { id: 'u-ky1', categoryId: 'c-kayaks', codeNumber: 'KY-01', name: 'Kayak Doble Laguna', status: 'disponible', currentRentalId: null },
-  { id: 'u-ky2', categoryId: 'c-kayaks', codeNumber: 'KY-02', name: 'Kayak Simple Delta', status: 'disponible', currentRentalId: null },
-  { id: 'u-ky3', categoryId: 'c-kayaks', codeNumber: 'KY-03', name: 'Kayak Doble Explorer', status: 'disponible', currentRentalId: null },
+  // Kayaks Simples & Dobles
+  { id: 'u-ky1', categoryId: 'c-kayaks-dobles', codeNumber: 'KY-01', name: 'Kayak Doble Laguna', status: 'disponible', currentRentalId: null },
+  { id: 'u-ky2', categoryId: 'c-kayaks-simples', codeNumber: 'KY-02', name: 'Kayak Simple Delta', status: 'disponible', currentRentalId: null },
+  { id: 'u-ky3', categoryId: 'c-kayaks-dobles', codeNumber: 'KY-03', name: 'Kayak Doble Explorer', status: 'disponible', currentRentalId: null },
 ];
 
 const INITIAL_RENTALS: Rental[] = [];
@@ -137,14 +153,12 @@ class DataService {
   }
 
   private ensureInitialized() {
-    const DATA_VERSION = 'v4_eco_ready_clean_0km';
+    const DATA_VERSION = 'v5_eco_tarifas_oficiales_2026';
     const currentVersion = localStorage.getItem('rentflow_data_version');
 
     if (currentVersion !== DATA_VERSION) {
-      // Setup categories if not already present
-      if (!localStorage.getItem(STORAGE_KEY_CATEGORIES)) {
-        localStorage.setItem(STORAGE_KEY_CATEGORIES, JSON.stringify(INITIAL_CATEGORIES));
-      }
+      // Overwrite categories with official default rates
+      localStorage.setItem(STORAGE_KEY_CATEGORIES, JSON.stringify(INITIAL_CATEGORIES));
 
       // Reset all units to 'disponible' and unlinked
       const existingUnitsStr = localStorage.getItem(STORAGE_KEY_UNITS);
@@ -770,7 +784,7 @@ class DataService {
     const supabase = getSupabase();
     if (!supabase) return;
     try {
-      await supabase.from('cash_movements').upsert({
+      const { error } = await supabase.from('cash_movements').upsert({
         id: cash.id,
         type: cash.type,
         category: cash.category,
@@ -781,6 +795,9 @@ class DataService {
         registered_by: cash.registeredBy,
         created_at: cash.createdAt,
       });
+      if (error) {
+        console.error('❌ Error de Supabase al guardar movimiento en cash_movements:', error);
+      }
     } catch (e) {
       console.warn('Supabase cash sync warning:', e);
     }
@@ -790,7 +807,7 @@ class DataService {
     const supabase = getSupabase();
     if (!supabase) return;
     try {
-      await supabase.from('daily_closings').upsert({
+      const { error } = await supabase.from('daily_closings').upsert({
         id: closing.id,
         closed_at: closing.closedAt,
         closed_by: closing.closedBy,
@@ -807,6 +824,9 @@ class DataService {
         rentals_snapshot: closing.rentalsSnapshot,
         created_at: closing.createdAt,
       });
+      if (error) {
+        console.error('❌ Error de Supabase al guardar en daily_closings:', error);
+      }
     } catch (e) {
       console.warn('Error subiendo cierre a Supabase:', e);
     }
@@ -824,6 +844,13 @@ class DataService {
         supabase.from('daily_closings').select('*').order('closed_at', { ascending: false }),
         supabase.from('categories').select('*'),
       ]);
+
+      if (cashRes.error) {
+        console.error('❌ Error consultando cash_movements en Supabase:', cashRes.error);
+      }
+      if (closingsRes.error) {
+        console.error('❌ Error consultando daily_closings en Supabase:', closingsRes.error);
+      }
 
       let hasChanges = false;
 
@@ -868,7 +895,7 @@ class DataService {
         hasChanges = true;
       }
 
-      if (cashRes.data) {
+      if (cashRes.data && !cashRes.error) {
         const remoteCash: CashMovement[] = cashRes.data.map((c: any) => ({
           id: c.id,
           type: c.type,
@@ -884,7 +911,7 @@ class DataService {
         hasChanges = true;
       }
 
-      if (closingsRes.data) {
+      if (closingsRes.data && !closingsRes.error) {
         const remoteClosings: DailyClosing[] = closingsRes.data.map((dc: any) => ({
           id: dc.id,
           closedAt: dc.closed_at,
@@ -915,6 +942,10 @@ class DataService {
           color: cat.color,
           defaultRate30m: Number(cat.default_rate_30m),
           defaultRate60m: Number(cat.default_rate_60m),
+          cashRate30m: cat.cash_rate_30m !== undefined && cat.cash_rate_30m !== null ? Number(cat.cash_rate_30m) : Number(cat.default_rate_30m),
+          cashRate60m: cat.cash_rate_60m !== undefined && cat.cash_rate_60m !== null ? Number(cat.cash_rate_60m) : Number(cat.default_rate_60m),
+          digitalRate30m: cat.digital_rate_30m !== undefined && cat.digital_rate_30m !== null ? Number(cat.digital_rate_30m) : undefined,
+          digitalRate60m: cat.digital_rate_60m !== undefined && cat.digital_rate_60m !== null ? Number(cat.digital_rate_60m) : undefined,
           penaltyRate10Min: Number(cat.penalty_rate_10min),
           penaltyRatePerMin: cat.penalty_rate_per_min ? Number(cat.penalty_rate_per_min) : undefined,
           isActive: Boolean(cat.is_active),

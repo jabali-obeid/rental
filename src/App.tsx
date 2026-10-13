@@ -9,11 +9,15 @@ import { InventoryModule } from './components/InventoryModule';
 import { CashRegisterModule } from './components/CashRegisterModule';
 import { StatsReportsModule } from './components/StatsReportsModule';
 import { SettingsModal } from './components/SettingsModal';
+import { PinAuthLock } from './components/PinAuthLock';
 import { BottomNavigation, ActiveTab } from './components/BottomNavigation';
 
 export function App() {
   const [, setVersion] = useState<number>(0);
   const [activeTab, setActiveTab] = useState<ActiveTab>('dashboard');
+  const [isLocked, setIsLocked] = useState<boolean>(() => {
+    return sessionStorage.getItem('rentflow_pin_authorized') !== 'true';
+  });
 
   // Modals state
   const [isNewRentalOpen, setIsNewRentalOpen] = useState<boolean>(false);
@@ -111,6 +115,11 @@ export function App() {
         isOpen={isSettingsOpen}
         onClose={() => setIsSettingsOpen(false)}
       />
+
+      {/* Screen Blur PIN Security Lock */}
+      {isLocked && (
+        <PinAuthLock onUnlock={() => setIsLocked(false)} />
+      )}
     </div>
   );
 }

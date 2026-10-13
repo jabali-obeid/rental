@@ -167,11 +167,12 @@ CREATE POLICY "Public and auth access to daily_closings" ON public.daily_closing
 -- 10. CARGA INICIAL DE CATEGORÍAS (Tarifas y Mora en bloques de 10 min de Eco Aventura)
 INSERT INTO public.categories (id, name, slug, icon, color, default_rate_30m, default_rate_60m, penalty_rate_10min, penalty_rate_per_min)
 VALUES
-    ('c-kartings', 'Kartings a Pedal', 'kartings', 'Car', '#f97316', 18000.00, 32000.00, 6000.00, 600.00),
-    ('c-carritos-simples', 'Carritos Familiares Simples', 'carritos-simples', 'Users', '#10b981', 22000.00, 38000.00, 7500.00, 750.00),
-    ('c-monopatines', 'Monopatines Eléctricos', 'monopatines', 'Zap', '#8b5cf6', 22000.00, 38000.00, 7500.00, 750.00),
-    ('c-carritos-dobles', 'Carritos Familiares Dobles', 'carritos-dobles', 'Users', '#eab308', 28000.00, 48000.00, 9500.00, 950.00),
-    ('c-kayaks', 'Kayaks (Dobles/Simples)', 'kayaks', 'Ship', '#06b6d4', 20000.00, 35000.00, 7000.00, 700.00)
+    ('c-carritos-simples', 'Carritos Familiares Simples (Chico)', 'carritos-simples', 'Users', '#10b981', 18000.00, 32000.00, 6000.00, 600.00),
+    ('c-carritos-dobles', 'Carritos Familiares Dobles (Grande)', 'carritos-dobles', 'Users', '#eab308', 24000.00, 42000.00, 8000.00, 800.00),
+    ('c-kartings', 'Kartings a Pedal', 'kartings', 'Car', '#f97316', 16000.00, 28000.00, 5500.00, 550.00),
+    ('c-monopatines', 'Monopatines Eléctricos', 'monopatines', 'Zap', '#8b5cf6', 20000.00, 36000.00, 7000.00, 700.00),
+    ('c-kayaks-simples', 'Kayaks Simples', 'kayaks-simples', 'Ship', '#06b6d4', 18000.00, 30000.00, 6000.00, 600.00),
+    ('c-kayaks-dobles', 'Kayaks Dobles', 'kayaks-dobles', 'Ship', '#0284c7', 35000.00, 60000.00, 10000.00, 1000.00)
 ON CONFLICT (id) DO UPDATE SET
     name = EXCLUDED.name,
     default_rate_30m = EXCLUDED.default_rate_30m,
@@ -181,28 +182,28 @@ ON CONFLICT (id) DO UPDATE SET
 -- 11. CARGA INICIAL DE LA FLOTA COMPLETA (100% DISPONIBLE / 0 KM)
 INSERT INTO public.units (id, category_id, code_number, name, status)
 VALUES
-    -- Kartings ($18.000 / 30m)
+    -- Kartings ($16.000 / 30m)
     ('u-k1', 'c-kartings', 'K-01', 'Karting Rojo GT', 'disponible'),
     ('u-k2', 'c-kartings', 'K-02', 'Karting Azul Pro', 'disponible'),
     ('u-k3', 'c-kartings', 'K-03', 'Karting Amarillo Sport', 'disponible'),
     ('u-k4', 'c-kartings', 'K-04', 'Karting Verde Turbo', 'disponible'),
     
-    -- Carritos Simples ($22.000 / 30m)
+    -- Carritos Simples ($18.000 / 30m)
     ('u-cs1', 'c-carritos-simples', 'CS-01', 'Carrito Simple 1', 'disponible'),
     ('u-cs2', 'c-carritos-simples', 'CS-02', 'Carrito Simple 2', 'disponible'),
     ('u-cs3', 'c-carritos-simples', 'CS-03', 'Carrito Simple 3', 'disponible'),
 
-    -- Monopatines Eléctricos ($22.000 / 30m)
+    -- Monopatines Eléctricos ($20.000 / 30m)
     ('u-mp1', 'c-monopatines', 'MP-01', 'Xiaomi Mi Pro #1', 'disponible'),
     ('u-mp2', 'c-monopatines', 'MP-02', 'Xiaomi Mi Pro #2', 'disponible'),
     ('u-mp3', 'c-monopatines', 'MP-03', 'Segway Ninebot Max', 'disponible'),
 
-    -- Carritos Dobles ($28.000 / 30m)
+    -- Carritos Dobles ($24.000 / 30m)
     ('u-cd1', 'c-carritos-dobles', 'CD-01', 'Carrito Doble 1', 'disponible'),
     ('u-cd2', 'c-carritos-dobles', 'CD-02', 'Carrito Doble 2', 'disponible'),
 
-    -- Kayaks ($20.000 / 30m)
-    ('u-ky1', 'c-kayaks', 'KY-01', 'Kayak Doble Laguna', 'disponible'),
-    ('u-ky2', 'c-kayaks', 'KY-02', 'Kayak Simple Delta', 'disponible'),
-    ('u-ky3', 'c-kayaks', 'KY-03', 'Kayak Doble Explorer', 'disponible')
+    -- Kayaks Simples & Dobles
+    ('u-ky1', 'c-kayaks-dobles', 'KY-01', 'Kayak Doble Laguna', 'disponible'),
+    ('u-ky2', 'c-kayaks-simples', 'KY-02', 'Kayak Simple Delta', 'disponible'),
+    ('u-ky3', 'c-kayaks-dobles', 'KY-03', 'Kayak Doble Explorer', 'disponible')
 ON CONFLICT (id) DO NOTHING;
