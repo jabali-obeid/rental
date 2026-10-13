@@ -982,18 +982,18 @@ class DataService {
       }
 
       if (categoriesRes.data && categoriesRes.data.length > 0) {
-        // Enlazar con las tarifas oficiales base si la tabla remota en Supabase no tiene columnas de tarifa dual
-        const initialMap = new Map(INITIAL_CATEGORIES.map((c) => [c.id, c]));
+        // Enlazar con las tarifas oficiales base
+        const idMap = new Map(INITIAL_CATEGORIES.map((c) => [c.id, c]));
+        const slugMap = new Map(INITIAL_CATEGORIES.map((c) => [c.slug, c]));
 
         const remoteCategories: Category[] = categoriesRes.data.map((cat: any) => {
-          const defaultRef = initialMap.get(cat.id);
-          const def30 = Number(cat.default_rate_30m) || defaultRef?.defaultRate30m || 18000;
-          const def60 = Number(cat.default_rate_60m) || defaultRef?.defaultRate60m || 32000;
+          const defaultRef = idMap.get(cat.id) || slugMap.get(cat.slug);
 
-          const cash30 = cat.cash_rate_30m ? Number(cat.cash_rate_30m) : defaultRef?.cashRate30m || def30;
-          const cash60 = cat.cash_rate_60m ? Number(cat.cash_rate_60m) : defaultRef?.cashRate60m || def60;
-          const dig30 = cat.digital_rate_30m ? Number(cat.digital_rate_30m) : defaultRef?.digitalRate30m || def30;
-          const dig60 = cat.digital_rate_60m ? Number(cat.digital_rate_60m) : defaultRef?.digitalRate60m || def60;
+          // Si Supabase tiene columnas explícitas para tarifa dual las respeta, sino usa las oficiales fijadas
+          const cash30 = cat.cash_rate_30m ? Number(cat.cash_rate_30m) : defaultRef?.cashRate30m ?? Number(cat.default_rate_30m) ?? 18000;
+          const cash60 = cat.cash_rate_60m ? Number(cat.cash_rate_60m) : defaultRef?.cashRate60m ?? Number(cat.default_rate_60m) ?? 32000;
+          const dig30 = cat.digital_rate_30m ? Number(cat.digital_rate_30m) : defaultRef?.digitalRate30m ?? defaultRef?.defaultRate30m ?? cash30;
+          const dig60 = cat.digital_rate_60m ? Number(cat.digital_rate_60m) : defaultRef?.digitalRate60m ?? defaultRef?.defaultRate60m ?? cash60;
 
           return {
             id: cat.id,
@@ -1001,8 +1001,8 @@ class DataService {
             slug: cat.slug,
             icon: cat.icon,
             color: cat.color,
-            defaultRate30m: def30,
-            defaultRate60m: def60,
+            defaultRate30m: cash30,
+            defaultRate60m: cash60,
             cashRate30m: cash30,
             cashRate60m: cash60,
             digitalRate30m: dig30,
