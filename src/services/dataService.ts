@@ -1,4 +1,4 @@
-import { Category, Unit, Rental, CashMovement, CashShiftSummary, UnitStatus, DailyClosing, Reservation } from '../types';
+import { Category, Unit, Rental, CashMovement, CashShiftSummary, UnitStatus, DailyClosing, Reservation, PaymentMethod } from '../types';
 import { getSupabase, isSupabaseConfigured } from './supabaseClient';
 
 const STORAGE_KEY_CATEGORIES = 'rentflow_data_categories';
@@ -769,6 +769,25 @@ class DataService {
       } catch (e) {
         console.warn('Supabase delete cash movement warning:', e);
       }
+    }
+
+    this.notify();
+  }
+
+  public async updateCashMovementPaymentMethod(movementId: string, newMethod: PaymentMethod): Promise<void> {
+    let updatedItem: CashMovement | undefined;
+    const movements = this.getCashMovements().map((m) => {
+      if (m.id === movementId) {
+        updatedItem = { ...m, paymentMethod: newMethod };
+        return updatedItem;
+      }
+      return m;
+    });
+
+    localStorage.setItem(STORAGE_KEY_CASH, JSON.stringify(movements));
+
+    if (updatedItem) {
+      await this.pushCashToSupabase(updatedItem);
     }
 
     this.notify();

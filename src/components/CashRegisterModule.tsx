@@ -84,8 +84,9 @@ export const CashRegisterModule: React.FC<Props> = ({ movements }) => {
   const handleDeleteMovement = async (mv: CashMovement) => {
     const isIngreso = mv.type.startsWith('ingreso');
     const signo = isIngreso ? '+' : '-';
-    const confirmMsg = `¿Estás seguro de que deseas eliminar este movimiento?\n\n"${mv.description}" (${signo}$${mv.amount.toLocaleString()})\n\nEsta acción recalculará los totales del turno.`;
-    if (!window.confirm(confirmMsg)) return;
+    const confirmMsg = `¿Deseas eliminar este movimiento de caja?\n\n"${mv.description}" (${signo}$${mv.amount.toLocaleString()})\n\nPor favor, ingresa el motivo de la anulación (o presiona Aceptar para continuar):`;
+    const reason = window.prompt(confirmMsg, 'Error de registro');
+    if (reason === null) return; // Usuario canceló
 
     try {
       await dataService.deleteCashMovement(mv.id);
@@ -95,6 +96,21 @@ export const CashRegisterModule: React.FC<Props> = ({ movements }) => {
       alert('Error al intentar eliminar el movimiento');
     }
   };
+
+  const handleCyclePaymentMethod = async (mv: CashMovement) => {
+    const methods: PaymentMethod[] = ['efectivo', 'transferencia', 'tarjeta'];
+    const currentIdx = methods.indexOf(mv.paymentMethod);
+    const nextMethod = methods[(currentIdx + 1) % methods.length];
+
+    try {
+      await dataService.updateCashMovementPaymentMethod(mv.id, nextMethod);
+      soundService.playSuccess();
+    } catch (err) {
+      console.error(err);
+      alert('Error al actualizar el método de pago');
+    }
+  };
+
 
   const handleDeleteClosing = async (closingId: string, label: string) => {
     if (!window.confirm(`¿Estás seguro de que deseas eliminar permanentemente el cierre de caja "${label}"?`)) {
@@ -512,7 +528,14 @@ export const CashRegisterModule: React.FC<Props> = ({ movements }) => {
                             <span>•</span>
                             <span className="capitalize">{mv.category}</span>
                             <span>•</span>
-                            <span className="uppercase text-[#f3ebd6] font-bold">{mv.paymentMethod}</span>
+                            <button
+                              type="button"
+                              onClick={() => handleCyclePaymentMethod(mv)}
+                              title="Haz clic para cambiar método de pago (Efectivo / Transferencia / Tarjeta)"
+                              className="uppercase text-[#f3ebd6] font-bold px-1.5 py-0.5 rounded bg-[#02110c] hover:bg-[#1a422f] border border-[#1a422f] hover:border-[#2ea06e]/50 transition-colors"
+                            >
+                              {mv.paymentMethod} ⇄
+                            </button>
                           </div>
                         </div>
                       </div>
