@@ -802,6 +802,81 @@ class DataService {
     return raw ? JSON.parse(raw) : [];
   }
 
+  public async deleteDailyClosing(closingId: string): Promise<void> {
+    const closings = this.getDailyClosings().filter((c) => c.id !== closingId);
+    localStorage.setItem(STORAGE_KEY_CLOSINGS, JSON.stringify(closings));
+
+    const supabase = getSupabase();
+    if (supabase) {
+      try {
+        const { error } = await supabase.from('daily_closings').delete().eq('id', closingId);
+        if (error) {
+          console.error('❌ Error de Supabase al borrar cierre diario:', error);
+        }
+      } catch (e) {
+        console.warn('Supabase delete daily closing warning:', e);
+      }
+    }
+
+    this.notify();
+  }
+
+  public async deleteMovementFromClosing(closingId: string, movementId: string): Promise<DailyClosing | null> {
+    const closings = this.getDailyClosings();
+    const targetIdx = closings.findIndex((c) => c.id === closingId);
+    if (targetIdx === -1) return null;
+
+    const closing = closings[targetIdx];
+    const newMovements = (closing.movementsSnapshot || []).filter(
+      (m, idx) => (m.id ? m.id !== movementId : String(idx) !== movementId)
+    );
+
+    // Recalcular métricas del cierre archivado
+    let totalEfectivo = 0;
+    let totalTransferencia = 0;
+    let totalTarjeta = 0;
+    let totalIngresos = 0;
+    let totalEgresos = 0;
+    let countAlquileres = 0;
+
+    newMovements.forEach((mv) => {
+      const isIngreso = mv.type === 'ingreso_alquiler' || mv.type === 'ingreso_recargo' || mv.type === 'apertura_caja';
+      const isEgreso = mv.type === 'egreso_gasto' || mv.type === 'cierre_caja';
+
+      if (isIngreso) {
+        totalIngresos += mv.amount;
+        if (mv.type === 'ingreso_alquiler') countAlquileres++;
+        if (mv.paymentMethod === 'efectivo') totalEfectivo += mv.amount;
+        else if (mv.paymentMethod === 'transferencia') totalTransferencia += mv.amount;
+        else if (mv.paymentMethod === 'tarjeta') totalTarjeta += mv.amount;
+      } else if (isEgreso) {
+        totalEgresos += mv.amount;
+      }
+    });
+
+    const updatedClosing: DailyClosing = {
+      ...closing,
+      movementsSnapshot: newMovements,
+      totalRentals: countAlquileres,
+      totalEfectivo,
+      totalTransferencia,
+      totalTarjeta,
+      totalIngresos,
+      totalEgresos,
+      balanceNeto: totalIngresos - totalEgresos,
+    };
+
+    closings[targetIdx] = updatedClosing;
+    localStorage.setItem(STORAGE_KEY_CLOSINGS, JSON.stringify(closings));
+
+    // Persistir cierre actualizado en Supabase
+    await this.pushDailyClosingToSupabase(updatedClosing);
+
+    this.notify();
+    return updatedClosing;
+  }
+
+
   public async closeDailyCash(operatorName: string = 'Operador', notes?: string): Promise<DailyClosing> {
     const summary = this.getCashShiftSummary();
     const movements = this.getCashMovements();

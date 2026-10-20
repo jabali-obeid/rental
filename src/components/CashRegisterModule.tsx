@@ -96,6 +96,42 @@ export const CashRegisterModule: React.FC<Props> = ({ movements }) => {
     }
   };
 
+  const handleDeleteClosing = async (closingId: string, label: string) => {
+    if (!window.confirm(`¿Estás seguro de que deseas eliminar permanentemente el cierre de caja "${label}"?`)) {
+      return;
+    }
+    try {
+      await dataService.deleteDailyClosing(closingId);
+      soundService.playSuccess();
+      if (selectedClosing?.id === closingId) {
+        setSelectedClosing(null);
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Error al eliminar el cierre');
+    }
+  };
+
+  const handleDeleteArchivedMovement = async (mv: CashMovement, index: number) => {
+    if (!selectedClosing) return;
+    const isIngreso = mv.type.startsWith('ingreso');
+    const signo = isIngreso ? '+' : '-';
+    const confirmMsg = `¿Deseas eliminar este movimiento archivado del cierre?\n\n"${mv.description}" (${signo}$${mv.amount.toLocaleString()})\n\nSe recalcularán los totales archivados de este cierre.`;
+    if (!window.confirm(confirmMsg)) return;
+
+    try {
+      const movementIdOrIndex = mv.id || String(index);
+      const updated = await dataService.deleteMovementFromClosing(selectedClosing.id, movementIdOrIndex);
+      if (updated) {
+        setSelectedClosing(updated);
+      }
+      soundService.playSuccess();
+    } catch (err) {
+      console.error(err);
+      alert('Error al eliminar el movimiento archivado');
+    }
+  };
+
   const handleConfirmCloseCash = async () => {
     setIsProcessingClose(true);
     try {
@@ -622,6 +658,14 @@ export const CashRegisterModule: React.FC<Props> = ({ movements }) => {
                           <Share2 className="w-3.5 h-3.5" />
                           <span>WhatsApp</span>
                         </button>
+                        <button
+                          onClick={() => handleDeleteClosing(c.id, c.dateLabel)}
+                          className="p-2 rounded-xl bg-[#02110c] hover:bg-rose-950/50 text-[#d5cbbb]/50 hover:text-rose-400 border border-[#1a422f] hover:border-rose-900/50 transition-all"
+                          title="Eliminar este cierre de caja"
+                          aria-label={`Eliminar cierre de caja ${c.dateLabel}`}
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
                       </div>
                     </div>
                   </div>
@@ -846,8 +890,20 @@ export const CashRegisterModule: React.FC<Props> = ({ movements }) => {
                           </div>
                         </div>
 
-                        <div className={`font-mono font-bold ${isIngreso ? 'text-[#2ea06e]' : 'text-rose-400'}`}>
-                          {isIngreso ? '+' : '-'}${mv.amount.toLocaleString()}
+                        <div className="flex items-center gap-2">
+                          <div className={`font-mono font-bold ${isIngreso ? 'text-[#2ea06e]' : 'text-rose-400'}`}>
+                            {isIngreso ? '+' : '-'}${mv.amount.toLocaleString()}
+                          </div>
+
+                          <button
+                            type="button"
+                            onClick={() => handleDeleteArchivedMovement(mv, idx)}
+                            className="p-1 rounded-lg text-[#d5cbbb]/40 hover:text-rose-400 hover:bg-rose-950/40 transition-colors"
+                            title="Eliminar movimiento del cierre archivado"
+                            aria-label={`Eliminar ${mv.description}`}
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
                         </div>
                       </div>
                     );
