@@ -7,6 +7,7 @@ const STORAGE_KEY_RENTALS = 'rentflow_data_rentals';
 const STORAGE_KEY_CASH = 'rentflow_data_cash';
 const STORAGE_KEY_CLOSINGS = 'rentflow_data_daily_closings';
 const STORAGE_KEY_RESERVATIONS = 'rentflow_data_reservations';
+const STORAGE_KEY_DELETED_CASH = 'rentflow_data_deleted_cash_ids';
 
 // Seed Initial Data
 const INITIAL_CATEGORIES: Category[] = [
@@ -574,16 +575,19 @@ class DataService {
     const raw = localStorage.getItem(STORAGE_KEY_CASH);
     let movements: CashMovement[] = raw ? JSON.parse(raw) : [];
 
-    // AUTO-RECUPERACIÓN: Si hay alquileres registrados pero por el error 400 anterior no se guardaron en caja,
-    // vincularlos automáticamente para que nunca se pierda una venta en la caja del día.
+    // AUTO-RECUPERACIÓN: Si hay alquileres registrados pero por alguna razón no se guardaron en caja,
+    // vincularlos automáticamente (ignorando los que el usuario haya eliminado voluntariamente).
     const rentals = this.getRentals();
     const existingRentalIds = new Set(movements.filter((m) => m.rentalId).map((m) => m.rentalId));
+    const deletedIdsRaw = localStorage.getItem(STORAGE_KEY_DELETED_CASH);
+    const deletedIds: Set<string> = new Set(deletedIdsRaw ? JSON.parse(deletedIdsRaw) : []);
     let hasRecovered = false;
 
     rentals.forEach((r) => {
-      if (!existingRentalIds.has(r.id)) {
+      const rentalMvId = 'c-mv-' + r.id;
+      if (!existingRentalIds.has(r.id) && !deletedIds.has(rentalMvId)) {
         const item: CashMovement = {
-          id: 'c-mv-' + r.id,
+          id: rentalMvId,
           type: 'ingreso_alquiler',
           category: 'Alquiler',
           amount: r.basePrice || r.totalPrice,
@@ -598,7 +602,7 @@ class DataService {
       }
       if (r.penaltyPrice && r.penaltyPrice > 0) {
         const penaltyId = 'c-mv-penalty-' + r.id;
-        if (!movements.some((m) => m.id === penaltyId)) {
+        if (!movements.some((m) => m.id === penaltyId) && !deletedIds.has(penaltyId)) {
           movements.push({
             id: penaltyId,
             type: 'ingreso_recargo',
@@ -742,6 +746,18 @@ class DataService {
   public async deleteCashMovement(movementId: string): Promise<void> {
     const movements = this.getCashMovements().filter((m) => m.id !== movementId);
     localStorage.setItem(STORAGE_KEY_CASH, JSON.stringify(movements));
+
+    // Record movement id as deleted so auto-recovery does not restore it
+    try {
+      const deletedIdsRaw = localStorage.getItem(STORAGE_KEY_DELETED_CASH);
+      const deletedIds: string[] = deletedIdsRaw ? JSON.parse(deletedIdsRaw) : [];
+      if (!deletedIds.includes(movementId)) {
+        deletedIds.push(movementId);
+        localStorage.setItem(STORAGE_KEY_DELETED_CASH, JSON.stringify(deletedIds));
+      }
+    } catch {
+      // ignore
+    }
 
     const supabase = getSupabase();
     if (supabase) {
@@ -916,6 +932,7 @@ class DataService {
 
     // 2. Limpiar actividades del día en local (caja a cero)
     localStorage.setItem(STORAGE_KEY_CASH, JSON.stringify([]));
+    localStorage.removeItem(STORAGE_KEY_DELETED_CASH);
 
     // Mantener solo los alquileres que aún estén activos en curso para no cortar servicios
     const activeRentals = rentals.filter((r) => r.status === 'activo');
@@ -1040,7 +1057,7 @@ class DataService {
         description: cash.description,
         registered_by: cash.registeredBy,
         created_at: cash.createdAt,
-      });
+      }, { onConflict: 'id' });
       if (error) {
         console.error('❌ Error de Supabase al guardar movimiento en cash_movements:', error);
       }
@@ -1142,17 +1159,21 @@ class DataService {
       }
 
       if (cashRes.data && !cashRes.error) {
-        const remoteCash: CashMovement[] = cashRes.data.map((c: any) => ({
-          id: c.id,
-          type: c.type,
-          category: c.category,
-          amount: Number(c.amount),
-          paymentMethod: c.payment_method,
-          rentalId: c.rental_id || undefined,
-          description: c.description,
-          registeredBy: c.registered_by,
-          createdAt: c.created_at,
-        }));
+        const deletedIdsRaw = localStorage.getItem(STORAGE_KEY_DELETED_CASH);
+        const deletedIds: Set<string> = new Set(deletedIdsRaw ? JSON.parse(deletedIdsRaw) : []);
+        const remoteCash: CashMovement[] = cashRes.data
+          .filter((c: any) => !deletedIds.has(c.id))
+          .map((c: any) => ({
+            id: c.id,
+            type: c.type,
+            category: c.category,
+            amount: Number(c.amount),
+            paymentMethod: c.payment_method,
+            rentalId: c.rental_id || undefined,
+            description: c.description,
+            registeredBy: c.registered_by,
+            createdAt: c.created_at,
+          }));
         localStorage.setItem(STORAGE_KEY_CASH, JSON.stringify(remoteCash));
         hasChanges = true;
       }
