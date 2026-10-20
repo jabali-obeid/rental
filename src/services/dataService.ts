@@ -739,6 +739,26 @@ class DataService {
     return item;
   }
 
+  public async deleteCashMovement(movementId: string): Promise<void> {
+    const movements = this.getCashMovements().filter((m) => m.id !== movementId);
+    localStorage.setItem(STORAGE_KEY_CASH, JSON.stringify(movements));
+
+    const supabase = getSupabase();
+    if (supabase) {
+      try {
+        const { error } = await supabase.from('cash_movements').delete().eq('id', movementId);
+        if (error) {
+          console.error('❌ Error de Supabase al eliminar movimiento:', error);
+        }
+      } catch (e) {
+        console.warn('Supabase delete cash movement warning:', e);
+      }
+    }
+
+    this.notify();
+  }
+
+
   public getCashShiftSummary(): CashShiftSummary {
     const movements = this.getCashMovements();
     let totalEfectivo = 0;

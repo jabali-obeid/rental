@@ -20,7 +20,8 @@ import {
   Clock,
   ArrowRight,
   Eye,
-  FileSpreadsheet
+  FileSpreadsheet,
+  Trash2
 } from 'lucide-react';
 
 interface Props {
@@ -78,6 +79,21 @@ export const CashRegisterModule: React.FC<Props> = ({ movements }) => {
     soundService.playSuccess();
     setExpenseDesc('');
     setExpenseAmount('');
+  };
+
+  const handleDeleteMovement = async (mv: CashMovement) => {
+    const isIngreso = mv.type.startsWith('ingreso');
+    const signo = isIngreso ? '+' : '-';
+    const confirmMsg = `¿Estás seguro de que deseas eliminar este movimiento?\n\n"${mv.description}" (${signo}$${mv.amount.toLocaleString()})\n\nEsta acción recalculará los totales del turno.`;
+    if (!window.confirm(confirmMsg)) return;
+
+    try {
+      await dataService.deleteCashMovement(mv.id);
+      soundService.playSuccess();
+    } catch (err) {
+      console.error(err);
+      alert('Error al intentar eliminar el movimiento');
+    }
   };
 
   const handleConfirmCloseCash = async () => {
@@ -465,12 +481,24 @@ export const CashRegisterModule: React.FC<Props> = ({ movements }) => {
                         </div>
                       </div>
 
-                      <div
-                        className={`text-sm font-black font-mono ${
-                          isIngreso ? 'text-[#2ea06e]' : 'text-rose-400'
-                        }`}
-                      >
-                        {isIngreso ? '+' : '-'}${mv.amount.toLocaleString()}
+                      <div className="flex items-center gap-2">
+                        <div
+                          className={`text-sm font-black font-mono ${
+                            isIngreso ? 'text-[#2ea06e]' : 'text-rose-400'
+                          }`}
+                        >
+                          {isIngreso ? '+' : '-'}${mv.amount.toLocaleString()}
+                        </div>
+
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteMovement(mv)}
+                          className="p-1.5 rounded-lg text-[#d5cbbb]/40 hover:text-rose-400 hover:bg-rose-950/40 transition-colors"
+                          title="Eliminar movimiento"
+                          aria-label={`Eliminar movimiento ${mv.description}`}
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
                       </div>
                     </div>
                   );
