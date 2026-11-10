@@ -1081,15 +1081,58 @@ class DataService {
     return closing;
   }
 
-  public resetToCleanState(): void {
+  public async resetToCleanState(): Promise<void> {
+    const existingRentals = this.getRentals();
+    const existingCash = this.getCashMovements();
+    const existingClosings = this.getDailyClosings();
     const cleanUnits = this.getUnits().map((u) => ({
       ...u,
       status: 'disponible' as UnitStatus,
       currentRentalId: null,
     }));
+
     localStorage.setItem(STORAGE_KEY_UNITS, JSON.stringify(cleanUnits));
     localStorage.setItem(STORAGE_KEY_RENTALS, JSON.stringify([]));
     localStorage.setItem(STORAGE_KEY_CASH, JSON.stringify([]));
+    localStorage.setItem(STORAGE_KEY_CLOSINGS, JSON.stringify([]));
+    localStorage.setItem(STORAGE_KEY_RESERVATIONS, JSON.stringify([]));
+    localStorage.removeItem(STORAGE_KEY_DELETED_CASH);
+    this.notify();
+
+    // Limpiar también en Supabase para que la sincronización en la nube no vuelva a traer el historial viejo
+    const supabase = getSupabase();
+    if (supabase) {
+      try {
+        // Liberar unidades primero
+        for (const u of cleanUnits) {
+          await supabase
+            .from('units')
+            .update({ status: 'disponible', current_rental_id: null })
+            .eq('id', u.id);
+        }
+
+        // Borrar todos los movimientos de caja
+        if (existingCash.length > 0) {
+          await supabase.from('cash_movements').delete().in('id', existingCash.map((c) => c.id));
+        }
+        await supabase.from('cash_movements').delete().neq('id', '__none__');
+
+        // Borrar todos los alquileres históricos y activos
+        if (existingRentals.length > 0) {
+          await supabase.from('rentals').delete().in('id', existingRentals.map((r) => r.id));
+        }
+        await supabase.from('rentals').delete().neq('id', '__none__');
+
+        // Borrar todos los cierres diarios archivados
+        if (existingClosings.length > 0) {
+          await supabase.from('daily_closings').delete().in('id', existingClosings.map((c) => c.id));
+        }
+        await supabase.from('daily_closings').delete().neq('id', '__none__');
+      } catch (e) {
+        console.warn('Error limpiando historial en Supabase:', e);
+      }
+    }
+
     this.notify();
   }
 

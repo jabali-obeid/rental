@@ -1,8 +1,9 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Rental, Category, Unit } from '../types';
 import { CategoryIcon } from './CategoryIcon';
 import { dataService } from '../services/dataService';
-import { Trophy, TrendingUp, DollarSign, Clock, BarChart3, Flame } from 'lucide-react';
+import { soundService } from '../services/sound';
+import { Trophy, TrendingUp, DollarSign, Clock, BarChart3, Flame, Trash2, RefreshCw } from 'lucide-react';
 
 interface Props {
   rentals: Rental[];
@@ -11,6 +12,24 @@ interface Props {
 }
 
 export const StatsReportsModule: React.FC<Props> = ({ rentals, categories, units }) => {
+  const [isClearing, setIsClearing] = useState(false);
+
+  const handleClearHistory = async () => {
+    if (
+      !window.confirm(
+        '¿Estás seguro de que querés borrar todo el historial de facturación, alquileres y cierres de caja (tanto en este dispositivo como en la nube Supabase) y dejar todo en $0?'
+      )
+    ) {
+      return;
+    }
+    setIsClearing(true);
+    try {
+      await dataService.resetToCleanState();
+      soundService.playSuccess();
+    } finally {
+      setIsClearing(false);
+    }
+  };
   const stats = useMemo(() => {
     let totalRevenue = 0;
     const categoryCounts: Record<string, number> = {};
@@ -72,6 +91,30 @@ export const StatsReportsModule: React.FC<Props> = ({ rentals, categories, units
 
   return (
     <div className="space-y-4 pb-24 text-[#f3ebd6]">
+      {/* TOP BAR WITH CLEAR HISTORY BUTTON */}
+      <div className="flex items-center justify-between gap-2 px-1">
+        <div>
+          <h2 className="text-sm font-extrabold text-[#f3ebd6]">Métricas e Historial Acumulado</h2>
+          <p className="text-[11px] text-[#d5cbbb]/70">Resumen general de facturación y salidas</p>
+        </div>
+
+        {(stats.totalCount > 0 || stats.totalRevenue > 0) && (
+          <button
+            type="button"
+            disabled={isClearing}
+            onClick={handleClearHistory}
+            className="px-3 py-2 rounded-xl bg-rose-950/70 hover:bg-rose-900/80 border border-rose-500/40 text-rose-200 text-xs font-extrabold flex items-center gap-1.5 transition-all active:scale-95 shrink-0"
+          >
+            {isClearing ? (
+              <RefreshCw className="w-3.5 h-3.5 animate-spin text-rose-300" />
+            ) : (
+              <Trash2 className="w-3.5 h-3.5 text-rose-400" />
+            )}
+            <span>{isClearing ? 'Borrando...' : 'Borrar Historial a $0'}</span>
+          </button>
+        )}
+      </div>
+
       {/* HIGHLIGHT KPIS */}
       <div className="grid grid-cols-2 gap-2.5">
         <div className="p-4 rounded-2xl bg-[#081d15] border border-[#1a422f]">
