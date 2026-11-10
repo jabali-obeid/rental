@@ -1,4 +1,4 @@
-import { Category, Unit, Rental, CashMovement, CashShiftSummary, UnitStatus, DailyClosing, Reservation, PaymentMethod } from '../types';
+import { Category, Unit, Rental, CashMovement, CashShiftSummary, RentalCategoryBreakdownItem, UnitStatus, DailyClosing, Reservation, PaymentMethod } from '../types';
 import { getSupabase, isSupabaseConfigured } from './supabaseClient';
 
 const STORAGE_KEY_CATEGORIES = 'rentflow_data_categories';
@@ -438,9 +438,10 @@ class DataService {
     localStorage.setItem(STORAGE_KEY_UNITS, JSON.stringify(updatedUnits));
 
     // Register initial cash payment
+    const rentalCategoryName = this.getCategories().find((c) => c.id === rental.categoryId)?.name || 'Alquiler';
     this.addCashMovement({
       type: 'ingreso_alquiler',
-      category: 'Alquiler',
+      category: rentalCategoryName,
       amount: rental.basePrice,
       paymentMethod: rental.paymentMethod,
       rentalId: id,
@@ -794,6 +795,78 @@ class DataService {
   }
 
 
+  public getRentalBreakdownByCategory(
+    movementsToAnalyze?: CashMovement[],
+    rentalsToAnalyze?: Rental[]
+  ): RentalCategoryBreakdownItem[] {
+    const movements = movementsToAnalyze ?? this.getCashMovements();
+    const rentals = rentalsToAnalyze ?? this.getRentals();
+    const categories = this.getCategories();
+    const units = this.getUnits();
+
+    const breakdownMap = new Map<string, RentalCategoryBreakdownItem>();
+
+    // Initialize map with all active categories in order so the user sees every category clearly
+    categories.forEach((cat) => {
+      breakdownMap.set(cat.id, {
+        categoryId: cat.id,
+        categoryName: cat.name,
+        count: 0,
+        totalAmount: 0,
+        color: cat.color || '#2ea06e',
+      });
+    });
+
+    movements.forEach((mv) => {
+      if (mv.type !== 'ingreso_alquiler') return;
+
+      let matchedCategory: Category | undefined;
+
+      // 1. Try matching by rentalId
+      if (mv.rentalId) {
+        const rental = rentals.find((r) => r.id === mv.rentalId);
+        if (rental) {
+          matchedCategory = categories.find((c) => c.id === rental.categoryId);
+        }
+      }
+
+      // 2. Try matching by unit code in description (e.g. "Alquiler MP-01 - ..." or "Reserva CD-02 - ...")
+      if (!matchedCategory && mv.description) {
+        const matchedUnit = units.find((u) => mv.description.includes(u.codeNumber));
+        if (matchedUnit) {
+          matchedCategory = categories.find((c) => c.id === matchedUnit.categoryId);
+        }
+      }
+
+      // 3. Try matching by mv.category name
+      if (!matchedCategory && mv.category) {
+        matchedCategory = categories.find(
+          (c) => c.name.toLowerCase() === mv.category.toLowerCase()
+        );
+      }
+
+      if (matchedCategory) {
+        const existing = breakdownMap.get(matchedCategory.id)!;
+        existing.count += 1;
+        existing.totalAmount += mv.amount;
+      } else {
+        const fallbackId = 'cat-otros';
+        const existing = breakdownMap.get(fallbackId) || {
+          categoryId: fallbackId,
+          categoryName: mv.category && mv.category !== 'Alquiler' ? mv.category : 'Otros Alquileres',
+          count: 0,
+          totalAmount: 0,
+          color: '#10b981',
+        };
+        existing.count += 1;
+        existing.totalAmount += mv.amount;
+        breakdownMap.set(fallbackId, existing);
+      }
+    });
+
+    return Array.from(breakdownMap.values());
+  }
+
   public getCashShiftSummary(): CashShiftSummary {
     const movements = this.getCashMovements();
     let totalEfectivo = 0;
@@ -828,6 +901,7 @@ class DataService {
       totalEgresos,
       balanceNeto: totalIngresos - totalEgresos,
       countAlquileres,
+      rentalsByCategory: this.getRentalBreakdownByCategory(movements),
     };
   }
 

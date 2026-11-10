@@ -71,6 +71,14 @@ export interface CashMovement {
   createdAt: string;
 }
 
+export interface RentalCategoryBreakdownItem {
+  categoryId: string;
+  categoryName: string;
+  count: number;
+  totalAmount: number;
+  color: string;
+}
+
 export interface CashShiftSummary {
   totalEfectivo: number;
   totalTransferencia: number;
@@ -79,6 +87,7 @@ export interface CashShiftSummary {
   totalEgresos: number;
   balanceNeto: number;
   countAlquileres: number;
+  rentalsByCategory: RentalCategoryBreakdownItem[];
 }
 
 export interface DailyClosing {

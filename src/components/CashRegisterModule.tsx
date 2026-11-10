@@ -184,11 +184,16 @@ export const CashRegisterModule: React.FC<Props> = ({ movements }) => {
       month: 'long',
       day: 'numeric',
     });
+    const categoryLines = summary.rentalsByCategory
+      .map((item) => `   • Alquileres de ${item.categoryName}: *${item.count}*`)
+      .join('\n');
+
     return (
       `*🌿 ECO AVENTURA - CIERRE DE CAJA / ARQUEO DIARIO*\n` +
       `📅 Fecha: ${today}\n` +
       `---------------------------------\n` +
       `🛵 Alquileres Realizados: *${summary.countAlquileres}*\n` +
+      (categoryLines ? `${categoryLines}\n---------------------------------\n` : '') +
       `💵 *Efectivo en Caja:* $${summary.totalEfectivo.toLocaleString()}\n` +
       `📲 *Transferencias:* $${summary.totalTransferencia.toLocaleString()}\n` +
       `💳 *Tarjetas:* $${summary.totalTarjeta.toLocaleString()}\n` +
@@ -202,12 +207,21 @@ export const CashRegisterModule: React.FC<Props> = ({ movements }) => {
   };
 
   const generateHistoricWhatsAppReport = (item: DailyClosing) => {
+    const historicBreakdown = dataService.getRentalBreakdownByCategory(
+      item.movementsSnapshot || [],
+      item.rentalsSnapshot || []
+    );
+    const categoryLines = historicBreakdown
+      .map((b) => `   • Alquileres de ${b.categoryName}: *${b.count}*`)
+      .join('\n');
+
     return (
       `*🌿 ECO AVENTURA - REPORTE DE CIERRE HISTÓRICO*\n` +
       `📅 Fecha: ${item.dateLabel}\n` +
       `👤 Operador: ${item.closedBy}\n` +
       `---------------------------------\n` +
       `🛵 Alquileres Totales: *${item.totalRentals}*\n` +
+      (categoryLines ? `${categoryLines}\n---------------------------------\n` : '') +
       `💵 Efectivo: $${item.totalEfectivo.toLocaleString()}\n` +
       `📲 Transferencias: $${item.totalTransferencia.toLocaleString()}\n` +
       `💳 Tarjetas: $${item.totalTarjeta.toLocaleString()}\n` +
@@ -594,6 +608,10 @@ export const CashRegisterModule: React.FC<Props> = ({ movements }) => {
               {closings.map((c) => {
                 const dateObj = new Date(c.closedAt);
                 const timeString = dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                const closingBreakdown = dataService.getRentalBreakdownByCategory(
+                  c.movementsSnapshot || [],
+                  c.rentalsSnapshot || []
+                );
 
                 return (
                   <div
@@ -627,6 +645,32 @@ export const CashRegisterModule: React.FC<Props> = ({ movements }) => {
                         <div className="text-lg font-black text-[#2ea06e] font-mono">
                           ${c.balanceNeto.toLocaleString()}
                         </div>
+                      </div>
+                    </div>
+
+                    {/* RENTAL BREAKDOWN BY CATEGORY */}
+                    <div className="p-2.5 rounded-xl bg-[#02110c]/70 border border-[#1a422f] space-y-1.5">
+                      <span className="text-[10px] uppercase font-bold text-[#d5cbbb]/70 block tracking-wider">
+                        Detalle de Alquileres por Vehículo ({c.totalRentals})
+                      </span>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1 text-xs">
+                        {closingBreakdown.map((item) => (
+                          <div
+                            key={item.categoryId}
+                            className="flex items-center justify-between text-[11px] py-0.5 border-b border-[#1a422f]/40 last:border-b-0"
+                          >
+                            <span className="text-[#d5cbbb] truncate pr-2">
+                              Alquileres de {item.categoryName}:
+                            </span>
+                            <span
+                              className={`font-mono font-extrabold shrink-0 ${
+                                item.count > 0 ? 'text-[#2ea06e]' : 'text-[#d5cbbb]/40'
+                              }`}
+                            >
+                              {item.count}
+                            </span>
+                          </div>
+                        ))}
                       </div>
                     </div>
 
@@ -722,10 +766,30 @@ export const CashRegisterModule: React.FC<Props> = ({ movements }) => {
             {closeStep === 'summary' ? (
               <>
                 <div className="rounded-2xl bg-[#02110c] p-4 border border-[#1a422f] space-y-2.5 font-mono text-xs">
-                  <div className="flex justify-between text-[#d5cbbb] pb-2 border-b border-[#1a422f] font-sans">
-                    <span>Alquileres Cerrados:</span>
-                    <span className="text-[#f3ebd6] font-bold">{summary.countAlquileres} servicios</span>
+                  <div className="flex justify-between text-[#d5cbbb] pb-1.5 border-b border-[#1a422f] font-sans">
+                    <span className="font-bold text-[#f3ebd6]">Alquileres Totales:</span>
+                    <span className="text-[#2ea06e] font-black">{summary.countAlquileres} servicios</span>
                   </div>
+
+                  {/* Discriminated Rentals by Category */}
+                  <div className="space-y-1 pb-2 border-b border-[#1a422f] font-sans">
+                    {summary.rentalsByCategory.map((item) => (
+                      <div
+                        key={item.categoryId}
+                        className="flex items-center justify-between text-[11px] text-[#d5cbbb]/90"
+                      >
+                        <span className="truncate pr-2">• Alquileres de {item.categoryName}:</span>
+                        <span
+                          className={`font-mono font-extrabold shrink-0 ${
+                            item.count > 0 ? 'text-[#f3ebd6]' : 'text-[#d5cbbb]/40'
+                          }`}
+                        >
+                          {item.count}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+
                   <div className="flex justify-between text-[#2ea06e]">
                     <span>Efectivo Físico en Caja:</span>
                     <span className="font-bold">${summary.totalEfectivo.toLocaleString()}</span>
@@ -885,6 +949,42 @@ export const CashRegisterModule: React.FC<Props> = ({ movements }) => {
                 <div>
                   <span className="text-[10px] text-rose-400 font-sans font-bold block">GASTOS</span>
                   <span className="text-rose-300 font-bold">-${selectedClosing.totalEgresos.toLocaleString()}</span>
+                </div>
+              </div>
+
+              {/* Rental Breakdown Snapshot */}
+              <div className="p-3.5 rounded-2xl bg-[#02110c] border border-[#1a422f] space-y-2">
+                <div className="flex items-center justify-between border-b border-[#1a422f] pb-1.5">
+                  <span className="text-xs font-extrabold text-[#f3ebd6]">
+                    Alquileres Discriminados por Vehículo
+                  </span>
+                  <span className="text-xs font-black text-[#2ea06e]">
+                    Total: {selectedClosing.totalRentals}
+                  </span>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1 text-xs">
+                  {dataService
+                    .getRentalBreakdownByCategory(
+                      selectedClosing.movementsSnapshot || [],
+                      selectedClosing.rentalsSnapshot || []
+                    )
+                    .map((item) => (
+                      <div
+                        key={item.categoryId}
+                        className="flex items-center justify-between text-[11px] py-0.5"
+                      >
+                        <span className="text-[#d5cbbb] truncate pr-2">
+                          Alquileres de {item.categoryName}:
+                        </span>
+                        <span
+                          className={`font-mono font-extrabold shrink-0 ${
+                            item.count > 0 ? 'text-[#2ea06e]' : 'text-[#d5cbbb]/40'
+                          }`}
+                        >
+                          {item.count}
+                        </span>
+                      </div>
+                    ))}
                 </div>
               </div>
 
