@@ -280,7 +280,15 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
+  // Health check / root check
+  if (req.method === 'GET' && (req.url === '/' || req.url === '/health')) {
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ status: 'ok', bridge: 'eco-aventura-whatsapp' }));
+    return;
+  }
+
   if (req.method === 'GET' && req.url === '/api/status') {
+
     res.writeHead(200, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify(getStatusPayload()));
     return;
@@ -320,8 +328,8 @@ const server = http.createServer(async (req, res) => {
   res.end(JSON.stringify({ error: 'Not found' }));
 });
 
-server.listen(PORT, () => {
-  console.log(`\n🚣 Servidor WhatsApp QR Eco Aventura corriendo en http://localhost:${PORT}`);
+server.listen(PORT, '0.0.0.0', () => {
+  console.log(`\n🚣 Servidor WhatsApp QR Eco Aventura corriendo en puerto ${PORT}`);
   initSupabaseBridge();
   startWhatsappSocket();
 });
