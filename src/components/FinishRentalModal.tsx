@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Rental, Category, Unit, PaymentMethod } from '../types';
 import { dataService } from '../services/dataService';
 import { soundService } from '../services/sound';
+import { calculateRentalPenalty } from '../hooks/useRentalTimer';
 import confetti from 'canvas-confetti';
 import {
   X,
@@ -36,10 +37,10 @@ export const FinishRentalModal: React.FC<Props> = ({
   const expectedEnd = new Date(rental.expectedEndTime).getTime();
   const diffMs = expectedEnd - now;
   const isOverdue = diffMs < 0;
-  const overdueMinutes = isOverdue ? Math.ceil(Math.abs(diffMs) / 60000) : 0;
-  const delayBlocks10m = isOverdue ? Math.max(1, Math.ceil(Math.max(1, overdueMinutes) / 10)) : 0;
-  const ratePer10m = category?.penaltyRate10Min || (category?.defaultRate30m ? Math.round(category.defaultRate30m / 3) : 6000);
-  const defaultPenalty = isOverdue ? delayBlocks10m * ratePer10m : 0;
+  const overdueMinutes = isOverdue ? Math.floor(Math.abs(diffMs) / 60000) : 0;
+  const { suggestedPenalty: defaultPenalty, penaltyLabel } = isOverdue
+    ? calculateRentalPenalty(rental, overdueMinutes, category)
+    : { suggestedPenalty: 0, penaltyLabel: '' };
 
   const [penaltyPrice, setPenaltyPrice] = useState<number>(defaultPenalty);
   const [discount, setDiscount] = useState<number>(0);
@@ -144,15 +145,23 @@ export const FinishRentalModal: React.FC<Props> = ({
 
           {/* Time & Late Surcharge Notice */}
           {isOverdue && (
-            <div className="rounded-2xl bg-rose-500/10 border border-rose-500/30 p-3.5 flex items-center justify-between">
+            <div
+              className={`rounded-2xl border p-3.5 flex items-center justify-between ${
+                defaultPenalty > 0
+                  ? 'bg-rose-500/10 border-rose-500/30'
+                  : 'bg-amber-500/10 border-amber-500/30'
+              }`}
+            >
               <div className="flex items-center gap-2.5">
-                <Clock className="w-5 h-5 text-rose-400" />
+                <Clock className={`w-5 h-5 ${defaultPenalty > 0 ? 'text-rose-400' : 'text-amber-400'}`} />
                 <div>
-                  <div className="text-xs font-bold text-rose-300">
-                    Demora de {overdueMinutes} min ({delayBlocks10m} {delayBlocks10m === 1 ? 'bloque' : 'bloques'} de 10 min)
+                  <div className={`text-xs font-bold ${defaultPenalty > 0 ? 'text-rose-300' : 'text-amber-300'}`}>
+                    Demora de {overdueMinutes} min ({penaltyLabel})
                   </div>
                   <div className="text-[11px] text-[#d5cbbb]">
-                    Tarifa por cada 10 min: ${ratePer10m.toLocaleString()}
+                    {defaultPenalty > 0
+                      ? 'Redondeado a billetes argentinos en circulación'
+                      : 'Dentro de los primeros 10 min de flexibilidad sin cargo'}
                   </div>
                 </div>
               </div>

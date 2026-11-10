@@ -29,9 +29,9 @@ export const RentalCard: React.FC<Props> = ({
     isExpired,
     formattedTime,
     delayMinutes,
-    delayBlocks10m,
     progressPercent,
     suggestedPenalty,
+    penaltyLabel,
   } = useRentalTimer(rental, category);
 
   const handleLaunchTimer = (e: React.MouseEvent) => {
@@ -166,18 +166,32 @@ export const RentalCard: React.FC<Props> = ({
 
         {/* Surcharge Notice if Red / Overdue */}
         {isExpired && (
-          <div className="mb-3 p-2.5 rounded-2xl bg-rose-500/15 border border-rose-500/40 flex items-center justify-between text-xs text-rose-300">
+          <div
+            className={`mb-3 p-2.5 rounded-2xl border flex items-center justify-between text-xs ${
+              suggestedPenalty > 0
+                ? 'bg-rose-500/15 border-rose-500/40 text-rose-300'
+                : 'bg-amber-500/15 border-amber-500/40 text-amber-200'
+            }`}
+          >
             <div className="flex items-center gap-1.5 font-medium">
-              <AlertTriangle className="w-4 h-4 text-rose-400 shrink-0" />
+              <AlertTriangle
+                className={`w-4 h-4 shrink-0 ${
+                  suggestedPenalty > 0 ? 'text-rose-400' : 'text-amber-400'
+                }`}
+              />
               <span>
                 Demora: <strong>{delayMinutes} min</strong>{' '}
-                <span className="text-[10px] opacity-80">
-                  ({delayBlocks10m} {delayBlocks10m === 1 ? 'bloque' : 'bloques'} de 10m)
-                </span>
+                <span className="text-[10px] opacity-80">({penaltyLabel})</span>
               </span>
             </div>
-            <div className="font-bold text-rose-200">
-              Recargo: <span className="text-white font-extrabold">+${suggestedPenalty.toLocaleString()}</span>
+            <div className="font-bold">
+              {suggestedPenalty > 0 ? (
+                <>
+                  Recargo: <span className="text-white font-extrabold">+${suggestedPenalty.toLocaleString()}</span>
+                </>
+              ) : (
+                <span className="text-emerald-300 font-extrabold">Sin cargo ($0)</span>
+              )}
             </div>
           </div>
         )}

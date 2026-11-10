@@ -8,6 +8,100 @@ export function isRentalWaitingStart(rental: Rental): boolean {
   return Boolean(rental.notes && rental.notes.includes('[ESPERANDO_INICIO]'));
 }
 
+/**
+ * Redondea el monto a la nómina de billetes argentinos en circulación (múltiplos de $1.000)
+ */
+export function roundToArgentineBills(amount: number): number {
+  if (amount <= 0) return 0;
+  return Math.max(1000, Math.round(amount / 1000) * 1000);
+}
+
+/**
+ * Calcula la penalización por demora según la regla oficial de Eco Aventura:
+ * - Primeros 10 minutos (0 a 9 min de demora): Flexibilidad sin cargo ($0).
+ * - Alquileres de 30 min:
+ *   • Minuto 10 al 14: 30% del valor del servicio (redondeado a billetes)
+ *   • Minuto 15 al 19: 50% (la mitad del servicio, redondeado a billetes)
+ *   • Minuto 20 al 29: 2/3 del servicio (redondeado a billetes)
+ *   • Minuto 30+: Turno completo + tramos adicionales
+ * - Alquileres por hora (60 min):
+ *   • Primeros 10 min (0 a 9 min): Flexibilidad sin cargo ($0).
+ *   • Pasados los 10 min: Bloques cada 15 min ajustados y redondeados a billetes.
+ */
+export function calculateRentalPenalty(
+  rental: Rental,
+  delayMinutes: number,
+  category?: Category
+): { suggestedPenalty: number; penaltyLabel: string; delayBlocks: number } {
+  const baseServicePrice =
+    rental.basePrice ||
+    category?.cashRate30m ||
+    category?.defaultRate30m ||
+    18000;
+
+  // Primeros 10 minutos de flexibilidad sin cargo (0 a 9 min)
+  if (delayMinutes < 10) {
+    return {
+      suggestedPenalty: 0,
+      penaltyLabel: 'En margen de flexibilidad (10m sin cargo)',
+      delayBlocks: 0,
+    };
+  }
+
+  // Caso 1: Alquileres de 30 minutos
+  if (rental.durationMinutes <= 30) {
+    const fullTurn30 = Math.floor(delayMinutes / 30);
+    const remMinutes = delayMinutes % 30;
+
+    let fraction = 0;
+    let stageDesc = '';
+
+    if (fullTurn30 === 0) {
+      if (remMinutes >= 20) {
+        fraction = 2 / 3;
+        stageDesc = '2/3 del servicio (+20m)';
+      } else if (remMinutes >= 15) {
+        fraction = 0.5;
+        stageDesc = '1/2 del servicio (+15m)';
+      } else {
+        fraction = 0.3;
+        stageDesc = '30% del servicio (10-15m)';
+      }
+    } else {
+      // Si superó 30 min de mora, suma el turno completo más el tramo adicional
+      if (remMinutes >= 20) {
+        fraction = fullTurn30 + 2 / 3;
+      } else if (remMinutes >= 15) {
+        fraction = fullTurn30 + 0.5;
+      } else if (remMinutes >= 10) {
+        fraction = fullTurn30 + 0.3;
+      } else {
+        fraction = fullTurn30;
+      }
+      stageDesc = `+${delayMinutes}m de mora`;
+    }
+
+    const penalty = roundToArgentineBills(baseServicePrice * fraction);
+    return {
+      suggestedPenalty: penalty,
+      penaltyLabel: stageDesc,
+      delayBlocks: Math.ceil(delayMinutes / 5),
+    };
+  }
+
+  // Caso 2: Alquileres por hora (60 min o más) -> cada 15 min (pasados los 10 min de flexibilidad)
+  // 10 a 29 min = 1 bloque de 15m (1/4 hora), 30 a 44 min = 2 bloques (1/2 hora), 45 a 59 min = 3 bloques (3/4 hora), etc.
+  const blocks15m = Math.max(1, Math.floor(delayMinutes / 15));
+  const ratePer15m = baseServicePrice * (15 / Math.max(60, rental.durationMinutes));
+  const penalty = roundToArgentineBills(blocks15m * ratePer15m);
+
+  return {
+    suggestedPenalty: penalty,
+    penaltyLabel: `${blocks15m} ${blocks15m === 1 ? 'bloque' : 'bloques'} de 15m`,
+    delayBlocks: blocks15m,
+  };
+}
+
 export interface TimerStatus {
   trafficLight: TrafficLight;
   isWaitingStart: boolean;
@@ -17,10 +111,11 @@ export interface TimerStatus {
   secondsRemaining: number;
   delayMinutes: number;
   delaySeconds: number;
-  delayBlocks10m: number; // Cantidad de bloques de 10 min de mora acumulados
-  ratePer10m: number;     // Tarifa por cada bloque de 10 minutos
+  delayBlocks10m: number;
+  ratePer10m: number;
   progressPercent: number;
   suggestedPenalty: number;
+  penaltyLabel: string;
 }
 
 export function useRentalTimer(rental: Rental, category?: Category): TimerStatus {
@@ -92,6 +187,7 @@ export function useRentalTimer(rental: Rental, category?: Category): TimerStatus
       ratePer10m,
       progressPercent: 0,
       suggestedPenalty: 0,
+      penaltyLabel: '',
     };
   }
 
@@ -120,10 +216,10 @@ export function useRentalTimer(rental: Rental, category?: Category): TimerStatus
   const elapsedMs = now - startTime;
   const progressPercent = Math.min(100, Math.max(0, (elapsedMs / totalDurationMs) * 100));
 
-  // Mora calculada por cada bloque de 10 minutos (1 a 10 min = 1 bloque, 11 a 20 min = 2 bloques)
-  const delayBlocks10m = isExpired ? Math.max(1, Math.ceil(Math.max(1, delayMinutes) / 10)) : 0;
-  const ratePer10m = category?.penaltyRate10Min || (category?.defaultRate30m ? Math.round(category.defaultRate30m / 3) : 6000);
-  const suggestedPenalty = isExpired ? delayBlocks10m * ratePer10m : 0;
+  const { suggestedPenalty, penaltyLabel, delayBlocks } = isExpired
+    ? calculateRentalPenalty(rental, delayMinutes, category)
+    : { suggestedPenalty: 0, penaltyLabel: '', delayBlocks: 0 };
+  const ratePer10m = roundToArgentineBills((rental.basePrice || category?.defaultRate30m || 18000) * 0.3);
 
   return {
     trafficLight,
@@ -134,9 +230,10 @@ export function useRentalTimer(rental: Rental, category?: Category): TimerStatus
     secondsRemaining,
     delayMinutes,
     delaySeconds,
-    delayBlocks10m,
+    delayBlocks10m: delayBlocks,
     ratePer10m,
     progressPercent,
     suggestedPenalty,
+    penaltyLabel,
   };
 }
