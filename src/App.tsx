@@ -10,6 +10,7 @@ import { InventoryModule } from './components/InventoryModule';
 import { CashRegisterModule } from './components/CashRegisterModule';
 import { StatsReportsModule } from './components/StatsReportsModule';
 import { SettingsModal } from './components/SettingsModal';
+import { RaftingWhatsappModal } from './components/RaftingWhatsappModal';
 import { PinAuthLock } from './components/PinAuthLock';
 import { BottomNavigation, ActiveTab } from './components/BottomNavigation';
 
@@ -25,6 +26,8 @@ export function App() {
   const [finishRentalTarget, setFinishRentalTarget] = useState<Rental | null>(null);
   const [reserveRentalTarget, setReserveRentalTarget] = useState<Rental | null>(null);
   const [isSettingsOpen, setIsSettingsOpen] = useState<boolean>(false);
+  const [isRaftingOpen, setIsRaftingOpen] = useState<boolean>(false);
+  const [raftingInitialTab, setRaftingInitialTab] = useState<'send' | 'steps' | 'qr' | 'history'>('send');
 
   // Subscribe to real-time data mutations
   useEffect(() => {
@@ -59,6 +62,10 @@ export function App() {
         activeCount={activeRentals.length}
         onOpenNewRental={() => setIsNewRentalOpen(true)}
         onOpenSettings={() => setIsSettingsOpen(true)}
+        onOpenRafting={() => {
+          setRaftingInitialTab('send');
+          setIsRaftingOpen(true);
+        }}
         activeTab={activeTab}
         onChangeTab={setActiveTab}
       />
@@ -127,6 +134,16 @@ export function App() {
       <SettingsModal
         isOpen={isSettingsOpen}
         onClose={() => setIsSettingsOpen(false)}
+        onOpenRaftingConfig={() => {
+          setRaftingInitialTab('steps');
+          setIsRaftingOpen(true);
+        }}
+      />
+
+      <RaftingWhatsappModal
+        isOpen={isRaftingOpen}
+        onClose={() => setIsRaftingOpen(false)}
+        initialTab={raftingInitialTab}
       />
 
       {/* Screen Blur PIN Security Lock */}

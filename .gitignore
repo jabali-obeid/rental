@@ -1,4 +1,7 @@
-# Logs
+# Baileys / WhatsApp bridge session data
+.baileys_auth
+whatsapp-bridge/.baileys_auth
+
 logs
 *.log
 npm-debug.log*

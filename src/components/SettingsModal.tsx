@@ -2,6 +2,7 @@ import React, { useState, useId } from 'react';
 import { getStoredSupabaseConfig, saveSupabaseConfig, getShareableConfigUrl, isSupabaseConfigured } from '../services/supabaseClient';
 import { soundService } from '../services/sound';
 import { dataService } from '../services/dataService';
+import { raftingWhatsappService } from '../services/raftingWhatsappService';
 import {
   X,
   Database,
@@ -13,15 +14,17 @@ import {
   Smartphone,
   Copy,
   Wifi,
-  CloudCheck
+  CloudCheck,
+  Send
 } from 'lucide-react';
 
 interface Props {
   isOpen: boolean;
   onClose: () => void;
+  onOpenRaftingConfig?: () => void;
 }
 
-export const SettingsModal: React.FC<Props> = ({ isOpen, onClose }) => {
+export const SettingsModal: React.FC<Props> = ({ isOpen, onClose, onOpenRaftingConfig }) => {
   const supabaseUrlId = useId();
   const supabaseKeyId = useId();
 
@@ -39,6 +42,7 @@ export const SettingsModal: React.FC<Props> = ({ isOpen, onClose }) => {
     e.preventDefault();
     saveSupabaseConfig(config.url, config.key);
     dataService.initRealtimeSync();
+    raftingWhatsappService.initSupabaseBridgeChannel();
     setSaveStatus('¡Conectando y activando tiempo real multi-dispositivo...!');
     const ok = await dataService.syncFromSupabase();
     if (ok) {
@@ -325,6 +329,23 @@ export const SettingsModal: React.FC<Props> = ({ isOpen, onClose }) => {
                 </div>
                 <span className="text-[10px] text-[#d5cbbb]/60">Incluye alquileres, caja e historial</span>
               </button>
+
+              {onOpenRaftingConfig && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    onClose();
+                    onOpenRaftingConfig();
+                  }}
+                  className="w-full py-3 px-4 rounded-xl bg-emerald-950/60 border border-[#2ea06e]/50 text-[#f3ebd6] text-xs font-bold flex items-center justify-between hover:bg-[#1a422f] active:scale-98 transition-all"
+                >
+                  <div className="flex items-center gap-2">
+                    <Send className="w-4 h-4 text-[#2ea06e]" />
+                    <span>Plantillas de Rafting (Pomelos) y WhatsApp QR</span>
+                  </div>
+                  <span className="text-[10px] text-[#2ea06e]">Editar 12 mensajes / QR</span>
+                </button>
+              )}
 
               <button
                 type="button"

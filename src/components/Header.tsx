@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Volume2, VolumeX, Plus, Settings, Compass, Clock, Bike, Banknote, BarChart3, Wifi, Database } from 'lucide-react';
+import { Volume2, VolumeX, Plus, Settings, Compass, Clock, Bike, Banknote, BarChart3, Send } from 'lucide-react';
 import { soundService } from '../services/sound';
 import { dataService } from '../services/dataService';
 import { ActiveTab } from './BottomNavigation';
@@ -8,6 +8,7 @@ interface Props {
   activeCount: number;
   onOpenNewRental: () => void;
   onOpenSettings: () => void;
+  onOpenRafting: () => void;
   activeTab?: ActiveTab;
   onChangeTab?: (tab: ActiveTab) => void;
 }
@@ -16,6 +17,7 @@ export const Header: React.FC<Props> = ({
   activeCount,
   onOpenNewRental,
   onOpenSettings,
+  onOpenRafting,
   activeTab = 'dashboard',
   onChangeTab,
 }) => {
@@ -125,6 +127,16 @@ export const Header: React.FC<Props> = ({
 
         {/* Action Controls */}
         <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+          {/* Quick Rafting Info WhatsApp Button */}
+          <button
+            onClick={onOpenRafting}
+            title="Enviar Pack de Info Rafting (Pomelos Tour) por WhatsApp"
+            className="flex items-center gap-1.5 px-2.5 sm:px-3 py-2 sm:py-2.5 rounded-xl bg-emerald-950/90 hover:bg-[#1a422f] border border-[#2ea06e]/60 text-[#2ea06e] hover:text-[#f3ebd6] font-extrabold text-xs shadow-md active:scale-95 transition-all shrink-0"
+          >
+            <Send className="w-3.5 h-3.5 sm:w-4 sm:h-4 stroke-[2.5]" />
+            <span>Info Rafting</span>
+          </button>
+
           {/* Sound Toggle */}
           <button
             onClick={handleToggleSound}
