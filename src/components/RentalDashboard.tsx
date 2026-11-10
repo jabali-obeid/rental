@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { Rental, Category, Unit } from '../types';
 import { RentalCard } from './RentalCard';
+import { isRentalWaitingStart } from '../hooks/useRentalTimer';
 import { Search, Plus } from 'lucide-react';
 
 interface Props {
@@ -21,15 +22,18 @@ export const RentalDashboard: React.FC<Props> = ({
   onReserveRental,
 }) => {
   const [search, setSearch] = useState<string>('');
-  const [filterState, setFilterState] = useState<'all' | 'green' | 'yellow' | 'red'>('all');
+  const [filterState, setFilterState] = useState<'all' | 'waiting' | 'green' | 'yellow' | 'red'>('all');
 
   const now = Date.now();
 
   // Classify rentals for filtering
   const classifiedRentals = useMemo(() => {
     return rentals.map((r) => {
+      if (isRentalWaitingStart(r)) {
+        return { rental: r, state: 'waiting' as const };
+      }
       const diffMs = new Date(r.expectedEndTime).getTime() - now;
-      let state: 'green' | 'yellow' | 'red' = 'green';
+      let state: 'waiting' | 'green' | 'yellow' | 'red' = 'green';
       if (diffMs <= 0) {
         state = 'red';
       } else if (diffMs <= 5 * 60 * 1000) {
@@ -44,6 +48,7 @@ export const RentalDashboard: React.FC<Props> = ({
   const counts = useMemo(() => {
     return {
       all: classifiedRentals.length,
+      waiting: classifiedRentals.filter((i) => i.state === 'waiting').length,
       green: classifiedRentals.filter((i) => i.state === 'green').length,
       yellow: classifiedRentals.filter((i) => i.state === 'yellow').length,
       red: classifiedRentals.filter((i) => i.state === 'red').length,
@@ -51,7 +56,7 @@ export const RentalDashboard: React.FC<Props> = ({
   }, [classifiedRentals]);
 
   const filteredItems = useMemo(() => {
-    return classifiedRentals.filter(({ rental, state }) => {
+    const items = classifiedRentals.filter(({ rental, state }) => {
       if (filterState !== 'all' && state !== filterState) return false;
 
       if (search.trim()) {
@@ -63,6 +68,13 @@ export const RentalDashboard: React.FC<Props> = ({
         if (!matchCustomer && !matchUnit && !matchLocker) return false;
       }
       return true;
+    });
+
+    // Prioritize rentals waiting to be started at the top so the track operator sees them immediately
+    return items.sort((a, b) => {
+      if (a.state === 'waiting' && b.state !== 'waiting') return -1;
+      if (a.state !== 'waiting' && b.state === 'waiting') return 1;
+      return 0;
     });
   }, [classifiedRentals, filterState, search, units]);
 
@@ -101,6 +113,18 @@ export const RentalDashboard: React.FC<Props> = ({
             }`}
           >
             Todos ({counts.all})
+          </button>
+
+          <button
+            onClick={() => setFilterState('waiting')}
+            className={`px-3 py-1.5 rounded-xl text-xs font-bold shrink-0 transition-all flex items-center gap-1.5 ${
+              filterState === 'waiting'
+                ? 'bg-cyan-500/25 text-cyan-200 border border-cyan-400/60 shadow'
+                : 'bg-[#081d15] text-[#d5cbbb]/70 border border-[#1a422f]/60 hover:text-cyan-300'
+            }`}
+          >
+            <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
+            <span>Por Iniciar ({counts.waiting})</span>
           </button>
 
           <button

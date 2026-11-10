@@ -2,10 +2,15 @@ import { useState, useEffect, useRef } from 'react';
 import { Rental, Category } from '../types';
 import { soundService } from '../services/sound';
 
-export type TrafficLight = 'GREEN' | 'YELLOW' | 'RED';
+export type TrafficLight = 'WAITING' | 'GREEN' | 'YELLOW' | 'RED';
+
+export function isRentalWaitingStart(rental: Rental): boolean {
+  return Boolean(rental.notes && rental.notes.includes('[ESPERANDO_INICIO]'));
+}
 
 export interface TimerStatus {
   trafficLight: TrafficLight;
+  isWaitingStart: boolean;
   isExpired: boolean;
   formattedTime: string;
   minutesRemaining: number;
@@ -22,17 +27,18 @@ export function useRentalTimer(rental: Rental, category?: Category): TimerStatus
   const [, setTick] = useState<number>(0);
   const alerted5mRef = useRef<boolean>(false);
   const alertedExpiredRef = useRef<boolean>(false);
+  const waitingStart = isRentalWaitingStart(rental);
 
   useEffect(() => {
-    // If rental is finished or canceled, don't tick
-    if (rental.status !== 'activo') return;
+    // If rental is finished, canceled, or waiting for manual start, don't tick
+    if (rental.status !== 'activo' || waitingStart) return;
 
     const interval = setInterval(() => {
       setTick((t) => t + 1);
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [rental.status]);
+  }, [rental.status, waitingStart]);
 
   const now = Date.now();
   const startTime = new Date(rental.startTime).getTime();
@@ -40,10 +46,12 @@ export function useRentalTimer(rental: Rental, category?: Category): TimerStatus
   const totalDurationMs = Math.max(1, expectedEnd - startTime);
   const diffMs = expectedEnd - now;
 
-  const isExpired = diffMs <= 0;
+  const isExpired = !waitingStart && diffMs <= 0;
   let trafficLight: TrafficLight = 'GREEN';
 
-  if (isExpired) {
+  if (waitingStart) {
+    trafficLight = 'WAITING';
+  } else if (isExpired) {
     trafficLight = 'RED';
   } else if (diffMs <= 5 * 60 * 1000) {
     trafficLight = 'YELLOW';
@@ -53,7 +61,7 @@ export function useRentalTimer(rental: Rental, category?: Category): TimerStatus
 
   // Audio Alerts on state transitions
   useEffect(() => {
-    if (rental.status !== 'activo') return;
+    if (rental.status !== 'activo' || waitingStart) return;
 
     // Trigger yellow warning once when entering last 5 mins
     if (diffMs <= 5 * 60 * 1000 && diffMs > 0 && !alerted5mRef.current) {
@@ -66,7 +74,26 @@ export function useRentalTimer(rental: Rental, category?: Category): TimerStatus
       alertedExpiredRef.current = true;
       soundService.playTimeAlert();
     }
-  }, [diffMs, rental.status]);
+  }, [diffMs, rental.status, waitingStart]);
+
+  if (waitingStart) {
+    const mStr = String(rental.durationMinutes).padStart(2, '0');
+    const ratePer10m = category?.penaltyRate10Min || (category?.defaultRate30m ? Math.round(category.defaultRate30m / 3) : 6000);
+    return {
+      trafficLight: 'WAITING',
+      isWaitingStart: true,
+      isExpired: false,
+      formattedTime: `${mStr}:00`,
+      minutesRemaining: rental.durationMinutes,
+      secondsRemaining: 0,
+      delayMinutes: 0,
+      delaySeconds: 0,
+      delayBlocks10m: 0,
+      ratePer10m,
+      progressPercent: 0,
+      suggestedPenalty: 0,
+    };
+  }
 
   let minutesRemaining = 0;
   let secondsRemaining = 0;
@@ -100,6 +127,7 @@ export function useRentalTimer(rental: Rental, category?: Category): TimerStatus
 
   return {
     trafficLight,
+    isWaitingStart: false,
     isExpired,
     formattedTime,
     minutesRemaining,

@@ -2,8 +2,9 @@ import React from 'react';
 import { Rental, Category, Unit } from '../types';
 import { useRentalTimer } from '../hooks/useRentalTimer';
 import { CategoryIcon } from './CategoryIcon';
-import { Phone, AlertTriangle, Clock, PlusCircle, BookmarkPlus, Printer, Play } from 'lucide-react';
+import { Phone, AlertTriangle, Clock, PlusCircle, BookmarkPlus, Printer, Play, XCircle } from 'lucide-react';
 import { dataService } from '../services/dataService';
+import { soundService } from '../services/sound';
 import { printThermalTicket } from '../services/printerService';
 
 interface Props {
@@ -24,6 +25,7 @@ export const RentalCard: React.FC<Props> = ({
   const pendingReservation = unit ? dataService.getPendingReservationForUnit(unit.id) : undefined;
   const {
     trafficLight,
+    isWaitingStart,
     isExpired,
     formattedTime,
     delayMinutes,
@@ -31,6 +33,12 @@ export const RentalCard: React.FC<Props> = ({
     progressPercent,
     suggestedPenalty,
   } = useRentalTimer(rental, category);
+
+  const handleLaunchTimer = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    dataService.launchRentalTimer(rental.id);
+    soundService.playSuccess();
+  };
 
   const handleQuickExtend = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -44,7 +52,13 @@ export const RentalCard: React.FC<Props> = ({
   let progressColor = '';
   let statusText = '';
 
-  if (trafficLight === 'GREEN') {
+  if (trafficLight === 'WAITING') {
+    cardStyles = 'border-cyan-500/80 bg-[#072227] shadow-xl ring-1 ring-cyan-400/50';
+    badgeStyles = 'bg-cyan-500/25 text-cyan-200 border border-cyan-400/60 animate-pulse';
+    timeStyles = 'text-cyan-300 font-black';
+    progressColor = 'bg-cyan-400';
+    statusText = 'LISTO PARA INICIAR';
+  } else if (trafficLight === 'GREEN') {
     cardStyles = 'border-[#1a422f] bg-[#081d15] shadow-xl shadow-[#02110c]/80';
     badgeStyles = 'bg-[#1a422f] text-[#f3ebd6] border border-[#2ea06e]/50';
     timeStyles = 'text-[#f3ebd6]';
@@ -96,12 +110,21 @@ export const RentalCard: React.FC<Props> = ({
         <div className="my-2.5 bg-[#02110c]/80 rounded-2xl p-3.5 border border-[#1a422f]/70 flex items-center justify-between shadow-inner">
           <div>
             <span className="text-[11px] uppercase font-semibold text-[#d5cbbb]/70 block tracking-wider">
-              {isExpired ? 'Demora transcurrida' : 'Tiempo Restante'}
+              {isWaitingStart
+                ? 'Tiempo Contratado (En Espera)'
+                : isExpired
+                ? 'Demora transcurrida'
+                : 'Tiempo Restante'}
             </span>
             <div className="flex items-baseline gap-2">
               <span className={`font-mono text-3xl tracking-tight ${timeStyles}`}>
                 {formattedTime}
               </span>
+              {isWaitingStart && (
+                <span className="text-[11px] font-extrabold text-cyan-300 uppercase tracking-wide">
+                  pausado
+                </span>
+              )}
               {isExpired && (
                 <span className="text-xs font-bold text-rose-400 uppercase tracking-wide">
                   min mora
@@ -110,15 +133,27 @@ export const RentalCard: React.FC<Props> = ({
             </div>
           </div>
 
-          {/* Quick +15m button */}
-          <button
-            onClick={handleQuickExtend}
-            title="Extender 15 minutos"
-            className="flex flex-col items-center justify-center px-3 py-1.5 rounded-xl bg-[#1a422f] border border-[#2ea06e]/40 hover:bg-[#265e43] active:scale-95 transition-all text-[#f3ebd6]"
-          >
-            <PlusCircle className="w-4 h-4 text-[#f3ebd6] mb-0.5" />
-            <span className="text-[10px] font-bold text-[#f3ebd6]">+15 min</span>
-          </button>
+          {/* Quick +15m button or Quick Start button */}
+          {isWaitingStart ? (
+            <button
+              type="button"
+              onClick={handleLaunchTimer}
+              title="Iniciar cuenta regresiva ahora"
+              className="flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl bg-gradient-to-r from-[#2ea06e] to-emerald-500 hover:brightness-110 active:scale-95 transition-all text-[#02110c] font-black text-xs shadow-lg"
+            >
+              <Play className="w-4 h-4 fill-current" />
+              <span>INICIAR</span>
+            </button>
+          ) : (
+            <button
+              onClick={handleQuickExtend}
+              title="Extender 15 minutos"
+              className="flex flex-col items-center justify-center px-3 py-1.5 rounded-xl bg-[#1a422f] border border-[#2ea06e]/40 hover:bg-[#265e43] active:scale-95 transition-all text-[#f3ebd6]"
+            >
+              <PlusCircle className="w-4 h-4 text-[#f3ebd6] mb-0.5" />
+              <span className="text-[10px] font-bold text-[#f3ebd6]">+15 min</span>
+            </button>
+          )}
         </div>
 
         {/* Linear progress bar */}
@@ -211,47 +246,73 @@ export const RentalCard: React.FC<Props> = ({
         </div>
       </div>
 
-      {/* Card Bottom Actions: Finalizar Alquiler & Reservar */}
-      <div className="pt-2 border-t border-[#1a422f]/60 grid grid-cols-2 gap-2">
-        {/* Reservar Button (if not already reserved) */}
-        {!pendingReservation ? (
+      {/* Card Bottom Actions: Iniciar (if waiting) or Finalizar Alquiler & Reservar */}
+      {isWaitingStart ? (
+        <div className="pt-2 border-t border-cyan-500/30 flex items-center gap-2">
           <button
             type="button"
-            onClick={() => onReserveClick && onReserveClick(rental)}
-            className="py-3 px-3 rounded-2xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 font-black text-xs tracking-wider transition-all shadow active:scale-[0.98] flex items-center justify-center gap-1.5"
+            onClick={handleLaunchTimer}
+            className="flex-1 py-3.5 px-4 rounded-2xl bg-gradient-to-r from-[#2ea06e] to-emerald-500 hover:brightness-110 text-[#02110c] font-black text-xs sm:text-sm tracking-wider transition-all shadow-lg shadow-emerald-950/60 active:scale-[0.98] flex items-center justify-center gap-2"
           >
-            <BookmarkPlus className="w-4 h-4 text-amber-400" />
-            <span>Reservar</span>
+            <Play className="w-4 h-4 fill-current" />
+            <span>INICIAR TIEMPO ({rental.durationMinutes} MIN)</span>
           </button>
-        ) : (
+
           <button
             type="button"
             onClick={() => {
-              if (window.confirm(`¿Deseas despachar inmediatamente la reserva de ${pendingReservation.customerName}?`)) {
-                dataService.dispatchReservation(pendingReservation.id);
+              if (window.confirm(`¿Cancelar este alquiler pendiente de ${rental.customerName} y liberar la unidad ${unitCode}?`)) {
+                dataService.cancelRental(rental.id);
               }
             }}
-            className="py-3 px-3 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-black text-xs tracking-wider transition-all shadow active:scale-[0.98] flex items-center justify-center gap-1.5"
+            title="Cancelar salida y liberar unidad"
+            className="py-3.5 px-3 rounded-2xl bg-[#02110c] hover:bg-rose-950/60 text-[#d5cbbb]/70 hover:text-rose-300 border border-[#1a422f] transition-all active:scale-95"
           >
-            <Play className="w-4 h-4" />
-            <span>Despachar</span>
+            <XCircle className="w-4 h-4" />
           </button>
-        )}
+        </div>
+      ) : (
+        <div className="pt-2 border-t border-[#1a422f]/60 grid grid-cols-2 gap-2">
+          {/* Reservar Button (if not already reserved) */}
+          {!pendingReservation ? (
+            <button
+              type="button"
+              onClick={() => onReserveClick && onReserveClick(rental)}
+              className="py-3 px-3 rounded-2xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 font-black text-xs tracking-wider transition-all shadow active:scale-[0.98] flex items-center justify-center gap-1.5"
+            >
+              <BookmarkPlus className="w-4 h-4 text-amber-400" />
+              <span>Reservar</span>
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={() => {
+                if (window.confirm(`¿Deseas despachar inmediatamente la reserva de ${pendingReservation.customerName}?`)) {
+                  dataService.dispatchReservation(pendingReservation.id);
+                }
+              }}
+              className="py-3 px-3 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-black text-xs tracking-wider transition-all shadow active:scale-[0.98] flex items-center justify-center gap-1.5"
+            >
+              <Play className="w-4 h-4" />
+              <span>Despachar</span>
+            </button>
+          )}
 
-        {/* Finalize Rental Button */}
-        <button
-          type="button"
-          onClick={() => onFinishClick(rental)}
-          className={`py-3 px-3 rounded-2xl font-black text-xs tracking-wider transition-all shadow-md active:scale-[0.98] flex items-center justify-center gap-1.5 ${
-            isExpired
-              ? 'bg-rose-600 hover:bg-rose-500 text-white shadow-rose-950/50 animate-bounce'
-              : 'bg-[#1a422f] hover:bg-[#265e43] text-[#f3ebd6] border border-[#f3ebd6]/25 shadow-lg shadow-[#02110c]/80'
-          }`}
-        >
-          <Clock className="w-4 h-4" />
-          <span>Finalizar</span>
-        </button>
-      </div>
+          {/* Finalize Rental Button */}
+          <button
+            type="button"
+            onClick={() => onFinishClick(rental)}
+            className={`py-3 px-3 rounded-2xl font-black text-xs tracking-wider transition-all shadow-md active:scale-[0.98] flex items-center justify-center gap-1.5 ${
+              isExpired
+                ? 'bg-rose-600 hover:bg-rose-500 text-white shadow-rose-950/50 animate-bounce'
+                : 'bg-[#1a422f] hover:bg-[#265e43] text-[#f3ebd6] border border-[#f3ebd6]/25 shadow-lg shadow-[#02110c]/80'
+            }`}
+          >
+            <Clock className="w-4 h-4" />
+            <span>Finalizar</span>
+          </button>
+        </div>
+      )}
     </div>
   );
 };

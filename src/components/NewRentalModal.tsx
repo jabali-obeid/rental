@@ -554,19 +554,22 @@ export const NewRentalModal: React.FC<Props> = ({ isOpen, onClose }) => {
           </div>
 
           {/* Bottom Sticky Action */}
-          <div className="pt-2">
+          <div className="pt-2 space-y-1.5">
             <button
               type="submit"
               disabled={availableUnitsForSelected.length === 0}
-              className={`w-full py-4 px-5 rounded-2xl font-black text-base shadow-xl flex items-center justify-center gap-2 transition-all active:scale-98 ${
+              className={`w-full py-4 px-5 rounded-2xl font-black text-sm sm:text-base shadow-xl flex items-center justify-center gap-2 transition-all active:scale-98 ${
                 availableUnitsForSelected.length === 0
                   ? 'bg-[#081d15] text-[#d5cbbb]/40 border border-[#1a422f] cursor-not-allowed'
                   : 'bg-[#f3ebd6] hover:bg-white text-[#02110c] shadow-[#000000]/50'
               }`}
             >
-              <Play className="w-5 h-5 fill-current stroke-none text-[#02110c]" />
-              <span>INICIAR ALQUILER ({durationMinutes} MIN)</span>
+              <Check className="w-5 h-5 stroke-[3] text-[#02110c]" />
+              <span>COBRAR Y DEJAR LISTO PARA INICIAR ({durationMinutes} MIN)</span>
             </button>
+            <p className="text-[11px] text-center text-[#d5cbbb]/70">
+              El reloj quedará pausado en {durationMinutes}:00 hasta que el encargado presione &quot;INICIAR&quot; al entregar la unidad.
+            </p>
           </div>
         </form>
       </div>

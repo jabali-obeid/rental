@@ -418,10 +418,14 @@ class DataService {
     const units = this.getUnits();
 
     const id = 'r-' + Date.now();
+    const initialNotes = newRentalData.notes
+      ? `[ESPERANDO_INICIO] ${newRentalData.notes}`
+      : '[ESPERANDO_INICIO]';
     const rental: Rental = {
       ...newRentalData,
       id,
       status: 'activo',
+      notes: initialNotes,
       createdAt: new Date().toISOString(),
     };
 
@@ -452,6 +456,28 @@ class DataService {
     this.pushRentalToSupabase(rental);
     this.notify();
     return rental;
+  }
+
+  public launchRentalTimer(rentalId: string): void {
+    let updatedRental: Rental | undefined;
+    const now = new Date();
+    const rentals = this.getRentals().map((r) => {
+      if (r.id === rentalId) {
+        const expectedEnd = new Date(now.getTime() + r.durationMinutes * 60 * 1000);
+        const cleanNotes = (r.notes || '').replace('[ESPERANDO_INICIO]', '').trim();
+        updatedRental = {
+          ...r,
+          startTime: now.toISOString(),
+          expectedEndTime: expectedEnd.toISOString(),
+          notes: cleanNotes || undefined,
+        };
+        return updatedRental;
+      }
+      return r;
+    });
+    localStorage.setItem(STORAGE_KEY_RENTALS, JSON.stringify(rentals));
+    if (updatedRental) this.pushRentalToSupabase(updatedRental);
+    this.notify();
   }
 
   public extendRental(rentalId: string, extraMinutes: number): void {
@@ -701,7 +727,7 @@ class DataService {
       discount: 0,
       totalPrice: target.totalPrice,
       paymentMethod: target.paymentMethod,
-      notes: `Despachado de reserva anticipada #${target.id.slice(-6)}`,
+      notes: `[ESPERANDO_INICIO] Despachado de reserva anticipada #${target.id.slice(-6)}`,
       createdAt: now.toISOString(),
     };
 
