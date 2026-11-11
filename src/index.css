@@ -15,8 +15,9 @@
   }
 
   body {
-    background-color: #02110c;
-    color: #f3ebd6;
+    background: linear-gradient(135deg, #FCFBF7 0%, #FAF5E4 50%, #F5E9C4 100%);
+    background-attachment: fixed;
+    color: #1C1C1C;
     overscroll-behavior-y: none;
     overscroll-behavior-x: none;
     user-select: none;
@@ -29,10 +30,21 @@
   }
 }
 
-/* Custom Scrollbar for Eco Aventura */
+/* Diagonal stripes pattern for Staffwyn-style progress bar segments */
+.bg-diagonal-stripes {
+  background-image: repeating-linear-gradient(
+    -45deg,
+    rgba(28, 28, 28, 0.08),
+    rgba(28, 28, 28, 0.08) 4px,
+    rgba(255, 255, 255, 0.6) 4px,
+    rgba(255, 255, 255, 0.6) 8px
+  );
+}
+
+/* Custom Scrollbar for Staffwyn Warm Light Theme */
 ::-webkit-scrollbar {
-  width: 4px;
-  height: 4px;
+  width: 5px;
+  height: 5px;
 }
 
 ::-webkit-scrollbar-track {
@@ -40,12 +52,12 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(243, 235, 214, 0.15);
+  background: rgba(28, 28, 28, 0.15);
   border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(243, 235, 214, 0.35);
+  background: rgba(28, 28, 28, 0.3);
 }
 
 /* Safe area padding utilities for notched phones */

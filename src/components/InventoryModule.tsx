@@ -109,36 +109,36 @@ export const InventoryModule: React.FC<Props> = ({ units, categories }) => {
   };
 
   return (
-    <div className="space-y-4 pb-24 text-[#f3ebd6]">
+    <div className="space-y-4 pb-24 text-[#1C1C1C]">
       {/* Fleet Summary Counters */}
-      <div className="grid grid-cols-4 gap-2">
-        <div className="p-3.5 rounded-2xl bg-[#081d15] border border-[#1a422f] text-center">
-          <div className="text-xl font-black text-[#f3ebd6]">{counts.disponible}</div>
-          <div className="text-[10px] font-bold text-[#2ea06e] uppercase tracking-tight">Disponibles</div>
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div className="p-4 rounded-[24px] bg-white border border-black/[0.05] shadow-[0_8px_30px_rgb(0,0,0,0.04)] text-center">
+          <div className="text-2xl font-bold text-[#1C1C1C]">{counts.disponible}</div>
+          <div className="text-[10px] font-bold text-[#166534] uppercase tracking-wider mt-0.5">Disponibles</div>
         </div>
-        <div className="p-3.5 rounded-2xl bg-[#081d15] border border-[#1a422f] text-center">
-          <div className="text-xl font-black text-cyan-400">{counts.alquilado}</div>
-          <div className="text-[10px] font-bold text-cyan-300 uppercase tracking-tight">Alquilados</div>
+        <div className="p-4 rounded-[24px] bg-white border border-black/[0.05] shadow-[0_8px_30px_rgb(0,0,0,0.04)] text-center">
+          <div className="text-2xl font-bold text-[#1C1C1C]">{counts.alquilado}</div>
+          <div className="text-[10px] font-bold text-[#92400E] uppercase tracking-wider mt-0.5">Alquilados</div>
         </div>
-        <div className="p-3.5 rounded-2xl bg-[#081d15] border border-[#1a422f] text-center">
-          <div className="text-xl font-black text-amber-400">{counts.mantenimiento}</div>
-          <div className="text-[10px] font-bold text-amber-300 uppercase tracking-tight">Taller</div>
+        <div className="p-4 rounded-[24px] bg-white border border-black/[0.05] shadow-[0_8px_30px_rgb(0,0,0,0.04)] text-center">
+          <div className="text-2xl font-bold text-[#D97706]">{counts.mantenimiento}</div>
+          <div className="text-[10px] font-bold text-[#92400E] uppercase tracking-wider mt-0.5">Taller</div>
         </div>
-        <div className="p-3.5 rounded-2xl bg-[#081d15] border border-[#1a422f] text-center">
-          <div className="text-xl font-black text-[#d5cbbb]">{counts.total}</div>
-          <div className="text-[10px] font-bold text-[#d5cbbb]/70 uppercase tracking-tight">Total Flota</div>
+        <div className="p-4 rounded-[24px] bg-[#1C1C1C] text-white shadow-[0_8px_30px_rgb(0,0,0,0.06)] text-center">
+          <div className="text-2xl font-bold text-[#F7D147]">{counts.total}</div>
+          <div className="text-[10px] font-bold text-white/75 uppercase tracking-wider mt-0.5">Total Flota</div>
         </div>
       </div>
 
       {/* Top Filter & Action Buttons */}
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
+      <div className="flex flex-wrap items-center justify-between gap-2 bg-white/95 p-3 rounded-[24px] border border-black/[0.05] shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
+        <div className="flex items-center gap-1.5 overflow-x-auto pb-0.5 scrollbar-none">
           <button
             onClick={() => setSelectedCategoryFilter('all')}
-            className={`px-3 py-1.5 rounded-xl text-xs font-bold shrink-0 transition-all ${
+            className={`px-3.5 py-2 rounded-full text-xs font-bold shrink-0 transition-all ${
               selectedCategoryFilter === 'all'
-                ? 'bg-[#1a422f] text-[#f3ebd6] border border-[#f3ebd6]/30 shadow'
-                : 'bg-[#081d15] text-[#d5cbbb]/70 border border-[#1a422f] hover:text-[#f3ebd6]'
+                ? 'bg-[#1C1C1C] text-white shadow-sm'
+                : 'bg-[#F6F3EA] text-[#52514E] border border-black/[0.05] hover:text-[#1C1C1C]'
             }`}
           >
             Todas ({units.length})
@@ -147,10 +147,10 @@ export const InventoryModule: React.FC<Props> = ({ units, categories }) => {
             <button
               key={c.id}
               onClick={() => setSelectedCategoryFilter(c.id)}
-              className={`px-3 py-1.5 rounded-xl text-xs font-bold shrink-0 transition-all ${
+              className={`px-3.5 py-2 rounded-full text-xs font-bold shrink-0 transition-all ${
                 selectedCategoryFilter === c.id
-                  ? 'bg-[#1a422f] text-[#f3ebd6] border border-[#f3ebd6]/30 shadow'
-                  : 'bg-[#081d15] text-[#d5cbbb]/70 border border-[#1a422f] hover:text-[#f3ebd6]'
+                  ? 'bg-[#1C1C1C] text-white shadow-sm'
+                  : 'bg-[#F6F3EA] text-[#52514E] border border-black/[0.05] hover:text-[#1C1C1C]'
               }`}
             >
               {c.name.split(' ')[0]}
@@ -176,48 +176,54 @@ export const InventoryModule: React.FC<Props> = ({ units, categories }) => {
               setRatesDraft(init);
               setIsRatesModalOpen(true);
             }}
-            className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-[#081d15] border border-[#1a422f] text-[#f3ebd6] text-xs font-bold hover:bg-[#1a422f] shrink-0 shadow transition-all"
+            className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#F7D147] text-[#1C1C1C] text-xs font-extrabold hover:bg-[#f0c62d] shrink-0 shadow-sm transition-all"
           >
-            <Sliders className="w-3.5 h-3.5 text-[#2ea06e]" />
+            <Sliders className="w-3.5 h-3.5 text-[#1C1C1C]" />
             <span>Editar Tarifas</span>
           </button>
 
           <button
             onClick={() => setIsAddModalOpen(true)}
-            className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-[#f3ebd6] text-[#02110c] text-xs font-black hover:bg-white shrink-0 shadow transition-all"
+            className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#1C1C1C] text-white text-xs font-bold hover:bg-[#333333] shrink-0 shadow-sm transition-all"
           >
-            <Plus className="w-3.5 h-3.5 stroke-[3]" />
+            <Plus className="w-3.5 h-3.5 stroke-[3] text-[#F7D147]" />
             <span>Nueva Unidad</span>
           </button>
         </div>
       </div>
 
-      {/* Units List */}
-      <div className="space-y-2.5">
+      {/* Units List (Staffwyn Clean Table Card Style) */}
+      <div className="bg-white/95 rounded-[28px] border border-black/[0.05] shadow-[0_8px_30px_rgb(0,0,0,0.04)] p-4 sm:p-5 divide-y divide-black/[0.06]">
         {filteredUnits.map((u) => {
           const category = categories.find((c) => c.id === u.categoryId);
 
           return (
             <div
               key={u.id}
-              className="p-3.5 rounded-2xl bg-[#081d15] border border-[#1a422f] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-md"
+              className="py-3.5 first:pt-1 last:pb-1 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3"
             >
               {/* Left Details */}
               <div className="flex items-center gap-3">
-                <span className="w-12 h-12 rounded-xl bg-[#02110c] font-mono font-black text-sm text-[#f3ebd6] flex items-center justify-center border border-[#1a422f] shadow-inner">
+                <div className={`w-6 h-6 rounded-md flex items-center justify-center shrink-0 ${
+                  u.status === 'disponible' ? 'bg-[#F7D147] text-[#1C1C1C]' : 'bg-[#F6F3EA] border border-black/10 text-[#71706B]'
+                }`}>
+                  <Check className="w-3.5 h-3.5 stroke-[3]" />
+                </div>
+
+                <span className="w-11 h-11 rounded-full bg-[#1C1C1C] font-mono font-black text-xs text-white flex items-center justify-center shrink-0">
                   {u.codeNumber}
                 </span>
 
                 <div>
                   <div className="flex items-center gap-2">
-                    <h4 className="text-sm font-bold text-[#f3ebd6] leading-tight">{u.name}</h4>
-                    <span className="text-[10px] px-1.5 py-0.5 rounded font-medium bg-[#02110c] text-[#2ea06e] border border-[#1a422f]">
+                    <h4 className="text-sm font-bold text-[#1C1C1C] leading-tight">{u.name}</h4>
+                    <span className="text-[10px] px-2.5 py-0.5 rounded-full font-semibold bg-[#F6F3EA] text-[#52514E] border border-black/[0.06]">
                       {category?.name}
                     </span>
                   </div>
 
                   {u.notes && (
-                    <p className="text-[11px] text-amber-300/90 mt-0.5 flex items-center gap-1">
+                    <p className="text-[11px] text-[#92400E] mt-0.5 flex items-center gap-1">
                       <Wrench className="w-3 h-3" />
                       <span>{u.notes}</span>
                     </p>
@@ -226,53 +232,53 @@ export const InventoryModule: React.FC<Props> = ({ units, categories }) => {
               </div>
 
               {/* Right Quick Status Selector */}
-              <div className="flex items-center gap-1.5 w-full sm:w-auto justify-end border-t sm:border-t-0 border-[#1a422f] pt-2 sm:pt-0">
+              <div className="flex items-center gap-1.5 w-full sm:w-auto justify-end pt-1 sm:pt-0">
                 {u.status === 'alquilado' ? (
-                  <span className="px-3 py-1.5 rounded-xl bg-cyan-950/60 border border-cyan-500/30 text-cyan-300 font-bold text-xs flex items-center gap-1.5">
-                    <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
+                  <span className="px-3.5 py-1.5 rounded-full bg-[#FEF3C7] border border-[#FDE68A] text-[#92400E] font-bold text-xs flex items-center gap-1.5">
+                    <span className="w-2 h-2 rounded-full bg-[#D97706] animate-pulse"></span>
                     <span>En Alquiler</span>
                   </span>
                 ) : (
                   <>
                     <button
                       onClick={() => handleStatusChange(u.id, 'disponible')}
-                      className={`px-2.5 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1 transition-all ${
+                      className={`px-3 py-1.5 rounded-full text-xs font-semibold flex items-center gap-1 transition-all ${
                         u.status === 'disponible'
-                          ? 'bg-[#1a422f] text-[#f3ebd6] border border-[#2ea06e] font-bold'
-                          : 'bg-[#02110c] text-[#d5cbbb]/60 border border-[#1a422f] hover:text-[#f3ebd6]'
+                          ? 'bg-[#DCFCE7] text-[#166534] border border-[#86EFAC] font-bold'
+                          : 'bg-[#F6F3EA] text-[#71706B] border border-black/[0.05] hover:text-[#1C1C1C]'
                       }`}
                     >
-                      <CheckCircle className="w-3.5 h-3.5 text-[#2ea06e]" />
+                      <CheckCircle className="w-3.5 h-3.5" />
                       <span>Disponible</span>
                     </button>
 
                     <button
                       onClick={() => handleStatusChange(u.id, 'mantenimiento')}
-                      className={`px-2.5 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1 transition-all ${
+                      className={`px-3 py-1.5 rounded-full text-xs font-semibold flex items-center gap-1 transition-all ${
                         u.status === 'mantenimiento'
-                          ? 'bg-amber-950/80 text-amber-300 border border-amber-500 font-bold'
-                          : 'bg-[#02110c] text-[#d5cbbb]/60 border border-[#1a422f] hover:text-white'
+                          ? 'bg-[#FEF3C7] text-[#92400E] border border-[#FDE68A] font-bold'
+                          : 'bg-[#F6F3EA] text-[#71706B] border border-black/[0.05] hover:text-[#1C1C1C]'
                       }`}
                     >
-                      <Wrench className="w-3.5 h-3.5 text-amber-400" />
+                      <Wrench className="w-3.5 h-3.5" />
                       <span>Taller</span>
                     </button>
 
                     <button
                       onClick={() => handleStatusChange(u.id, 'baja')}
-                      className={`px-2 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1 transition-all ${
+                      className={`px-2.5 py-1.5 rounded-full text-xs font-semibold flex items-center gap-1 transition-all ${
                         u.status === 'baja'
-                          ? 'bg-rose-950/80 text-rose-300 border border-rose-500 font-bold'
-                          : 'bg-[#02110c] text-[#d5cbbb]/60 border border-[#1a422f] hover:text-white'
+                          ? 'bg-[#FEE2E2] text-[#991B1B] border border-[#FCA5A5] font-bold'
+                          : 'bg-[#F6F3EA] text-[#71706B] border border-black/[0.05] hover:text-[#1C1C1C]'
                       }`}
                     >
-                      <Ban className="w-3.5 h-3.5 text-rose-400" />
+                      <Ban className="w-3.5 h-3.5" />
                       <span>Baja</span>
                     </button>
 
                     <button
                       onClick={() => handleDeleteUnit(u.id, u.codeNumber)}
-                      className="p-1.5 rounded-xl text-[#d5cbbb]/50 hover:text-rose-400 hover:bg-[#02110c] transition-colors ml-1"
+                      className="p-1.5 rounded-full text-[#71706B] hover:text-rose-600 hover:bg-[#FEE2E2] transition-colors ml-1"
                       title="Eliminar de la base"
                     >
                       <Trash2 className="w-4 h-4" />
@@ -287,32 +293,32 @@ export const InventoryModule: React.FC<Props> = ({ units, categories }) => {
 
       {/* Add Unit Modal */}
       {isAddModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#02110c]/85 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="w-full max-w-md rounded-3xl bg-[#081d15] border border-[#1a422f] shadow-2xl overflow-hidden text-[#f3ebd6]">
-            <div className="p-4 border-b border-[#1a422f] flex items-center justify-between">
-              <h3 className="text-sm font-bold text-[#f3ebd6] flex items-center gap-2">
-                <PlusCircle className="w-4 h-4 text-[#2ea06e]" />
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="w-full max-w-md rounded-[28px] bg-white border border-black/[0.08] shadow-2xl overflow-hidden text-[#1C1C1C]">
+            <div className="p-4 border-b border-black/[0.06] flex items-center justify-between bg-[#FAF6E8]">
+              <h3 className="text-sm font-bold text-[#1C1C1C] flex items-center gap-2">
+                <PlusCircle className="w-4 h-4 text-[#1C1C1C]" />
                 <span>Agregar Nueva Unidad - Eco Aventura</span>
               </h3>
               <button
                 onClick={() => setIsAddModalOpen(false)}
-                className="p-1.5 rounded-full text-[#d5cbbb] hover:text-[#f3ebd6]"
+                className="p-1.5 rounded-full text-[#71706B] hover:text-[#1C1C1C] hover:bg-white"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
-            <form onSubmit={handleCreateUnit} className="p-4 space-y-3.5">
+            <form onSubmit={handleCreateUnit} className="p-5 space-y-3.5">
               <div>
-                <label htmlFor={newCatId} className="text-xs font-bold text-[#d5cbbb] block mb-1">Categoría</label>
+                <label htmlFor={newCatId} className="text-xs font-bold text-[#52514E] block mb-1">Categoría</label>
                 <select
                   id={newCatId}
                   value={newCategoryId}
                   onChange={(e) => setNewCategoryId(e.target.value)}
-                  className="w-full bg-[#02110c] border border-[#1a422f] rounded-xl px-3 py-2 text-xs text-[#f3ebd6] focus:outline-none focus:border-[#f3ebd6]"
+                  className="w-full bg-[#F6F3EA] border border-black/[0.08] rounded-xl px-3 py-2.5 text-xs text-[#1C1C1C] focus:outline-none focus:border-[#1C1C1C]"
                 >
                   {categories.map((c) => (
-                    <option key={c.id} value={c.id} className="bg-[#081d15] text-[#f3ebd6]">
+                    <option key={c.id} value={c.id} className="bg-white text-[#1C1C1C]">
                       {c.name}
                     </option>
                   ))}
@@ -320,7 +326,7 @@ export const InventoryModule: React.FC<Props> = ({ units, categories }) => {
               </div>
 
               <div>
-                <label htmlFor={newCodeId} className="text-xs font-bold text-[#d5cbbb] block mb-1">
+                <label htmlFor={newCodeId} className="text-xs font-bold text-[#52514E] block mb-1">
                   Código de Identificación (ej: K-05, KY-04, MP-05) *
                 </label>
                 <input
@@ -330,12 +336,12 @@ export const InventoryModule: React.FC<Props> = ({ units, categories }) => {
                   placeholder="K-05"
                   value={newCode}
                   onChange={(e) => setNewCode(e.target.value)}
-                  className="w-full bg-[#02110c] border border-[#1a422f] rounded-xl px-3 py-2 text-xs font-mono font-bold text-[#f3ebd6] focus:outline-none focus:border-[#f3ebd6] uppercase"
+                  className="w-full bg-[#F6F3EA] border border-black/[0.08] rounded-xl px-3 py-2.5 text-xs font-mono font-bold text-[#1C1C1C] focus:outline-none focus:border-[#1C1C1C] uppercase"
                 />
               </div>
 
               <div>
-                <label htmlFor={newNameId} className="text-xs font-bold text-[#d5cbbb] block mb-1">
+                <label htmlFor={newNameId} className="text-xs font-bold text-[#52514E] block mb-1">
                   Nombre descriptivo *
                 </label>
                 <input
@@ -345,12 +351,12 @@ export const InventoryModule: React.FC<Props> = ({ units, categories }) => {
                   placeholder="Ej: Karting Negro Safari Edition"
                   value={newName}
                   onChange={(e) => setNewName(e.target.value)}
-                  className="w-full bg-[#02110c] border border-[#1a422f] rounded-xl px-3 py-2 text-xs text-[#f3ebd6] focus:outline-none focus:border-[#f3ebd6]"
+                  className="w-full bg-[#F6F3EA] border border-black/[0.08] rounded-xl px-3 py-2.5 text-xs text-[#1C1C1C] focus:outline-none focus:border-[#1C1C1C]"
                 />
               </div>
 
               <div>
-                <label htmlFor={newNotesId} className="text-xs font-bold text-[#d5cbbb] block mb-1">
+                <label htmlFor={newNotesId} className="text-xs font-bold text-[#52514E] block mb-1">
                   Notas de mantenimiento (opcional)
                 </label>
                 <input
@@ -359,14 +365,14 @@ export const InventoryModule: React.FC<Props> = ({ units, categories }) => {
                   placeholder="Ej: Batería nueva comprada oct-2026"
                   value={newNotes}
                   onChange={(e) => setNewNotes(e.target.value)}
-                  className="w-full bg-[#02110c] border border-[#1a422f] rounded-xl px-3 py-2 text-xs text-[#f3ebd6] focus:outline-none focus:border-[#f3ebd6]"
+                  className="w-full bg-[#F6F3EA] border border-black/[0.08] rounded-xl px-3 py-2.5 text-xs text-[#1C1C1C] focus:outline-none focus:border-[#1C1C1C]"
                 />
               </div>
 
               <div className="pt-2">
                 <button
                   type="submit"
-                  className="w-full py-3 rounded-xl bg-[#f3ebd6] text-[#02110c] font-black text-xs tracking-wider shadow-lg active:scale-98 transition-all hover:bg-white"
+                  className="w-full py-3.5 rounded-full bg-[#1C1C1C] text-white font-black text-xs tracking-wider shadow-md active:scale-98 transition-all hover:bg-[#333333]"
                 >
                   GUARDAR UNIDAD EN INVENTARIO
                 </button>
@@ -378,23 +384,23 @@ export const InventoryModule: React.FC<Props> = ({ units, categories }) => {
 
       {/* Edit Rates Modal */}
       {isRatesModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#02110c]/85 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-3xl bg-[#081d15] border border-[#1a422f] shadow-2xl text-[#f3ebd6]">
-            <div className="p-4 border-b border-[#1a422f] flex items-center justify-between sticky top-0 bg-[#081d15]/95 backdrop-blur-md">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-[28px] bg-white border border-black/[0.08] shadow-2xl text-[#1C1C1C]">
+            <div className="p-4 border-b border-black/[0.06] flex items-center justify-between sticky top-0 bg-[#FAF6E8]/95 backdrop-blur-md">
               <div className="flex items-center gap-2">
-                <DollarSign className="w-4 h-4 text-[#2ea06e]" />
-                <h3 className="text-sm font-extrabold text-[#f3ebd6]">Configurar Tarifas y Precios</h3>
+                <DollarSign className="w-4 h-4 text-[#1C1C1C]" />
+                <h3 className="text-sm font-extrabold text-[#1C1C1C]">Configurar Tarifas y Precios</h3>
               </div>
               <button
                 onClick={() => setIsRatesModalOpen(false)}
-                className="p-1.5 rounded-full text-[#d5cbbb] hover:text-[#f3ebd6]"
+                className="p-1.5 rounded-full text-[#71706B] hover:text-[#1C1C1C]"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
-            <form onSubmit={handleSaveRates} className="p-4 space-y-4">
-              <p className="text-xs text-[#d5cbbb]/70">
+            <form onSubmit={handleSaveRates} className="p-5 space-y-4">
+              <p className="text-xs text-[#71706B]">
                 Modifica aquí las tarifas base y recargos por demora. Se aplicarán de inmediato a los nuevos alquileres.
               </p>
 
@@ -408,22 +414,22 @@ export const InventoryModule: React.FC<Props> = ({ units, categories }) => {
                 };
 
                 return (
-                  <div key={c.id} className="p-3.5 rounded-2xl bg-[#02110c] border border-[#1a422f] space-y-3">
-                    <div className="flex items-center justify-between font-bold text-xs text-[#f3ebd6]">
+                  <div key={c.id} className="p-4 rounded-2xl bg-[#F6F3EA] border border-black/[0.06] space-y-3">
+                    <div className="flex items-center justify-between font-bold text-xs text-[#1C1C1C]">
                       <span className="flex items-center gap-1.5">
-                        <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: c.color }}></span>
+                        <span className="w-2.5 h-2.5 rounded-full bg-[#1C1C1C]"></span>
                         <span className="font-extrabold">{c.name}</span>
                       </span>
                     </div>
 
                     {/* Precios Efectivo */}
                     <div className="space-y-1">
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-[#2ea06e] flex items-center gap-1">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-[#166534] flex items-center gap-1">
                         💵 Tarifas en Efectivo:
                       </span>
                       <div className="grid grid-cols-2 gap-2 text-xs">
                         <div>
-                          <label className="text-[10px] text-[#d5cbbb]/70 block mb-0.5">Efectivo 30 min ($)</label>
+                          <label className="text-[10px] text-[#71706B] block mb-0.5">Efectivo 30 min ($)</label>
                           <input
                             type="number"
                             step="100"
@@ -435,11 +441,11 @@ export const InventoryModule: React.FC<Props> = ({ units, categories }) => {
                                 [c.id]: { ...currentVals, cash30m: Number(e.target.value) || 0 },
                               })
                             }
-                            className="w-full bg-[#081d15] border border-[#1a422f] rounded-xl px-2.5 py-1.5 text-center font-bold text-[#f3ebd6] focus:outline-none focus:border-[#2ea06e]"
+                            className="w-full bg-white border border-black/[0.08] rounded-xl px-2.5 py-1.5 text-center font-bold text-[#1C1C1C] focus:outline-none focus:border-[#1C1C1C]"
                           />
                         </div>
                         <div>
-                          <label className="text-[10px] text-[#d5cbbb]/70 block mb-0.5">Efectivo 1 hora ($)</label>
+                          <label className="text-[10px] text-[#71706B] block mb-0.5">Efectivo 1 hora ($)</label>
                           <input
                             type="number"
                             step="100"
@@ -451,20 +457,20 @@ export const InventoryModule: React.FC<Props> = ({ units, categories }) => {
                                 [c.id]: { ...currentVals, cash60m: Number(e.target.value) || 0 },
                               })
                             }
-                            className="w-full bg-[#081d15] border border-[#1a422f] rounded-xl px-2.5 py-1.5 text-center font-bold text-[#f3ebd6] focus:outline-none focus:border-[#2ea06e]"
+                            className="w-full bg-white border border-black/[0.08] rounded-xl px-2.5 py-1.5 text-center font-bold text-[#1C1C1C] focus:outline-none focus:border-[#1C1C1C]"
                           />
                         </div>
                       </div>
                     </div>
 
                     {/* Precios Transferencia / Tarjeta */}
-                    <div className="space-y-1 pt-1 border-t border-[#1a422f]/60">
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-cyan-400 flex items-center gap-1">
+                    <div className="space-y-1 pt-2 border-t border-black/[0.06]">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-[#52514E] flex items-center gap-1">
                         📲 Tarifas Transferencia / Tarjeta:
                       </span>
                       <div className="grid grid-cols-2 gap-2 text-xs">
                         <div>
-                          <label className="text-[10px] text-[#d5cbbb]/70 block mb-0.5">Digital 30 min ($)</label>
+                          <label className="text-[10px] text-[#71706B] block mb-0.5">Digital 30 min ($)</label>
                           <input
                             type="number"
                             step="100"
@@ -476,11 +482,11 @@ export const InventoryModule: React.FC<Props> = ({ units, categories }) => {
                                 [c.id]: { ...currentVals, dig30m: Number(e.target.value) || 0 },
                               })
                             }
-                            className="w-full bg-[#081d15] border border-[#1a422f] rounded-xl px-2.5 py-1.5 text-center font-bold text-[#f3ebd6] focus:outline-none focus:border-cyan-400"
+                            className="w-full bg-white border border-black/[0.08] rounded-xl px-2.5 py-1.5 text-center font-bold text-[#1C1C1C] focus:outline-none focus:border-[#1C1C1C]"
                           />
                         </div>
                         <div>
-                          <label className="text-[10px] text-[#d5cbbb]/70 block mb-0.5">Digital 1 hora ($)</label>
+                          <label className="text-[10px] text-[#71706B] block mb-0.5">Digital 1 hora ($)</label>
                           <input
                             type="number"
                             step="100"
@@ -492,15 +498,15 @@ export const InventoryModule: React.FC<Props> = ({ units, categories }) => {
                                 [c.id]: { ...currentVals, dig60m: Number(e.target.value) || 0 },
                               })
                             }
-                            className="w-full bg-[#081d15] border border-[#1a422f] rounded-xl px-2.5 py-1.5 text-center font-bold text-[#f3ebd6] focus:outline-none focus:border-cyan-400"
+                            className="w-full bg-white border border-black/[0.08] rounded-xl px-2.5 py-1.5 text-center font-bold text-[#1C1C1C] focus:outline-none focus:border-[#1C1C1C]"
                           />
                         </div>
                       </div>
                     </div>
 
                     {/* Recargo por mora */}
-                    <div className="pt-1 border-t border-[#1a422f]/60">
-                      <label className="text-[10px] text-rose-300 font-bold block mb-0.5">⏱️ Recargo por Mora c/10 min ($)</label>
+                    <div className="pt-2 border-t border-black/[0.06]">
+                      <label className="text-[10px] text-[#991B1B] font-bold block mb-0.5">⏱️ Recargo por Mora c/10 min ($)</label>
                       <input
                         type="number"
                         step="500"
@@ -512,7 +518,7 @@ export const InventoryModule: React.FC<Props> = ({ units, categories }) => {
                             [c.id]: { ...currentVals, penalty10m: Number(e.target.value) || 0 },
                           })
                         }
-                        className="w-full bg-[#081d15] border border-[#1a422f] rounded-xl px-2.5 py-1.5 text-center font-bold text-rose-300 focus:outline-none focus:border-rose-400"
+                        className="w-full bg-white border border-black/[0.08] rounded-xl px-2.5 py-1.5 text-center font-bold text-[#991B1B] focus:outline-none focus:border-rose-500"
                       />
                     </div>
                   </div>
@@ -522,9 +528,9 @@ export const InventoryModule: React.FC<Props> = ({ units, categories }) => {
               <div className="pt-2">
                 <button
                   type="submit"
-                  className="w-full py-3.5 rounded-xl bg-[#f3ebd6] text-[#02110c] font-black text-xs tracking-wider shadow-lg active:scale-98 transition-all hover:bg-white flex items-center justify-center gap-1.5"
+                  className="w-full py-3.5 rounded-full bg-[#1C1C1C] text-white font-black text-xs tracking-wider shadow-md active:scale-98 transition-all hover:bg-[#333333] flex items-center justify-center gap-1.5"
                 >
-                  <Check className="w-4 h-4 stroke-[3]" />
+                  <Check className="w-4 h-4 stroke-[3] text-[#F7D147]" />
                   <span>GUARDAR TODAS LAS TARIFAS</span>
                 </button>
               </div>

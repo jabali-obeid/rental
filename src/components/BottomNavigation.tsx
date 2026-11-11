@@ -15,21 +15,21 @@ export const BottomNavigation: React.FC<Props> = ({
   activeRentalsCount,
 }) => {
   return (
-    <nav className="md:hidden fixed bottom-0 left-0 right-0 z-30 bg-[#02110c]/95 backdrop-blur-lg border-t border-[#1a422f] pb-safe">
-      <div className="max-w-md mx-auto grid grid-cols-4 h-16">
+    <nav className="md:hidden fixed bottom-0 left-0 right-0 z-30 bg-white/95 backdrop-blur-lg border-t border-black/[0.08] pb-safe shadow-[0_-4px_20px_rgb(0,0,0,0.05)]">
+      <div className="max-w-md mx-auto grid grid-cols-4 h-16 px-2 items-center gap-1">
         {/* Tab 1: Alquileres en curso */}
         <button
           onClick={() => onChangeTab('dashboard')}
-          className={`relative flex flex-col items-center justify-center transition-all ${
+          className={`relative flex flex-col items-center justify-center py-1.5 rounded-2xl transition-all ${
             activeTab === 'dashboard'
-              ? 'text-[#f3ebd6] font-extrabold scale-105'
-              : 'text-[#d5cbbb]/60 hover:text-[#f3ebd6]'
+              ? 'bg-[#1C1C1C] text-white font-extrabold shadow-sm'
+              : 'text-[#71706B] hover:text-[#1C1C1C]'
           }`}
         >
           <div className="relative">
             <Clock className="w-5 h-5 mb-0.5" />
             {activeRentalsCount > 0 && (
-              <span className="absolute -top-1.5 -right-2.5 px-1.5 py-0.2 rounded-full text-[10px] font-black bg-rose-600 text-white animate-pulse">
+              <span className="absolute -top-1.5 -right-2.5 px-1.5 py-0.2 rounded-full text-[10px] font-black bg-[#F7D147] text-[#1C1C1C] border border-black/10">
                 {activeRentalsCount}
               </span>
             )}
@@ -40,10 +40,10 @@ export const BottomNavigation: React.FC<Props> = ({
         {/* Tab 2: Flota / Stock */}
         <button
           onClick={() => onChangeTab('inventory')}
-          className={`flex flex-col items-center justify-center transition-all ${
+          className={`flex flex-col items-center justify-center py-1.5 rounded-2xl transition-all ${
             activeTab === 'inventory'
-              ? 'text-[#f3ebd6] font-extrabold scale-105'
-              : 'text-[#d5cbbb]/60 hover:text-[#f3ebd6]'
+              ? 'bg-[#1C1C1C] text-white font-extrabold shadow-sm'
+              : 'text-[#71706B] hover:text-[#1C1C1C]'
           }`}
         >
           <Bike className="w-5 h-5 mb-0.5" />
@@ -53,10 +53,10 @@ export const BottomNavigation: React.FC<Props> = ({
         {/* Tab 3: Caja */}
         <button
           onClick={() => onChangeTab('cash')}
-          className={`flex flex-col items-center justify-center transition-all ${
+          className={`flex flex-col items-center justify-center py-1.5 rounded-2xl transition-all ${
             activeTab === 'cash'
-              ? 'text-[#f3ebd6] font-extrabold scale-105'
-              : 'text-[#d5cbbb]/60 hover:text-[#f3ebd6]'
+              ? 'bg-[#1C1C1C] text-white font-extrabold shadow-sm'
+              : 'text-[#71706B] hover:text-[#1C1C1C]'
           }`}
         >
           <Banknote className="w-5 h-5 mb-0.5" />
@@ -66,10 +66,10 @@ export const BottomNavigation: React.FC<Props> = ({
         {/* Tab 4: Métricas */}
         <button
           onClick={() => onChangeTab('stats')}
-          className={`flex flex-col items-center justify-center transition-all ${
+          className={`flex flex-col items-center justify-center py-1.5 rounded-2xl transition-all ${
             activeTab === 'stats'
-              ? 'text-[#f3ebd6] font-extrabold scale-105'
-              : 'text-[#d5cbbb]/60 hover:text-[#f3ebd6]'
+              ? 'bg-[#1C1C1C] text-white font-extrabold shadow-sm'
+              : 'text-[#71706B] hover:text-[#1C1C1C]'
           }`}
         >
           <BarChart3 className="w-5 h-5 mb-0.5" />

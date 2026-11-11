@@ -163,22 +163,22 @@ export const NewRentalModal: React.FC<Props> = ({ isOpen, onClose }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-[#02110c]/85 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="w-full max-w-lg max-h-[94vh] overflow-y-auto rounded-t-3xl sm:rounded-3xl bg-[#081d15] border border-[#1a422f] shadow-2xl flex flex-col text-[#f3ebd6]">
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/40 backdrop-blur-sm animate-in fade-in duration-200">
+      <div className="w-full max-w-lg max-h-[94vh] overflow-y-auto rounded-t-[28px] sm:rounded-[28px] bg-white border border-black/[0.08] shadow-2xl flex flex-col text-[#1C1C1C]">
         {/* Header */}
-        <div className="sticky top-0 bg-[#081d15]/95 backdrop-blur-md px-5 py-4 border-b border-[#1a422f] flex items-center justify-between z-10">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-xl bg-[#1a422f] text-[#f3ebd6] flex items-center justify-center font-black">
+        <div className="sticky top-0 bg-[#FAF6E8]/95 backdrop-blur-md px-5 py-4 border-b border-black/[0.06] flex items-center justify-between z-10">
+          <div className="flex items-center gap-2.5">
+            <div className="w-9 h-9 rounded-full bg-[#1C1C1C] text-[#F7D147] flex items-center justify-center font-black">
               🌿
             </div>
             <div>
-              <h2 className="text-base font-extrabold text-[#f3ebd6] leading-none">Nuevo Alquiler</h2>
-              <p className="text-xs text-[#d5cbbb] mt-0.5">Asignación express Eco Aventura</p>
+              <h2 className="text-base font-extrabold text-[#1C1C1C] leading-none">Nuevo Alquiler</h2>
+              <p className="text-xs text-[#71706B] mt-0.5">Asignación express Eco Aventura</p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-2 rounded-full text-[#d5cbbb] hover:text-[#f3ebd6] hover:bg-[#1a422f] active:scale-95 transition-all"
+            className="p-2 rounded-full text-[#71706B] hover:text-[#1C1C1C] hover:bg-white active:scale-95 transition-all"
           >
             <X className="w-5 h-5" />
           </button>
@@ -187,10 +187,10 @@ export const NewRentalModal: React.FC<Props> = ({ isOpen, onClose }) => {
         <form onSubmit={handleStartRental} className="p-5 space-y-4">
           {/* STEP 1: CATEGORY SELECTOR */}
           <div>
-            <label className="text-xs font-bold uppercase tracking-wider text-[#d5cbbb]/80 block mb-2">
+            <label className="text-xs font-bold uppercase tracking-wider text-[#71706B] block mb-2">
               1. Seleccionar Categoría
             </label>
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-2 gap-2.5">
               {categories.map((cat) => {
                 const stock = categoryStock[cat.id]?.length || 0;
                 const isSelected = selectedCategoryId === cat.id;
@@ -208,24 +208,27 @@ export const NewRentalModal: React.FC<Props> = ({ isOpen, onClose }) => {
                     }}
                     className={`relative p-3.5 rounded-2xl border text-left transition-all flex flex-col justify-between ${
                       !hasStock
-                        ? 'opacity-35 cursor-not-allowed bg-[#02110c] border-[#1a422f]/40'
+                        ? 'opacity-40 cursor-not-allowed bg-[#F6F3EA] border-black/[0.05]'
                         : isSelected
-                        ? 'bg-[#1a422f] border-[#f3ebd6] shadow-xl shadow-[#02110c]/80 ring-1 ring-[#f3ebd6]'
-                        : 'bg-[#02110c]/70 border-[#1a422f] hover:bg-[#02110c]'
+                        ? 'bg-[#1C1C1C] border-[#1C1C1C] text-white shadow-lg ring-2 ring-[#F7D147]'
+                        : 'bg-[#F6F3EA] border-black/[0.06] hover:bg-[#EAE4D3] text-[#1C1C1C]'
                     }`}
                   >
                     <div className="flex items-start justify-between">
                       <div
-                        className="w-8 h-8 rounded-xl flex items-center justify-center bg-[#081d15] border border-[#1a422f]"
-                        style={{ color: '#f3ebd6' }}
+                        className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                          isSelected ? 'bg-[#F7D147] text-[#1C1C1C]' : 'bg-white border border-black/[0.06] text-[#1C1C1C]'
+                        }`}
                       >
-                        <CategoryIcon name={cat.icon} className="w-4 h-4 text-[#2ea06e]" />
+                        <CategoryIcon name={cat.icon} className="w-4 h-4" />
                       </div>
                       <span
-                        className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                        className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full ${
                           hasStock
-                            ? 'bg-[#02110c] text-[#f3ebd6] border border-[#2ea06e]/50'
-                            : 'bg-rose-950/80 text-rose-300 border border-rose-600/40'
+                            ? isSelected
+                              ? 'bg-[#F7D147] text-[#1C1C1C]'
+                              : 'bg-[#DCFCE7] text-[#166534] border border-[#86EFAC]'
+                            : 'bg-[#FEE2E2] text-[#991B1B] border border-[#FCA5A5]'
                         }`}
                       >
                         {hasStock ? `${stock} disp.` : 'Sin Stock'}
@@ -233,10 +236,10 @@ export const NewRentalModal: React.FC<Props> = ({ isOpen, onClose }) => {
                     </div>
 
                     <div className="mt-2.5">
-                      <div className="text-xs font-extrabold text-[#f3ebd6] truncate">{cat.name}</div>
-                      <div className="text-[10px] text-[#d5cbbb] flex items-center justify-between gap-1 mt-0.5">
-                        <span className="text-[#2ea06e] font-bold">Ef: ${(cat.cashRate30m ?? cat.defaultRate30m).toLocaleString()}</span>
-                        <span className="text-cyan-400 font-bold">Dig: ${(cat.digitalRate30m ?? cat.defaultRate30m).toLocaleString()}</span>
+                      <div className={`text-xs font-extrabold truncate ${isSelected ? 'text-white' : 'text-[#1C1C1C]'}`}>{cat.name}</div>
+                      <div className={`text-[10px] flex items-center justify-between gap-1 mt-0.5 ${isSelected ? 'text-white/80' : 'text-[#52514E]'}`}>
+                        <span className="font-bold">Ef: ${(cat.cashRate30m ?? cat.defaultRate30m).toLocaleString()}</span>
+                        <span className="font-bold">Dig: ${(cat.digitalRate30m ?? cat.defaultRate30m).toLocaleString()}</span>
                       </div>
                     </div>
                   </button>
@@ -248,16 +251,16 @@ export const NewRentalModal: React.FC<Props> = ({ isOpen, onClose }) => {
           {/* STEP 2: AVAILABLE UNIT CHIPS */}
           <div>
             <div className="flex items-center justify-between mb-2">
-              <label className="text-xs font-bold uppercase tracking-wider text-[#d5cbbb]/80">
+              <label className="text-xs font-bold uppercase tracking-wider text-[#71706B]">
                 2. Unidad Disponible ({availableUnitsForSelected.length})
               </label>
-              <span className="text-[11px] text-[#f3ebd6] font-semibold">
+              <span className="text-[11px] text-[#52514E] font-semibold">
                 Toca para seleccionar
               </span>
             </div>
 
             {availableUnitsForSelected.length === 0 ? (
-              <div className="p-3 rounded-xl bg-[#02110c] border border-[#1a422f] text-center text-xs text-[#d5cbbb]/60">
+              <div className="p-3 rounded-2xl bg-[#F6F3EA] border border-black/[0.06] text-center text-xs text-[#71706B]">
                 No hay unidades disponibles en esta categoría.
               </div>
             ) : (
@@ -269,13 +272,13 @@ export const NewRentalModal: React.FC<Props> = ({ isOpen, onClose }) => {
                       key={u.id}
                       type="button"
                       onClick={() => setSelectedUnitId(u.id)}
-                      className={`px-3 py-2 rounded-xl text-xs font-mono font-bold transition-all flex items-center gap-1.5 ${
+                      className={`px-3.5 py-2 rounded-full text-xs font-mono font-bold transition-all flex items-center gap-1.5 ${
                         isUnitSelected
-                          ? 'bg-[#f3ebd6] text-[#02110c] shadow-lg shadow-[#000000]/40 scale-105'
-                          : 'bg-[#02110c] text-[#f3ebd6] border border-[#1a422f] hover:border-[#f3ebd6]/60'
+                          ? 'bg-[#1C1C1C] text-white shadow-md scale-105'
+                          : 'bg-[#F6F3EA] text-[#1C1C1C] border border-black/[0.06] hover:bg-[#EAE4D3]'
                       }`}
                     >
-                      {isUnitSelected && <Check className="w-3.5 h-3.5 stroke-[3]" />}
+                      {isUnitSelected && <Check className="w-3.5 h-3.5 stroke-[3] text-[#F7D147]" />}
                       <span>{u.codeNumber}</span>
                       <span className="text-[10px] opacity-75 font-sans font-normal truncate max-w-[80px]">
                         ({u.name.split(' ')[0]})
@@ -289,7 +292,7 @@ export const NewRentalModal: React.FC<Props> = ({ isOpen, onClose }) => {
 
           {/* STEP 3: PREDEFINED DURATION BUTTONS */}
           <div>
-            <label className="text-xs font-bold uppercase tracking-wider text-[#d5cbbb]/80 block mb-2">
+            <label className="text-xs font-bold uppercase tracking-wider text-[#71706B] block mb-2">
               3. Duración del Alquiler
             </label>
             <div className="grid grid-cols-3 gap-2">
@@ -299,10 +302,10 @@ export const NewRentalModal: React.FC<Props> = ({ isOpen, onClose }) => {
                   setDurationMode('30');
                   setCustomPrice(null);
                 }}
-                className={`py-2.5 px-3 rounded-xl text-xs font-bold border transition-all text-center ${
+                className={`py-2.5 px-3 rounded-full text-xs font-bold border transition-all text-center ${
                   durationMode === '30'
-                    ? 'bg-[#1a422f] border-[#f3ebd6] text-[#f3ebd6] ring-1 ring-[#f3ebd6]'
-                    : 'bg-[#02110c] border-[#1a422f] text-[#d5cbbb] hover:text-[#f3ebd6]'
+                    ? 'bg-[#1C1C1C] border-[#1C1C1C] text-white shadow-sm'
+                    : 'bg-[#F6F3EA] border-black/[0.06] text-[#52514E] hover:text-[#1C1C1C]'
                 }`}
               >
                 30 minutos
@@ -314,10 +317,10 @@ export const NewRentalModal: React.FC<Props> = ({ isOpen, onClose }) => {
                   setDurationMode('60');
                   setCustomPrice(null);
                 }}
-                className={`py-2.5 px-3 rounded-xl text-xs font-bold border transition-all text-center ${
+                className={`py-2.5 px-3 rounded-full text-xs font-bold border transition-all text-center ${
                   durationMode === '60'
-                    ? 'bg-[#1a422f] border-[#f3ebd6] text-[#f3ebd6] ring-1 ring-[#f3ebd6]'
-                    : 'bg-[#02110c] border-[#1a422f] text-[#d5cbbb] hover:text-[#f3ebd6]'
+                    ? 'bg-[#1C1C1C] border-[#1C1C1C] text-white shadow-sm'
+                    : 'bg-[#F6F3EA] border-black/[0.06] text-[#52514E] hover:text-[#1C1C1C]'
                 }`}
               >
                 1 hora
@@ -326,10 +329,10 @@ export const NewRentalModal: React.FC<Props> = ({ isOpen, onClose }) => {
               <button
                 type="button"
                 onClick={() => setDurationMode('custom')}
-                className={`py-2.5 px-3 rounded-xl text-xs font-bold border transition-all text-center ${
+                className={`py-2.5 px-3 rounded-full text-xs font-bold border transition-all text-center ${
                   durationMode === 'custom'
-                    ? 'bg-[#1a422f] border-[#f3ebd6] text-[#f3ebd6] ring-1 ring-[#f3ebd6]'
-                    : 'bg-[#02110c] border-[#1a422f] text-[#d5cbbb] hover:text-[#f3ebd6]'
+                    ? 'bg-[#1C1C1C] border-[#1C1C1C] text-white shadow-sm'
+                    : 'bg-[#F6F3EA] border-black/[0.06] text-[#52514E] hover:text-[#1C1C1C]'
                 }`}
               >
                 Personalizado
@@ -337,8 +340,8 @@ export const NewRentalModal: React.FC<Props> = ({ isOpen, onClose }) => {
             </div>
 
             {durationMode === 'custom' && (
-              <div className="mt-2.5 p-3 rounded-xl bg-[#02110c] border border-[#1a422f] flex items-center justify-between gap-3">
-                <label htmlFor={durationInputId} className="text-xs text-[#d5cbbb]">Minutos totales:</label>
+              <div className="mt-2.5 p-3 rounded-2xl bg-[#F6F3EA] border border-black/[0.06] flex items-center justify-between gap-3">
+                <label htmlFor={durationInputId} className="text-xs font-semibold text-[#52514E]">Minutos totales:</label>
                 <div className="flex items-center gap-2">
                   <input
                     id={durationInputId}
@@ -348,22 +351,22 @@ export const NewRentalModal: React.FC<Props> = ({ isOpen, onClose }) => {
                     step="5"
                     value={customMinutes}
                     onChange={(e) => setCustomMinutes(Math.max(5, Number(e.target.value) || 30))}
-                    className="w-20 bg-[#081d15] border border-[#1a422f] rounded-lg px-2 py-1 text-center font-bold text-[#f3ebd6] text-sm"
+                    className="w-20 bg-white border border-black/[0.08] rounded-xl px-2 py-1 text-center font-bold text-[#1C1C1C] text-sm"
                   />
-                  <span className="text-xs text-[#d5cbbb]">min</span>
+                  <span className="text-xs text-[#52514E]">min</span>
                 </div>
               </div>
             )}
           </div>
 
           {/* STEP 4: GUARANTEE & IDENTITY DOCUMENT REGISTRATION */}
-          <div className="rounded-2xl bg-[#0d281e] border border-[#1a422f] p-3.5 space-y-3">
+          <div className="rounded-2xl bg-[#F6F3EA] border border-black/[0.06] p-4 space-y-3">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-bold uppercase tracking-wider text-[#f3ebd6] flex items-center gap-1.5">
-                <ShieldCheck className="w-4 h-4 text-[#2ea06e]" />
+              <span className="text-xs font-bold uppercase tracking-wider text-[#1C1C1C] flex items-center gap-1.5">
+                <ShieldCheck className="w-4 h-4 text-[#16A34A]" />
                 <span>4. Retención de Garantía / Documento</span>
               </span>
-              <span className="text-[10px] text-[#2ea06e] font-bold">Requerido</span>
+              <span className="text-[10px] bg-[#DCFCE7] text-[#166534] px-2 py-0.5 rounded-full font-bold">Requerido</span>
             </div>
 
             {/* Doc Type pills */}
@@ -373,10 +376,10 @@ export const NewRentalModal: React.FC<Props> = ({ isOpen, onClose }) => {
                   key={type}
                   type="button"
                   onClick={() => setDocType(type)}
-                  className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${
+                  className={`px-3 py-1 rounded-full text-xs font-bold transition-all ${
                     docType === type
-                      ? 'bg-[#f3ebd6] text-[#02110c] shadow'
-                      : 'bg-[#02110c] text-[#d5cbbb] border border-[#1a422f] hover:border-[#f3ebd6]/40'
+                      ? 'bg-[#1C1C1C] text-white shadow-sm'
+                      : 'bg-white text-[#52514E] border border-black/[0.06] hover:text-[#1C1C1C]'
                   }`}
                 >
                   {type}
@@ -387,7 +390,7 @@ export const NewRentalModal: React.FC<Props> = ({ isOpen, onClose }) => {
             {/* Physical Locker & Photo */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
               <div>
-                <label htmlFor={docLockerId} className="text-[11px] text-[#d5cbbb] block mb-1">
+                <label htmlFor={docLockerId} className="text-[11px] font-semibold text-[#52514E] block mb-1">
                   Casillero / Gaveta física:
                 </label>
                 <input
@@ -397,7 +400,7 @@ export const NewRentalModal: React.FC<Props> = ({ isOpen, onClose }) => {
                   placeholder="Ej: Casillero 04, Sobre 2"
                   value={docLocker}
                   onChange={(e) => setDocLocker(e.target.value)}
-                  className="w-full bg-[#02110c] border border-[#1a422f] rounded-xl px-3 py-2 text-xs font-bold text-[#f3ebd6] placeholder-[#d5cbbb]/40 focus:outline-none focus:border-[#f3ebd6]"
+                  className="w-full bg-white border border-black/[0.08] rounded-xl px-3 py-2 text-xs font-bold text-[#1C1C1C] placeholder-[#71706B] focus:outline-none focus:border-[#1C1C1C]"
                 />
                 <div className="flex gap-1 mt-1.5 overflow-x-auto pb-1">
                   {['C-01', 'C-02', 'C-03', 'C-04', 'C-05', 'C-06', 'C-07', 'C-08'].map((code) => (
@@ -405,7 +408,7 @@ export const NewRentalModal: React.FC<Props> = ({ isOpen, onClose }) => {
                       key={code}
                       type="button"
                       onClick={() => setDocLocker(`Casillero ${code.replace('C-', '')}`)}
-                      className="px-1.5 py-0.5 rounded text-[10px] bg-[#02110c] text-[#d5cbbb] border border-[#1a422f] hover:bg-[#1a422f] shrink-0"
+                      className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-white text-[#52514E] border border-black/[0.06] hover:bg-[#F7D147] hover:text-[#1C1C1C] shrink-0"
                     >
                       {code}
                     </button>
@@ -415,24 +418,24 @@ export const NewRentalModal: React.FC<Props> = ({ isOpen, onClose }) => {
 
               {/* Quick Camera photo capture */}
               <div>
-                <label className="text-[11px] text-[#d5cbbb] block mb-1">
+                <label className="text-[11px] font-semibold text-[#52514E] block mb-1">
                   Foto rápida de garantía (opcional):
                 </label>
                 {docPhotoUrl ? (
-                  <div className="relative rounded-xl overflow-hidden border border-[#1a422f]">
+                  <div className="relative rounded-xl overflow-hidden border border-black/[0.08]">
                     <img src={docPhotoUrl} alt="Foto Doc" className="w-full h-16 object-cover" />
                     <button
                       type="button"
                       onClick={() => setDocPhotoUrl('')}
-                      className="absolute top-1 right-1 p-1 rounded-full bg-[#02110c] text-rose-400 hover:text-white"
+                      className="absolute top-1 right-1 p-1 rounded-full bg-white/90 text-rose-600 hover:bg-white"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
                     </button>
                   </div>
                 ) : (
-                  <label htmlFor={cameraInputId} className="w-full h-16 rounded-xl border border-dashed border-[#1a422f] bg-[#02110c]/70 flex flex-col items-center justify-center gap-1 cursor-pointer hover:bg-[#02110c] text-[#d5cbbb]">
-                    <Camera className="w-4 h-4 text-[#f3ebd6]" />
-                    <span className="text-[10px] font-semibold text-[#f3ebd6]">Tocar para tomar foto</span>
+                  <label htmlFor={cameraInputId} className="w-full h-16 rounded-xl border border-dashed border-black/20 bg-white flex flex-col items-center justify-center gap-1 cursor-pointer hover:bg-[#FAF6E8] text-[#52514E]">
+                    <Camera className="w-4 h-4 text-[#1C1C1C]" />
+                    <span className="text-[10px] font-semibold text-[#1C1C1C]">Tocar para tomar foto</span>
                     <input
                       id={cameraInputId}
                       type="file"
@@ -450,11 +453,11 @@ export const NewRentalModal: React.FC<Props> = ({ isOpen, onClose }) => {
           {/* STEP 5: CUSTOMER INFORMATION */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
             <div>
-              <label htmlFor={customerNameId} className="text-xs font-bold uppercase tracking-wider text-[#d5cbbb]/80 block mb-1">
+              <label htmlFor={customerNameId} className="text-xs font-bold uppercase tracking-wider text-[#71706B] block mb-1">
                 5. Nombre del Cliente *
               </label>
               <div className="relative">
-                <User className="w-4 h-4 text-[#d5cbbb]/50 absolute left-3 top-3" />
+                <User className="w-4 h-4 text-[#71706B] absolute left-3 top-3" />
                 <input
                   id={customerNameId}
                   type="text"
@@ -462,43 +465,43 @@ export const NewRentalModal: React.FC<Props> = ({ isOpen, onClose }) => {
                   placeholder="Ej: Marcelo Fernández"
                   value={customerName}
                   onChange={(e) => setCustomerName(e.target.value)}
-                  className="w-full bg-[#02110c] border border-[#1a422f] rounded-xl pl-9 pr-3 py-2.5 text-xs text-[#f3ebd6] placeholder-[#d5cbbb]/40 focus:outline-none focus:border-[#f3ebd6]"
+                  className="w-full bg-[#F6F3EA] border border-black/[0.08] rounded-xl pl-9 pr-3 py-2.5 text-xs text-[#1C1C1C] placeholder-[#71706B] focus:outline-none focus:border-[#1C1C1C]"
                 />
               </div>
             </div>
 
             <div>
-              <label htmlFor={customerPhoneId} className="text-xs font-bold uppercase tracking-wider text-[#d5cbbb]/80 block mb-1">
+              <label htmlFor={customerPhoneId} className="text-xs font-bold uppercase tracking-wider text-[#71706B] block mb-1">
                 Teléfono de Contacto
               </label>
               <div className="relative">
-                <Phone className="w-4 h-4 text-[#d5cbbb]/50 absolute left-3 top-3" />
+                <Phone className="w-4 h-4 text-[#71706B] absolute left-3 top-3" />
                 <input
                   id={customerPhoneId}
                   type="tel"
                   placeholder="Ej: 11 5566-7788"
                   value={customerPhone}
                   onChange={(e) => setCustomerPhone(e.target.value)}
-                  className="w-full bg-[#02110c] border border-[#1a422f] rounded-xl pl-9 pr-3 py-2.5 text-xs text-[#f3ebd6] placeholder-[#d5cbbb]/40 focus:outline-none focus:border-[#f3ebd6]"
+                  className="w-full bg-[#F6F3EA] border border-black/[0.08] rounded-xl pl-9 pr-3 py-2.5 text-xs text-[#1C1C1C] placeholder-[#71706B] focus:outline-none focus:border-[#1C1C1C]"
                 />
               </div>
             </div>
           </div>
 
           {/* STEP 6: PAYMENT METHOD & TOTAL AMOUNT */}
-          <div className="rounded-2xl bg-[#02110c]/80 border border-[#1a422f] p-3.5 space-y-3">
+          <div className="rounded-2xl bg-[#F6F3EA] border border-black/[0.06] p-4 space-y-3">
             <div className="flex items-center justify-between">
               <div>
-                <span className="text-xs font-bold uppercase tracking-wider text-[#d5cbbb]/80 block">
+                <span className="text-xs font-bold uppercase tracking-wider text-[#71706B] block">
                   6. Método de Cobro y Tarifa
                 </span>
-                <span className="text-[10px] font-semibold text-[#2ea06e] flex items-center gap-1 mt-0.5">
+                <span className="text-[10px] font-bold text-[#166534] flex items-center gap-1 mt-0.5">
                   {paymentMethod === 'efectivo' ? '💵 Tarifa Efectivo aplicada' : '📲 Tarifa Transferencia / Tarjeta aplicada'}
                 </span>
               </div>
               <div className="flex items-center gap-1.5">
-                <span className="text-xs text-[#d5cbbb]">Monto:</span>
-                <span className="text-xs text-[#2ea06e] font-bold">$</span>
+                <span className="text-xs text-[#52514E]">Monto:</span>
+                <span className="text-xs text-[#1C1C1C] font-bold">$</span>
                 <label htmlFor={customPriceInputId} className="sr-only">Monto a cobrar</label>
                 <input
                   id={customPriceInputId}
@@ -506,7 +509,7 @@ export const NewRentalModal: React.FC<Props> = ({ isOpen, onClose }) => {
                   step="100"
                   value={finalPrice}
                   onChange={(e) => setCustomPrice(Number(e.target.value) || 0)}
-                  className="w-24 bg-[#081d15] border border-[#1a422f] rounded-lg px-2 py-0.5 text-right font-black text-[#f3ebd6] text-sm focus:outline-none focus:border-[#f3ebd6]"
+                  className="w-24 bg-white border border-black/[0.08] rounded-xl px-2.5 py-1 text-right font-black text-[#1C1C1C] text-sm focus:outline-none focus:border-[#1C1C1C]"
                 />
               </div>
             </div>
@@ -515,39 +518,39 @@ export const NewRentalModal: React.FC<Props> = ({ isOpen, onClose }) => {
               <button
                 type="button"
                 onClick={() => handleSelectPaymentMethod('efectivo')}
-                className={`py-2 px-2 rounded-xl text-xs font-bold border transition-all flex items-center justify-center gap-1.5 ${
+                className={`py-2.5 px-2 rounded-full text-xs font-bold border transition-all flex items-center justify-center gap-1.5 ${
                   paymentMethod === 'efectivo'
-                    ? 'bg-[#1a422f] border-[#f3ebd6] text-[#f3ebd6] ring-1 ring-[#f3ebd6]'
-                    : 'bg-[#081d15] border-[#1a422f] text-[#d5cbbb] hover:text-[#f3ebd6]'
+                    ? 'bg-[#1C1C1C] border-[#1C1C1C] text-white shadow-sm'
+                    : 'bg-white border-black/[0.06] text-[#52514E] hover:text-[#1C1C1C]'
                 }`}
               >
-                <Banknote className="w-4 h-4 text-[#2ea06e]" />
+                <Banknote className={`w-4 h-4 ${paymentMethod === 'efectivo' ? 'text-[#F7D147]' : 'text-[#16A34A]'}`} />
                 <span>Efectivo</span>
               </button>
 
               <button
                 type="button"
                 onClick={() => handleSelectPaymentMethod('transferencia')}
-                className={`py-2 px-2 rounded-xl text-xs font-bold border transition-all flex items-center justify-center gap-1.5 ${
+                className={`py-2.5 px-2 rounded-full text-xs font-bold border transition-all flex items-center justify-center gap-1.5 ${
                   paymentMethod === 'transferencia'
-                    ? 'bg-[#1a422f] border-[#f3ebd6] text-[#f3ebd6] ring-1 ring-[#f3ebd6]'
-                    : 'bg-[#081d15] border-[#1a422f] text-[#d5cbbb] hover:text-[#f3ebd6]'
+                    ? 'bg-[#1C1C1C] border-[#1C1C1C] text-white shadow-sm'
+                    : 'bg-white border-black/[0.06] text-[#52514E] hover:text-[#1C1C1C]'
                 }`}
               >
-                <Smartphone className="w-4 h-4 text-cyan-400" />
+                <Smartphone className={`w-4 h-4 ${paymentMethod === 'transferencia' ? 'text-[#F7D147]' : 'text-[#1C1C1C]'}`} />
                 <span>Transfer.</span>
               </button>
 
               <button
                 type="button"
                 onClick={() => handleSelectPaymentMethod('tarjeta')}
-                className={`py-2 px-2 rounded-xl text-xs font-bold border transition-all flex items-center justify-center gap-1.5 ${
+                className={`py-2.5 px-2 rounded-full text-xs font-bold border transition-all flex items-center justify-center gap-1.5 ${
                   paymentMethod === 'tarjeta'
-                    ? 'bg-[#1a422f] border-[#f3ebd6] text-[#f3ebd6] ring-1 ring-[#f3ebd6]'
-                    : 'bg-[#081d15] border-[#1a422f] text-[#d5cbbb] hover:text-[#f3ebd6]'
+                    ? 'bg-[#1C1C1C] border-[#1C1C1C] text-white shadow-sm'
+                    : 'bg-white border-black/[0.06] text-[#52514E] hover:text-[#1C1C1C]'
                 }`}
               >
-                <CreditCard className="w-4 h-4 text-purple-400" />
+                <CreditCard className={`w-4 h-4 ${paymentMethod === 'tarjeta' ? 'text-[#F7D147]' : 'text-[#1C1C1C]'}`} />
                 <span>Tarjeta</span>
               </button>
             </div>
@@ -558,16 +561,16 @@ export const NewRentalModal: React.FC<Props> = ({ isOpen, onClose }) => {
             <button
               type="submit"
               disabled={availableUnitsForSelected.length === 0}
-              className={`w-full py-4 px-5 rounded-2xl font-black text-sm sm:text-base shadow-xl flex items-center justify-center gap-2 transition-all active:scale-98 ${
+              className={`w-full py-4 px-5 rounded-full font-black text-sm sm:text-base shadow-lg flex items-center justify-center gap-2 transition-all active:scale-98 ${
                 availableUnitsForSelected.length === 0
-                  ? 'bg-[#081d15] text-[#d5cbbb]/40 border border-[#1a422f] cursor-not-allowed'
-                  : 'bg-[#f3ebd6] hover:bg-white text-[#02110c] shadow-[#000000]/50'
+                  ? 'bg-[#F6F3EA] text-[#71706B] border border-black/[0.06] cursor-not-allowed'
+                  : 'bg-[#1C1C1C] hover:bg-[#333333] text-white'
               }`}
             >
-              <Check className="w-5 h-5 stroke-[3] text-[#02110c]" />
+              <Check className="w-5 h-5 stroke-[3] text-[#F7D147]" />
               <span>COBRAR Y DEJAR LISTO PARA INICIAR ({durationMinutes} MIN)</span>
             </button>
-            <p className="text-[11px] text-center text-[#d5cbbb]/70">
+            <p className="text-[11px] text-center text-[#71706B]">
               El reloj quedará pausado en {durationMinutes}:00 hasta que el encargado presione &quot;INICIAR&quot; al entregar la unidad.
             </p>
           </div>

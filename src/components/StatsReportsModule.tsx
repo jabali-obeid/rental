@@ -90,12 +90,12 @@ export const StatsReportsModule: React.FC<Props> = ({ rentals, categories, units
   ];
 
   return (
-    <div className="space-y-4 pb-24 text-[#f3ebd6]">
+    <div className="space-y-4 pb-24 text-[#1C1C1C]">
       {/* TOP BAR WITH CLEAR HISTORY BUTTON */}
       <div className="flex items-center justify-between gap-2 px-1">
         <div>
-          <h2 className="text-sm font-extrabold text-[#f3ebd6]">Métricas e Historial Acumulado</h2>
-          <p className="text-[11px] text-[#d5cbbb]/70">Resumen general de facturación y salidas</p>
+          <h2 className="text-lg font-bold text-[#1C1C1C]">Métricas e Historial Acumulado</h2>
+          <p className="text-xs text-[#71706B]">Resumen general de facturación y salidas</p>
         </div>
 
         {(stats.totalCount > 0 || stats.totalRevenue > 0) && (
@@ -103,93 +103,95 @@ export const StatsReportsModule: React.FC<Props> = ({ rentals, categories, units
             type="button"
             disabled={isClearing}
             onClick={handleClearHistory}
-            className="px-3 py-2 rounded-xl bg-rose-950/70 hover:bg-rose-900/80 border border-rose-500/40 text-rose-200 text-xs font-extrabold flex items-center gap-1.5 transition-all active:scale-95 shrink-0"
+            className="px-4 py-2 rounded-full bg-[#FEE2E2] hover:bg-[#FECACA] border border-[#FCA5A5] text-[#991B1B] text-xs font-extrabold flex items-center gap-1.5 transition-all active:scale-95 shrink-0"
           >
             {isClearing ? (
-              <RefreshCw className="w-3.5 h-3.5 animate-spin text-rose-300" />
+              <RefreshCw className="w-3.5 h-3.5 animate-spin text-[#991B1B]" />
             ) : (
-              <Trash2 className="w-3.5 h-3.5 text-rose-400" />
+              <Trash2 className="w-3.5 h-3.5 text-[#991B1B]" />
             )}
             <span>{isClearing ? 'Borrando...' : 'Borrar Historial a $0'}</span>
           </button>
         )}
       </div>
 
-      {/* HIGHLIGHT KPIS */}
-      <div className="grid grid-cols-2 gap-2.5">
-        <div className="p-4 rounded-2xl bg-[#081d15] border border-[#1a422f]">
-          <div className="flex items-center justify-between text-[#d5cbbb] mb-1">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-[#2ea06e]">Facturación Total</span>
-            <DollarSign className="w-4 h-4 text-[#2ea06e]" />
+      {/* HIGHLIGHT KPIS (Bento Grid with Staffwyn Dark Accent Card) */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+        <div className="p-5 rounded-[28px] bg-[#1C1C1C] text-white shadow-[0_8px_30px_rgb(0,0,0,0.06)]">
+          <div className="flex items-center justify-between text-white/70 mb-1">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-[#F7D147]">Facturación Total</span>
+            <DollarSign className="w-4 h-4 text-[#F7D147]" />
           </div>
-          <div className="text-2xl font-black text-[#f3ebd6]">
+          <div className="text-2xl font-black text-white">
             ${stats.totalRevenue.toLocaleString()}
           </div>
-          <div className="text-[10px] text-[#2ea06e] mt-1">Acumulado Eco Aventura</div>
+          <div className="text-[10px] text-white/60 mt-1">Acumulado Eco Aventura</div>
         </div>
 
-        <div className="p-4 rounded-2xl bg-[#081d15] border border-[#1a422f]">
-          <div className="flex items-center justify-between text-[#d5cbbb] mb-1">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-cyan-400">Ticket Promedio</span>
-            <TrendingUp className="w-4 h-4 text-cyan-400" />
+        <div className="p-5 rounded-[28px] bg-white border border-black/[0.05] shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
+          <div className="flex items-center justify-between text-[#71706B] mb-1">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-[#1C1C1C]">Ticket Promedio</span>
+            <TrendingUp className="w-4 h-4 text-[#1C1C1C]" />
           </div>
-          <div className="text-2xl font-black text-[#f3ebd6]">
+          <div className="text-2xl font-black text-[#1C1C1C]">
             ${stats.averageTicket.toLocaleString()}
           </div>
-          <div className="text-[10px] text-[#d5cbbb]/60 mt-1">Por cada salida</div>
+          <div className="text-[10px] text-[#71706B] mt-1">Por cada salida</div>
         </div>
 
-        <div className="p-4 rounded-2xl bg-[#081d15] border border-[#1a422f]">
-          <div className="flex items-center justify-between text-[#d5cbbb] mb-1">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-purple-400">Total Alquileres</span>
-            <BarChart3 className="w-4 h-4 text-purple-400" />
+        <div className="p-5 rounded-[28px] bg-white border border-black/[0.05] shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
+          <div className="flex items-center justify-between text-[#71706B] mb-1">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-[#1C1C1C]">Total Alquileres</span>
+            <BarChart3 className="w-4 h-4 text-[#1C1C1C]" />
           </div>
-          <div className="text-2xl font-black text-[#f3ebd6]">
+          <div className="text-2xl font-black text-[#1C1C1C]">
             {stats.totalCount}
           </div>
-          <div className="text-[10px] text-[#d5cbbb]/60 mt-1">Servicios despachados</div>
+          <div className="text-[10px] text-[#71706B] mt-1">Servicios despachados</div>
         </div>
 
-        <div className="p-4 rounded-2xl bg-[#081d15] border border-[#1a422f]">
-          <div className="flex items-center justify-between text-[#d5cbbb] mb-1">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-amber-400">Ocupación Flota</span>
-            <Flame className="w-4 h-4 text-amber-400" />
+        <div className="p-5 rounded-[28px] bg-[#F7D147] text-[#1C1C1C] shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
+          <div className="flex items-center justify-between text-[#1C1C1C]/80 mb-1">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-[#1C1C1C]">Ocupación Flota</span>
+            <Flame className="w-4 h-4 text-[#1C1C1C]" />
           </div>
-          <div className="text-2xl font-black text-amber-300">
+          <div className="text-2xl font-black text-[#1C1C1C]">
             {stats.occupancyPercent}%
           </div>
-          <div className="text-[10px] text-[#d5cbbb]/60 mt-1">En pista en este instante</div>
+          <div className="text-[10px] text-[#1C1C1C]/75 mt-1">En pista en este instante</div>
         </div>
       </div>
 
       {/* CATEGORY RANKING */}
-      <div className="p-4 rounded-2xl bg-[#081d15] border border-[#1a422f] space-y-3 shadow-md">
-        <h3 className="text-xs font-bold uppercase tracking-wider text-[#d5cbbb]/80 flex items-center gap-1.5">
-          <Trophy className="w-4 h-4 text-[#f3ebd6]" />
+      <div className="p-5 rounded-[28px] bg-white border border-black/[0.05] space-y-3.5 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
+        <h3 className="text-xs font-bold uppercase tracking-wider text-[#71706B] flex items-center gap-1.5">
+          <Trophy className="w-4 h-4 text-[#1C1C1C]" />
           <span>Ranking de Categorías Más Alquiladas</span>
         </h3>
 
         <div className="space-y-3">
           {stats.categoryRanking.map((cat, idx) => (
-            <div key={cat.id} className="space-y-1">
+            <div key={cat.id} className="space-y-1.5">
               <div className="flex items-center justify-between text-xs">
                 <div className="flex items-center gap-2">
-                  <span className="font-bold text-[#d5cbbb]">#{idx + 1}</span>
-                  <div className="flex items-center gap-1.5 font-semibold text-[#f3ebd6]">
-                    <span className="text-[#2ea06e]">
+                  <span className="font-bold text-[#71706B]">#{idx + 1}</span>
+                  <div className="flex items-center gap-1.5 font-semibold text-[#1C1C1C]">
+                    <span className="text-[#1C1C1C]">
                       <CategoryIcon name={cat.icon} className="w-3.5 h-3.5" />
                     </span>
                     <span>{cat.name}</span>
                   </div>
                 </div>
-                <span className="font-mono font-bold text-[#f3ebd6]">
+                <span className="font-mono font-bold text-[#1C1C1C]">
                   {cat.count} salidas ({cat.percent}%)
                 </span>
               </div>
 
-              <div className="w-full bg-[#02110c] rounded-full h-2 overflow-hidden border border-[#1a422f]">
+              <div className="w-full bg-[#F6F3EA] rounded-full h-2.5 overflow-hidden border border-black/[0.05]">
                 <div
-                  className="h-full rounded-full transition-all duration-700 bg-[#2ea06e]"
+                  className={`h-full rounded-full transition-all duration-700 ${
+                    idx === 0 ? 'bg-[#1C1C1C]' : 'bg-[#F7D147]'
+                  }`}
                   style={{ width: `${cat.percent}%` }}
                 />
               </div>
@@ -199,9 +201,9 @@ export const StatsReportsModule: React.FC<Props> = ({ rentals, categories, units
       </div>
 
       {/* TOP UNITS RANKING */}
-      <div className="p-4 rounded-2xl bg-[#081d15] border border-[#1a422f] space-y-3 shadow-md">
-        <h3 className="text-xs font-bold uppercase tracking-wider text-[#d5cbbb]/80 flex items-center gap-1.5">
-          <Trophy className="w-4 h-4 text-[#2ea06e]" />
+      <div className="p-5 rounded-[28px] bg-white border border-black/[0.05] space-y-3 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
+        <h3 className="text-xs font-bold uppercase tracking-wider text-[#71706B] flex items-center gap-1.5">
+          <Trophy className="w-4 h-4 text-[#D97706]" />
           <span>Top 5 Unidades Más Demandadas</span>
         </h3>
 
@@ -209,18 +211,18 @@ export const StatsReportsModule: React.FC<Props> = ({ rentals, categories, units
           {stats.unitRanking.map((u, i) => (
             <div
               key={u.id}
-              className="p-2.5 rounded-xl bg-[#02110c] border border-[#1a422f] flex items-center justify-between"
+              className="p-3 rounded-2xl bg-[#F6F3EA] border border-black/[0.05] flex items-center justify-between"
             >
               <div className="flex items-center gap-2.5">
-                <span className="font-black text-[#f3ebd6] text-xs font-mono">0{i + 1}</span>
-                <span className="px-2 py-0.5 rounded-lg bg-[#081d15] text-[#f3ebd6] font-mono font-bold text-xs border border-[#1a422f]">
+                <span className="font-black text-[#71706B] text-xs font-mono">0{i + 1}</span>
+                <span className="px-2.5 py-0.5 rounded-full bg-[#1C1C1C] text-white font-mono font-bold text-xs">
                   {u.codeNumber}
                 </span>
-                <span className="text-xs text-[#d5cbbb] font-medium truncate max-w-[140px]">
+                <span className="text-xs text-[#1C1C1C] font-semibold truncate max-w-[140px]">
                   {u.name}
                 </span>
               </div>
-              <span className="text-xs font-bold text-[#2ea06e] font-mono">
+              <span className="text-xs font-bold text-[#166534] bg-[#DCFCE7] px-2.5 py-0.5 rounded-full font-mono">
                 {u.count} salidas
               </span>
             </div>
@@ -229,9 +231,9 @@ export const StatsReportsModule: React.FC<Props> = ({ rentals, categories, units
       </div>
 
       {/* OCCUPANCY BY TIME SLOTS */}
-      <div className="p-4 rounded-2xl bg-[#081d15] border border-[#1a422f] space-y-3 shadow-md">
-        <h3 className="text-xs font-bold uppercase tracking-wider text-[#d5cbbb]/80 flex items-center gap-1.5">
-          <Clock className="w-4 h-4 text-cyan-400" />
+      <div className="p-5 rounded-[28px] bg-white border border-black/[0.05] space-y-3 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
+        <h3 className="text-xs font-bold uppercase tracking-wider text-[#71706B] flex items-center gap-1.5">
+          <Clock className="w-4 h-4 text-[#1C1C1C]" />
           <span>Franjas Horarias de Mayor Demanda</span>
         </h3>
 
@@ -240,20 +242,20 @@ export const StatsReportsModule: React.FC<Props> = ({ rentals, categories, units
             <div key={slot.label} className="space-y-1">
               <div className="flex items-center justify-between text-xs">
                 <div className="flex items-center gap-1.5">
-                  <span className="font-medium text-[#f3ebd6]">{slot.label}</span>
+                  <span className="font-semibold text-[#1C1C1C]">{slot.label}</span>
                   {slot.isPeak && (
-                    <span className="px-1.5 py-0.2 rounded-full text-[9px] font-bold bg-[#1a422f] text-[#f3ebd6] border border-[#2ea06e]">
+                    <span className="px-2 py-0.5 rounded-full text-[9px] font-bold bg-[#F7D147] text-[#1C1C1C]">
                       HORA PICO 🔥
                     </span>
                   )}
                 </div>
-                <span className="font-bold text-[#d5cbbb]">{slot.percent}% Ocupación</span>
+                <span className="font-bold text-[#52514E]">{slot.percent}% Ocupación</span>
               </div>
 
-              <div className="w-full bg-[#02110c] rounded-full h-2 overflow-hidden border border-[#1a422f]">
+              <div className="w-full bg-[#F6F3EA] rounded-full h-2.5 overflow-hidden border border-black/[0.05]">
                 <div
                   className={`h-full rounded-full ${
-                    slot.isPeak ? 'bg-[#f3ebd6]' : 'bg-[#1a422f]'
+                    slot.isPeak ? 'bg-[#F7D147]' : 'bg-[#1C1C1C]'
                   }`}
                   style={{ width: `${slot.percent}%` }}
                 />

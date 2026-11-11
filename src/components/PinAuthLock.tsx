@@ -74,23 +74,23 @@ export const PinAuthLock: React.FC<Props> = ({ onUnlock }) => {
   };
 
   return (
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-[#02110c]/85 backdrop-blur-xl animate-in fade-in duration-300">
-      <div className="w-full max-w-sm rounded-3xl bg-[#081d15] border border-[#1a422f] p-6 shadow-2xl flex flex-col items-center text-center space-y-6">
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-gradient-to-br from-[#FCFBF7] via-[#FAF5E4] to-[#F4E6BA] animate-in fade-in duration-300">
+      <div className="w-full max-w-sm rounded-[32px] bg-white border border-black/[0.06] p-7 shadow-[0_20px_50px_rgb(0,0,0,0.08)] flex flex-col items-center text-center space-y-6">
         
         {/* Brand Icon */}
         <div className="relative">
-          <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-[#1a422f] to-[#2ea06e]/30 border border-[#2ea06e]/40 flex items-center justify-center shadow-inner">
-            <Lock className="w-8 h-8 text-[#2ea06e] animate-pulse" />
+          <div className="w-16 h-16 rounded-2xl bg-[#1C1C1C] flex items-center justify-center shadow-md">
+            <Lock className="w-8 h-8 text-[#F7D147]" />
           </div>
-          <div className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-[#02110c] border border-[#1a422f] flex items-center justify-center">
-            <ShieldCheck className="w-3.5 h-3.5 text-[#2ea06e]" />
+          <div className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-[#F7D147] border-2 border-white flex items-center justify-center">
+            <ShieldCheck className="w-3.5 h-3.5 text-[#1C1C1C]" />
           </div>
         </div>
 
         {/* Title */}
         <div className="space-y-1">
-          <h2 className="text-xl font-black text-[#f3ebd6] tracking-tight">Eco Aventura</h2>
-          <p className="text-xs text-[#d5cbbb]/70">Ingresá el PIN de seguridad para acceder al sistema</p>
+          <h2 className="text-xl font-black text-[#1C1C1C] tracking-tight">Eco Aventura</h2>
+          <p className="text-xs text-[#71706B]">Ingresá el PIN de seguridad para acceder al sistema</p>
         </div>
 
         {/* Dots Indicator */}
@@ -104,8 +104,8 @@ export const PinAuthLock: React.FC<Props> = ({ onUnlock }) => {
                   isError
                     ? 'bg-rose-500 border border-rose-400 scale-110 animate-bounce'
                     : isFilled
-                    ? 'bg-[#2ea06e] border border-[#2ea06e] scale-110 shadow-[0_0_12px_rgba(46,160,110,0.6)]'
-                    : 'bg-[#02110c] border border-[#1a422f]'
+                    ? 'bg-[#1C1C1C] border border-[#1C1C1C] scale-110 shadow-sm'
+                    : 'bg-[#F6F3EA] border border-black/15'
                 }`}
               />
             );
@@ -114,7 +114,7 @@ export const PinAuthLock: React.FC<Props> = ({ onUnlock }) => {
 
         {/* Error message */}
         {isError && (
-          <p className="text-xs font-bold text-rose-400 animate-in fade-in">
+          <p className="text-xs font-bold text-rose-600 animate-in fade-in">
             PIN incorrecto. Reintentá nuevamente.
           </p>
         )}
@@ -127,7 +127,7 @@ export const PinAuthLock: React.FC<Props> = ({ onUnlock }) => {
               type="button"
               disabled={isVerifying}
               onClick={() => handleAddDigit(digit)}
-              className="h-14 rounded-2xl bg-[#02110c] hover:bg-[#1a422f] border border-[#1a422f] hover:border-[#2ea06e]/50 text-xl font-extrabold text-[#f3ebd6] shadow active:scale-95 transition-all flex items-center justify-center"
+              className="h-14 rounded-2xl bg-[#F6F3EA] hover:bg-[#F7D147] border border-black/[0.06] text-xl font-extrabold text-[#1C1C1C] shadow-sm active:scale-95 transition-all flex items-center justify-center"
             >
               {digit}
             </button>
@@ -137,7 +137,7 @@ export const PinAuthLock: React.FC<Props> = ({ onUnlock }) => {
             type="button"
             disabled={isVerifying || pin.length === 0}
             onClick={() => setPin('')}
-            className="h-14 rounded-2xl bg-[#02110c] hover:bg-[#1a422f] border border-[#1a422f] text-xs font-bold text-[#d5cbbb]/60 shadow active:scale-95 transition-all flex items-center justify-center disabled:opacity-30"
+            className="h-14 rounded-2xl bg-[#F6F3EA] hover:bg-[#EAE4D3] border border-black/[0.06] text-xs font-bold text-[#71706B] shadow-sm active:scale-95 transition-all flex items-center justify-center disabled:opacity-30"
           >
             Borrar
           </button>
@@ -146,7 +146,7 @@ export const PinAuthLock: React.FC<Props> = ({ onUnlock }) => {
             type="button"
             disabled={isVerifying}
             onClick={() => handleAddDigit('0')}
-            className="h-14 rounded-2xl bg-[#02110c] hover:bg-[#1a422f] border border-[#1a422f] hover:border-[#2ea06e]/50 text-xl font-extrabold text-[#f3ebd6] shadow active:scale-95 transition-all flex items-center justify-center"
+            className="h-14 rounded-2xl bg-[#F6F3EA] hover:bg-[#F7D147] border border-black/[0.06] text-xl font-extrabold text-[#1C1C1C] shadow-sm active:scale-95 transition-all flex items-center justify-center"
           >
             0
           </button>
@@ -155,13 +155,13 @@ export const PinAuthLock: React.FC<Props> = ({ onUnlock }) => {
             type="button"
             disabled={isVerifying || pin.length === 0}
             onClick={handleBackspace}
-            className="h-14 rounded-2xl bg-[#02110c] hover:bg-[#1a422f] border border-[#1a422f] text-[#d5cbbb] shadow active:scale-95 transition-all flex items-center justify-center disabled:opacity-30"
+            className="h-14 rounded-2xl bg-[#F6F3EA] hover:bg-[#EAE4D3] border border-black/[0.06] text-[#1C1C1C] shadow-sm active:scale-95 transition-all flex items-center justify-center disabled:opacity-30"
           >
-            <Delete className="w-5 h-5 text-[#d5cbbb]" />
+            <Delete className="w-5 h-5 text-[#1C1C1C]" />
           </button>
         </div>
 
-        <div className="text-[11px] text-[#d5cbbb]/40 font-mono">
+        <div className="text-[11px] text-[#71706B] font-mono">
           🔒 Acceso protegido con cifrado SHA-256
         </div>
       </div>

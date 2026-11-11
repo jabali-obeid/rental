@@ -8,17 +8,17 @@ export default {
     extend: {
       colors: {
         eco: {
-          dark: '#02110c',      // Dark Emerald Green from Pinterest palette
-          darker: '#010906',
-          card: '#081d15',      // Elevated surface
-          surface: '#0d281e',   // Surface element
-          forest: '#1a422f',    // Olive/Forest Green from Pinterest palette
-          forestLight: '#265e43',
-          cream: '#f3ebd6',     // Cream Beige from Pinterest palette
-          creamMuted: '#d5cbbb',
-          creamDark: '#b8ac97',
-          gold: '#dfc499',
-          leaf: '#2ea06e',
+          dark: '#1C1C1C',      // Charcoal Black from Staffwyn palette
+          darker: '#121212',
+          card: '#FFFFFF',      // Crisp White surface
+          surface: '#F6F3EA',   // Warm sand / cream secondary surface
+          forest: '#1C1C1C',    // Charcoal pill active state
+          forestLight: '#333333',
+          cream: '#FAF6E8',     // Soft cream background
+          creamMuted: '#71706B',
+          creamDark: '#52514E',
+          gold: '#F7D147',      // Warm Golden Yellow accent
+          leaf: '#16A34A',
         },
       },
       animation: {
@@ -27,8 +27,8 @@ export default {
       },
       keyframes: {
         flashRed: {
-          '0%': { backgroundColor: 'rgba(239, 68, 68, 0.15)', borderColor: 'rgba(239, 68, 68, 0.8)' },
-          '100%': { backgroundColor: 'rgba(239, 68, 68, 0.35)', borderColor: 'rgba(220, 38, 38, 1)' },
+          '0%': { backgroundColor: 'rgba(254, 226, 226, 0.7)', borderColor: 'rgba(239, 68, 68, 0.8)' },
+          '100%': { backgroundColor: 'rgba(254, 202, 202, 0.95)', borderColor: 'rgba(220, 38, 38, 1)' },
         }
       }
     },

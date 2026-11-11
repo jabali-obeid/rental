@@ -45,37 +45,42 @@ export const RentalCard: React.FC<Props> = ({
     dataService.extendRental(rental.id, 15);
   };
 
-  // Dynamic visual styles according to traffic light state with Eco Aventura palette
+  // Dynamic visual styles according to traffic light state with Staffwyn palette
   let cardStyles = '';
   let badgeStyles = '';
+  let timeBoxStyles = '';
   let timeStyles = '';
   let progressColor = '';
   let statusText = '';
 
   if (trafficLight === 'WAITING') {
-    cardStyles = 'border-cyan-500/80 bg-[#072227] shadow-xl ring-1 ring-cyan-400/50';
-    badgeStyles = 'bg-cyan-500/25 text-cyan-200 border border-cyan-400/60 animate-pulse';
-    timeStyles = 'text-cyan-300 font-black';
-    progressColor = 'bg-cyan-400';
+    cardStyles = 'border-[#F7D147] bg-white shadow-[0_8px_30px_rgb(0,0,0,0.05)] ring-1 ring-[#F7D147]/60';
+    badgeStyles = 'bg-[#F7D147] text-[#1C1C1C] font-extrabold animate-pulse';
+    timeBoxStyles = 'bg-[#F9E27D]/55 border-[#F7D147] text-[#1C1C1C]';
+    timeStyles = 'text-[#1C1C1C] font-black';
+    progressColor = 'bg-[#F7D147]';
     statusText = 'LISTO PARA INICIAR';
   } else if (trafficLight === 'GREEN') {
-    cardStyles = 'border-[#1a422f] bg-[#081d15] shadow-xl shadow-[#02110c]/80';
-    badgeStyles = 'bg-[#1a422f] text-[#f3ebd6] border border-[#2ea06e]/50';
-    timeStyles = 'text-[#f3ebd6]';
-    progressColor = 'bg-[#2ea06e]';
+    cardStyles = 'border-black/[0.06] bg-white shadow-[0_8px_30px_rgb(0,0,0,0.04)]';
+    badgeStyles = 'bg-[#DCFCE7] text-[#166534] border border-[#86EFAC]';
+    timeBoxStyles = 'bg-[#1C1C1C] border-[#1C1C1C] text-white';
+    timeStyles = 'text-white font-bold';
+    progressColor = 'bg-[#1C1C1C]';
     statusText = 'EN TIEMPO';
   } else if (trafficLight === 'YELLOW') {
-    cardStyles = 'border-amber-500/80 bg-[#1f1a0e] shadow-xl ring-1 ring-amber-500/50';
-    badgeStyles = 'bg-amber-500/25 text-amber-200 border border-amber-500/50 animate-pulse';
-    timeStyles = 'text-amber-300 font-extrabold';
-    progressColor = 'bg-amber-400';
+    cardStyles = 'border-[#F7D147] bg-white shadow-[0_8px_30px_rgb(0,0,0,0.05)] ring-1 ring-[#F7D147]';
+    badgeStyles = 'bg-[#FEF3C7] text-[#92400E] border border-[#FDE68A] animate-pulse';
+    timeBoxStyles = 'bg-[#F9E27D] border-[#F7D147] text-[#1C1C1C]';
+    timeStyles = 'text-[#1C1C1C] font-extrabold';
+    progressColor = 'bg-[#F59E0B]';
     statusText = 'POR VENCER';
   } else {
     // RED: Intermittent alert
-    cardStyles = 'border-rose-600 bg-rose-950/30 shadow-2xl ring-2 ring-rose-500 animate-pulse-fast';
-    badgeStyles = 'bg-rose-600 text-white font-bold border border-rose-400';
+    cardStyles = 'border-rose-500 bg-white shadow-xl ring-2 ring-rose-500 animate-pulse-fast';
+    badgeStyles = 'bg-[#FEE2E2] text-[#991B1B] font-extrabold border border-[#FCA5A5]';
+    timeBoxStyles = 'bg-[#1C1C1C] border-rose-500 text-white';
     timeStyles = 'text-rose-400 font-black animate-pulse';
-    progressColor = 'bg-rose-500';
+    progressColor = 'bg-rose-600';
     statusText = 'TIEMPO CUMPLIDO';
   }
 
@@ -84,32 +89,34 @@ export const RentalCard: React.FC<Props> = ({
 
   return (
     <div
-      className={`relative rounded-3xl border p-4 transition-all duration-300 flex flex-col justify-between ${cardStyles}`}
+      className={`relative rounded-[28px] border p-4 sm:p-5 transition-all duration-300 flex flex-col justify-between ${cardStyles}`}
     >
       {/* Top Banner: Unit code, Category, Traffic Status */}
       <div>
-        <div className="flex items-center justify-between gap-2 mb-2.5">
+        <div className="flex items-center justify-between gap-2 mb-3">
           <div className="flex items-center gap-2">
-            <span className="px-2.5 py-1 rounded-xl bg-[#02110c] text-[#f3ebd6] font-mono font-black text-sm tracking-wide border border-[#1a422f]">
+            <span className="px-3 py-1 rounded-full bg-[#1C1C1C] text-white font-mono font-black text-xs tracking-wide">
               {unitCode}
             </span>
-            <div className="flex items-center gap-1.5 text-xs text-[#d5cbbb] font-medium">
-              <span className="text-[#2ea06e]">
+            <div className="flex items-center gap-1.5 text-xs text-[#52514E] font-semibold">
+              <span className="text-[#1C1C1C]">
                 <CategoryIcon name={category?.icon || 'Bike'} className="w-4 h-4" />
               </span>
               <span className="truncate max-w-[120px]">{categoryName}</span>
             </div>
           </div>
 
-          <span className={`px-2.5 py-0.5 rounded-full text-[11px] font-bold tracking-wider ${badgeStyles}`}>
+          <span className={`px-3 py-1 rounded-full text-[11px] font-bold tracking-wide ${badgeStyles}`}>
             {statusText}
           </span>
         </div>
 
-        {/* Center Countdown Display */}
-        <div className="my-2.5 bg-[#02110c]/80 rounded-2xl p-3.5 border border-[#1a422f]/70 flex items-center justify-between shadow-inner">
+        {/* Center Countdown Display (Staffwyn Schedule / Dark Accent Card Style) */}
+        <div className={`my-2.5 rounded-2xl p-3.5 border flex items-center justify-between shadow-sm ${timeBoxStyles}`}>
           <div>
-            <span className="text-[11px] uppercase font-semibold text-[#d5cbbb]/70 block tracking-wider">
+            <span className={`text-[10px] uppercase font-semibold block tracking-wider ${
+              trafficLight === 'GREEN' || trafficLight === 'RED' ? 'text-white/65' : 'text-[#1C1C1C]/70'
+            }`}>
               {isWaitingStart
                 ? 'Tiempo Contratado (En Espera)'
                 : isExpired
@@ -121,7 +128,7 @@ export const RentalCard: React.FC<Props> = ({
                 {formattedTime}
               </span>
               {isWaitingStart && (
-                <span className="text-[11px] font-extrabold text-cyan-300 uppercase tracking-wide">
+                <span className="text-[11px] font-extrabold text-[#1C1C1C] uppercase tracking-wide">
                   pausado
                 </span>
               )}
@@ -139,27 +146,31 @@ export const RentalCard: React.FC<Props> = ({
               type="button"
               onClick={handleLaunchTimer}
               title="Iniciar cuenta regresiva ahora"
-              className="flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl bg-gradient-to-r from-[#2ea06e] to-emerald-500 hover:brightness-110 active:scale-95 transition-all text-[#02110c] font-black text-xs shadow-lg"
+              className="flex items-center gap-1.5 px-4 py-2.5 rounded-full bg-[#1C1C1C] hover:bg-[#333333] active:scale-95 transition-all text-white font-black text-xs shadow-md"
             >
-              <Play className="w-4 h-4 fill-current" />
+              <Play className="w-3.5 h-3.5 fill-current text-[#F7D147]" />
               <span>INICIAR</span>
             </button>
           ) : (
             <button
               onClick={handleQuickExtend}
               title="Extender 15 minutos"
-              className="flex flex-col items-center justify-center px-3 py-1.5 rounded-xl bg-[#1a422f] border border-[#2ea06e]/40 hover:bg-[#265e43] active:scale-95 transition-all text-[#f3ebd6]"
+              className={`flex flex-col items-center justify-center px-3 py-1.5 rounded-xl border active:scale-95 transition-all ${
+                trafficLight === 'GREEN' || trafficLight === 'RED'
+                  ? 'bg-white/10 border-white/15 hover:bg-white/20 text-white'
+                  : 'bg-[#1C1C1C] border-[#1C1C1C] text-white'
+              }`}
             >
-              <PlusCircle className="w-4 h-4 text-[#f3ebd6] mb-0.5" />
-              <span className="text-[10px] font-bold text-[#f3ebd6]">+15 min</span>
+              <PlusCircle className="w-4 h-4 text-[#F7D147] mb-0.5" />
+              <span className="text-[10px] font-bold">+15 min</span>
             </button>
           )}
         </div>
 
         {/* Linear progress bar */}
-        <div className="w-full bg-[#02110c] rounded-full h-1.5 overflow-hidden mb-3 border border-[#1a422f]/40">
+        <div className="w-full bg-[#F6F3EA] rounded-full h-2 overflow-hidden mb-3 border border-black/[0.05]">
           <div
-            className={`h-full transition-all duration-1000 ${progressColor}`}
+            className={`h-full rounded-full transition-all duration-1000 ${progressColor}`}
             style={{ width: `${progressPercent}%` }}
           />
         </div>
@@ -169,14 +180,14 @@ export const RentalCard: React.FC<Props> = ({
           <div
             className={`mb-3 p-2.5 rounded-2xl border flex items-center justify-between text-xs ${
               suggestedPenalty > 0
-                ? 'bg-rose-500/15 border-rose-500/40 text-rose-300'
-                : 'bg-amber-500/15 border-amber-500/40 text-amber-200'
+                ? 'bg-[#FEE2E2] border-[#FCA5A5] text-[#991B1B]'
+                : 'bg-[#FEF3C7] border-[#FDE68A] text-[#92400E]'
             }`}
           >
             <div className="flex items-center gap-1.5 font-medium">
               <AlertTriangle
                 className={`w-4 h-4 shrink-0 ${
-                  suggestedPenalty > 0 ? 'text-rose-400' : 'text-amber-400'
+                  suggestedPenalty > 0 ? 'text-rose-600' : 'text-amber-600'
                 }`}
               />
               <span>
@@ -187,48 +198,53 @@ export const RentalCard: React.FC<Props> = ({
             <div className="font-bold">
               {suggestedPenalty > 0 ? (
                 <>
-                  Recargo: <span className="text-white font-extrabold">+${suggestedPenalty.toLocaleString()}</span>
+                  Recargo: <span className="text-[#991B1B] font-extrabold">+${suggestedPenalty.toLocaleString()}</span>
                 </>
               ) : (
-                <span className="text-emerald-300 font-extrabold">Sin cargo ($0)</span>
+                <span className="text-[#166534] font-extrabold">Sin cargo ($0)</span>
               )}
             </div>
           </div>
         )}
 
         {/* Customer & Physical Guarantee Locker */}
-        <div className="space-y-1.5 mb-3 text-xs">
-          <div className="flex items-center justify-between text-[#d5cbbb]">
-            <span className="font-bold text-[#f3ebd6] truncate max-w-[160px]">
-              {rental.customerName}
-            </span>
+        <div className="space-y-2 mb-3 text-xs">
+          <div className="flex items-center justify-between text-[#52514E]">
+            <div className="flex items-center gap-2 min-w-0">
+              <span className="w-7 h-7 rounded-full bg-[#F7D147] text-[#1C1C1C] font-black text-[10px] flex items-center justify-center shrink-0">
+                {rental.customerName.slice(0, 2).toUpperCase()}
+              </span>
+              <span className="font-bold text-[#1C1C1C] truncate max-w-[150px]">
+                {rental.customerName}
+              </span>
+            </div>
             {rental.customerPhone && (
               <a
                 href={`tel:${rental.customerPhone}`}
-                className="flex items-center gap-1 text-[#d5cbbb] hover:text-[#f3ebd6] active:text-[#f3ebd6] transition-colors py-0.5 px-2 rounded-lg bg-[#02110c] border border-[#1a422f]/60"
+                className="flex items-center gap-1 text-[#52514E] hover:text-[#1C1C1C] transition-colors py-1 px-2.5 rounded-full bg-[#F6F3EA] border border-black/[0.06]"
               >
-                <Phone className="w-3 h-3 text-[#2ea06e]" />
-                <span className="text-[11px] font-mono">{rental.customerPhone}</span>
+                <Phone className="w-3 h-3 text-[#1C1C1C]" />
+                <span className="text-[11px] font-mono font-semibold">{rental.customerPhone}</span>
               </a>
             )}
           </div>
 
           {/* Retention Guarantee Locker */}
-          <div className="flex items-center justify-between bg-[#0d281e]/70 px-3 py-1.5 rounded-xl border border-[#1a422f] text-[11px]">
-            <span className="text-[#d5cbbb]/80 font-medium">Garantía / Doc:</span>
-            <span className="font-extrabold text-[#f3ebd6] flex items-center gap-1.5">
+          <div className="flex items-center justify-between bg-[#F6F3EA] px-3.5 py-2 rounded-2xl border border-black/[0.05] text-[11px]">
+            <span className="text-[#71706B] font-medium">Garantía / Doc:</span>
+            <span className="font-extrabold text-[#1C1C1C] flex items-center gap-1.5">
               <span>🗄️ {rental.docLocker}</span>
-              <span className="text-[#1a422f]">|</span>
-              <span className="text-[#d5cbbb]">{rental.docType}</span>
+              <span className="text-black/20">|</span>
+              <span className="text-[#52514E]">{rental.docType}</span>
             </span>
           </div>
 
           {/* Pending Next Reservation Banner */}
           {pendingReservation && (
-            <div className="p-2.5 rounded-xl bg-amber-400/15 border border-amber-400/40 text-amber-200 flex items-center justify-between">
+            <div className="p-2.5 rounded-2xl bg-[#FEF3C7] border border-[#FDE68A] text-[#92400E] flex items-center justify-between">
               <div>
-                <span className="text-[10px] uppercase font-bold text-amber-300 block">Siguiente turno reservado:</span>
-                <span className="font-extrabold text-[#f3ebd6]">{pendingReservation.customerName} ({pendingReservation.durationMinutes}m)</span>
+                <span className="text-[10px] uppercase font-bold text-[#92400E] block">Siguiente turno reservado:</span>
+                <span className="font-extrabold text-[#1C1C1C]">{pendingReservation.customerName} ({pendingReservation.durationMinutes}m)</span>
               </div>
               <button
                 type="button"
@@ -250,7 +266,7 @@ export const RentalCard: React.FC<Props> = ({
                     createdAt: pendingReservation.createdAt,
                   });
                 }}
-                className="p-1.5 rounded-lg bg-[#02110c] hover:bg-[#1a422f] border border-amber-400/30 text-amber-300 active:scale-95 transition-all"
+                className="p-2 rounded-full bg-white hover:bg-[#1C1C1C] hover:text-white border border-black/10 text-[#1C1C1C] active:scale-95 transition-all"
                 title="Reimprimir ticket de reserva"
               >
                 <Printer className="w-3.5 h-3.5" />
@@ -262,13 +278,13 @@ export const RentalCard: React.FC<Props> = ({
 
       {/* Card Bottom Actions: Iniciar (if waiting) or Finalizar Alquiler & Reservar */}
       {isWaitingStart ? (
-        <div className="pt-2 border-t border-cyan-500/30 flex items-center gap-2">
+        <div className="pt-2.5 border-t border-black/[0.06] flex items-center gap-2">
           <button
             type="button"
             onClick={handleLaunchTimer}
-            className="flex-1 py-3.5 px-4 rounded-2xl bg-gradient-to-r from-[#2ea06e] to-emerald-500 hover:brightness-110 text-[#02110c] font-black text-xs sm:text-sm tracking-wider transition-all shadow-lg shadow-emerald-950/60 active:scale-[0.98] flex items-center justify-center gap-2"
+            className="flex-1 py-3.5 px-4 rounded-full bg-[#1C1C1C] hover:bg-[#333333] text-white font-black text-xs sm:text-sm tracking-wider transition-all shadow-md active:scale-[0.98] flex items-center justify-center gap-2"
           >
-            <Play className="w-4 h-4 fill-current" />
+            <Play className="w-4 h-4 fill-current text-[#F7D147]" />
             <span>INICIAR TIEMPO ({rental.durationMinutes} MIN)</span>
           </button>
 
@@ -280,21 +296,21 @@ export const RentalCard: React.FC<Props> = ({
               }
             }}
             title="Cancelar salida y liberar unidad"
-            className="py-3.5 px-3 rounded-2xl bg-[#02110c] hover:bg-rose-950/60 text-[#d5cbbb]/70 hover:text-rose-300 border border-[#1a422f] transition-all active:scale-95"
+            className="py-3.5 px-3.5 rounded-full bg-[#F6F3EA] hover:bg-[#FEE2E2] text-[#71706B] hover:text-[#991B1B] border border-black/[0.06] transition-all active:scale-95"
           >
             <XCircle className="w-4 h-4" />
           </button>
         </div>
       ) : (
-        <div className="pt-2 border-t border-[#1a422f]/60 grid grid-cols-2 gap-2">
+        <div className="pt-2.5 border-t border-black/[0.06] grid grid-cols-2 gap-2">
           {/* Reservar Button (if not already reserved) */}
           {!pendingReservation ? (
             <button
               type="button"
               onClick={() => onReserveClick && onReserveClick(rental)}
-              className="py-3 px-3 rounded-2xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 font-black text-xs tracking-wider transition-all shadow active:scale-[0.98] flex items-center justify-center gap-1.5"
+              className="py-3 px-3 rounded-full bg-[#F7D147] hover:bg-[#f0c62d] text-[#1C1C1C] font-extrabold text-xs tracking-wide transition-all shadow-sm active:scale-[0.98] flex items-center justify-center gap-1.5"
             >
-              <BookmarkPlus className="w-4 h-4 text-amber-400" />
+              <BookmarkPlus className="w-4 h-4 text-[#1C1C1C]" />
               <span>Reservar</span>
             </button>
           ) : (
@@ -305,7 +321,7 @@ export const RentalCard: React.FC<Props> = ({
                   dataService.dispatchReservation(pendingReservation.id);
                 }
               }}
-              className="py-3 px-3 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-black text-xs tracking-wider transition-all shadow active:scale-[0.98] flex items-center justify-center gap-1.5"
+              className="py-3 px-3 rounded-full bg-[#DCFCE7] hover:bg-[#BBF7D0] text-[#166534] border border-[#86EFAC] font-extrabold text-xs tracking-wide transition-all shadow-sm active:scale-[0.98] flex items-center justify-center gap-1.5"
             >
               <Play className="w-4 h-4" />
               <span>Despachar</span>
@@ -316,13 +332,13 @@ export const RentalCard: React.FC<Props> = ({
           <button
             type="button"
             onClick={() => onFinishClick(rental)}
-            className={`py-3 px-3 rounded-2xl font-black text-xs tracking-wider transition-all shadow-md active:scale-[0.98] flex items-center justify-center gap-1.5 ${
+            className={`py-3 px-3 rounded-full font-extrabold text-xs tracking-wide transition-all shadow-sm active:scale-[0.98] flex items-center justify-center gap-1.5 ${
               isExpired
-                ? 'bg-rose-600 hover:bg-rose-500 text-white shadow-rose-950/50 animate-bounce'
-                : 'bg-[#1a422f] hover:bg-[#265e43] text-[#f3ebd6] border border-[#f3ebd6]/25 shadow-lg shadow-[#02110c]/80'
+                ? 'bg-rose-600 hover:bg-rose-500 text-white animate-bounce'
+                : 'bg-[#1C1C1C] hover:bg-[#333333] text-white'
             }`}
           >
-            <Clock className="w-4 h-4" />
+            <Clock className="w-4 h-4 text-[#F7D147]" />
             <span>Finalizar</span>
           </button>
         </div>

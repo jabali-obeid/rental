@@ -96,20 +96,20 @@ export const ReserveActiveVehicleModal: React.FC<Props> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#02110c]/80 backdrop-blur-md animate-in fade-in duration-200">
-      <div className="w-full max-w-lg rounded-3xl bg-[#081d15] border border-[#1a422f] shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-md animate-in fade-in duration-200">
+      <div className="w-full max-w-lg rounded-[28px] bg-white border border-black/[0.08] shadow-2xl overflow-hidden flex flex-col max-h-[90vh] text-[#1C1C1C]">
         
         {/* Header */}
-        <div className="p-4 sm:p-5 border-b border-[#1a422f] bg-[#02110c]/60 flex items-center justify-between">
+        <div className="p-4 sm:p-5 border-b border-black/[0.06] bg-[#FAF6E8] flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <div className="w-10 h-10 rounded-xl bg-amber-400/15 border border-amber-400/30 flex items-center justify-center text-amber-300">
+            <div className="w-10 h-10 rounded-full bg-[#F7D147] flex items-center justify-center text-[#1C1C1C]">
               <BookmarkPlus className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="text-base font-black text-[#f3ebd6]">
+              <h3 className="text-base font-black text-[#1C1C1C]">
                 Reservar {unit?.codeNumber || 'Unidad'}
               </h3>
-              <p className="text-xs text-[#d5cbbb]/70">
+              <p className="text-xs text-[#71706B]">
                 Turno siguiente al regresar de pista ({expectedReturnTime} hs aprox.)
               </p>
             </div>
@@ -117,7 +117,7 @@ export const ReserveActiveVehicleModal: React.FC<Props> = ({
 
           <button
             onClick={onClose}
-            className="w-8 h-8 rounded-xl bg-[#02110c] border border-[#1a422f] text-[#d5cbbb] hover:text-white flex items-center justify-center active:scale-95"
+            className="w-8 h-8 rounded-full bg-white border border-black/[0.08] text-[#71706B] hover:text-[#1C1C1C] flex items-center justify-center active:scale-95"
           >
             <X className="w-4 h-4" />
           </button>
@@ -127,21 +127,21 @@ export const ReserveActiveVehicleModal: React.FC<Props> = ({
         <form onSubmit={handleSubmit} className="p-4 sm:p-5 overflow-y-auto space-y-4 text-xs">
           
           {/* Active Status Info Alert */}
-          <div className="p-3 rounded-2xl bg-[#02110c] border border-[#1a422f] flex items-center justify-between text-xs">
+          <div className="p-3.5 rounded-2xl bg-[#F6F3EA] border border-black/[0.06] flex items-center justify-between text-xs">
             <div>
-              <span className="text-[10px] text-[#d5cbbb]/60 uppercase font-bold block">En uso actual por:</span>
-              <span className="font-extrabold text-[#f3ebd6]">{rental.customerName}</span>
+              <span className="text-[10px] text-[#71706B] uppercase font-bold block">En uso actual por:</span>
+              <span className="font-extrabold text-[#1C1C1C]">{rental.customerName}</span>
             </div>
             <div className="text-right">
-              <span className="text-[10px] text-amber-300 uppercase font-bold block">Regresa aprox:</span>
-              <span className="font-mono font-bold text-amber-400 text-sm">{expectedReturnTime} hs</span>
+              <span className="text-[10px] text-[#92400E] uppercase font-bold block">Regresa aprox:</span>
+              <span className="font-mono font-bold text-[#1C1C1C] text-sm">{expectedReturnTime} hs</span>
             </div>
           </div>
 
           {/* Customer Name & Phone */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label htmlFor={customerNameId} className="block text-xs font-bold text-[#d5cbbb] mb-1">
+              <label htmlFor={customerNameId} className="block text-xs font-bold text-[#52514E] mb-1">
                 Cliente que reserva *
               </label>
               <input
@@ -151,12 +151,12 @@ export const ReserveActiveVehicleModal: React.FC<Props> = ({
                 placeholder="Nombre y Apellido"
                 value={customerName}
                 onChange={(e) => setCustomerName(e.target.value)}
-                className="w-full bg-[#02110c] border border-[#1a422f] rounded-xl px-3 py-2 text-xs text-[#f3ebd6] focus:outline-none focus:border-[#2ea06e]"
+                className="w-full bg-[#F6F3EA] border border-black/[0.08] rounded-xl px-3 py-2.5 text-xs text-[#1C1C1C] focus:outline-none focus:border-[#1C1C1C]"
               />
             </div>
 
             <div>
-              <label htmlFor={customerPhoneId} className="block text-xs font-bold text-[#d5cbbb] mb-1">
+              <label htmlFor={customerPhoneId} className="block text-xs font-bold text-[#52514E] mb-1">
                 WhatsApp de contacto (Opcional)
               </label>
               <input
@@ -165,7 +165,7 @@ export const ReserveActiveVehicleModal: React.FC<Props> = ({
                 placeholder="Ej: 341 555-1234"
                 value={customerPhone}
                 onChange={(e) => setCustomerPhone(e.target.value)}
-                className="w-full bg-[#02110c] border border-[#1a422f] rounded-xl px-3 py-2 text-xs text-[#f3ebd6] focus:outline-none focus:border-[#2ea06e]"
+                className="w-full bg-[#F6F3EA] border border-black/[0.08] rounded-xl px-3 py-2.5 text-xs text-[#1C1C1C] focus:outline-none focus:border-[#1C1C1C]"
               />
             </div>
           </div>
@@ -173,17 +173,17 @@ export const ReserveActiveVehicleModal: React.FC<Props> = ({
           {/* Guarantee Locker & Document */}
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label htmlFor={lockerId} className="block text-xs font-bold text-[#d5cbbb] mb-1">
+              <label htmlFor={lockerId} className="block text-xs font-bold text-[#52514E] mb-1">
                 Casillero de Garantía
               </label>
               <select
                 id={lockerId}
                 value={docLocker}
                 onChange={(e) => setDocLocker(e.target.value)}
-                className="w-full bg-[#02110c] border border-[#1a422f] rounded-xl px-3 py-2 text-xs text-[#f3ebd6] focus:outline-none focus:border-[#2ea06e]"
+                className="w-full bg-[#F6F3EA] border border-black/[0.08] rounded-xl px-3 py-2.5 text-xs text-[#1C1C1C] focus:outline-none focus:border-[#1C1C1C]"
               >
                 {Array.from({ length: 24 }, (_, i) => `Casillero ${String(i + 1).padStart(2, '0')}`).map((loc) => (
-                  <option key={loc} value={loc} className="bg-[#081d15] text-[#f3ebd6]">
+                  <option key={loc} value={loc} className="bg-white text-[#1C1C1C]">
                     🗄️ {loc}
                   </option>
                 ))}
@@ -191,17 +191,17 @@ export const ReserveActiveVehicleModal: React.FC<Props> = ({
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-[#d5cbbb] mb-1">Tipo de Documento</label>
+              <label className="block text-xs font-bold text-[#52514E] mb-1">Tipo de Documento</label>
               <div className="flex gap-1">
                 {(['DNI', 'Licencia', 'Llaves', 'Otro'] as DocType[]).map((t) => (
                   <button
                     key={t}
                     type="button"
                     onClick={() => setDocType(t)}
-                    className={`flex-1 py-2 rounded-xl text-[11px] font-bold border transition-all ${
+                    className={`flex-1 py-2 rounded-full text-[11px] font-bold border transition-all ${
                       docType === t
-                        ? 'bg-[#1a422f] text-[#f3ebd6] border-[#2ea06e]'
-                        : 'bg-[#02110c] text-[#d5cbbb]/60 border-[#1a422f]'
+                        ? 'bg-[#1C1C1C] text-white border-[#1C1C1C]'
+                        : 'bg-[#F6F3EA] text-[#52514E] border-black/[0.06]'
                     }`}
                   >
                     {t}
@@ -213,15 +213,15 @@ export const ReserveActiveVehicleModal: React.FC<Props> = ({
 
           {/* Duration Selector */}
           <div>
-            <label className="block text-xs font-bold text-[#d5cbbb] mb-1">Duración Reservada</label>
+            <label className="block text-xs font-bold text-[#52514E] mb-1">Duración Reservada</label>
             <div className="grid grid-cols-2 gap-2">
               <button
                 type="button"
                 onClick={() => setDurationMinutes(30)}
-                className={`py-2.5 rounded-xl font-bold border flex items-center justify-center gap-1.5 transition-all ${
+                className={`py-2.5 rounded-full font-bold border flex items-center justify-center gap-1.5 transition-all ${
                   durationMinutes === 30
-                    ? 'bg-[#1a422f] text-[#f3ebd6] border-[#2ea06e]'
-                    : 'bg-[#02110c] text-[#d5cbbb]/60 border-[#1a422f]'
+                    ? 'bg-[#1C1C1C] text-white border-[#1C1C1C]'
+                    : 'bg-[#F6F3EA] text-[#52514E] border-black/[0.06]'
                 }`}
               >
                 <Clock className="w-3.5 h-3.5" />
@@ -230,10 +230,10 @@ export const ReserveActiveVehicleModal: React.FC<Props> = ({
               <button
                 type="button"
                 onClick={() => setDurationMinutes(60)}
-                className={`py-2.5 rounded-xl font-bold border flex items-center justify-center gap-1.5 transition-all ${
+                className={`py-2.5 rounded-full font-bold border flex items-center justify-center gap-1.5 transition-all ${
                   durationMinutes === 60
-                    ? 'bg-[#1a422f] text-[#f3ebd6] border-[#2ea06e]'
-                    : 'bg-[#02110c] text-[#d5cbbb]/60 border-[#1a422f]'
+                    ? 'bg-[#1C1C1C] text-white border-[#1C1C1C]'
+                    : 'bg-[#F6F3EA] text-[#52514E] border-black/[0.06]'
                 }`}
               >
                 <Clock className="w-3.5 h-3.5" />
@@ -244,61 +244,61 @@ export const ReserveActiveVehicleModal: React.FC<Props> = ({
 
           {/* Payment Method (Pago Anticipado) */}
           <div>
-            <label className="block text-xs font-bold text-[#d5cbbb] mb-1">Cobro Anticipado en Caja *</label>
+            <label className="block text-xs font-bold text-[#52514E] mb-1">Cobro Anticipado en Caja *</label>
             <div className="grid grid-cols-3 gap-2">
               <button
                 type="button"
                 onClick={() => setPaymentMethod('efectivo')}
-                className={`py-2.5 rounded-xl font-bold border flex items-center justify-center gap-1.5 transition-all ${
+                className={`py-2.5 rounded-full font-bold border flex items-center justify-center gap-1.5 transition-all ${
                   paymentMethod === 'efectivo'
-                    ? 'bg-[#1a422f] text-[#f3ebd6] border-[#2ea06e] shadow'
-                    : 'bg-[#02110c] text-[#d5cbbb]/60 border-[#1a422f]'
+                    ? 'bg-[#1C1C1C] text-white border-[#1C1C1C] shadow-sm'
+                    : 'bg-[#F6F3EA] text-[#52514E] border-black/[0.06]'
                 }`}
               >
-                <Banknote className="w-4 h-4 text-[#2ea06e]" />
+                <Banknote className={`w-4 h-4 ${paymentMethod === 'efectivo' ? 'text-[#F7D147]' : 'text-[#16A34A]'}`} />
                 <span>Efectivo</span>
               </button>
               <button
                 type="button"
                 onClick={() => setPaymentMethod('transferencia')}
-                className={`py-2.5 rounded-xl font-bold border flex items-center justify-center gap-1.5 transition-all ${
+                className={`py-2.5 rounded-full font-bold border flex items-center justify-center gap-1.5 transition-all ${
                   paymentMethod === 'transferencia'
-                    ? 'bg-cyan-950/80 text-cyan-300 border-cyan-400 shadow'
-                    : 'bg-[#02110c] text-[#d5cbbb]/60 border-[#1a422f]'
+                    ? 'bg-[#1C1C1C] text-white border-[#1C1C1C] shadow-sm'
+                    : 'bg-[#F6F3EA] text-[#52514E] border-black/[0.06]'
                 }`}
               >
-                <Smartphone className="w-4 h-4 text-cyan-400" />
+                <Smartphone className={`w-4 h-4 ${paymentMethod === 'transferencia' ? 'text-[#F7D147]' : 'text-[#1C1C1C]'}`} />
                 <span>Transfer.</span>
               </button>
               <button
                 type="button"
                 onClick={() => setPaymentMethod('tarjeta')}
-                className={`py-2.5 rounded-xl font-bold border flex items-center justify-center gap-1.5 transition-all ${
+                className={`py-2.5 rounded-full font-bold border flex items-center justify-center gap-1.5 transition-all ${
                   paymentMethod === 'tarjeta'
-                    ? 'bg-purple-950/80 text-purple-300 border-purple-400 shadow'
-                    : 'bg-[#02110c] text-[#d5cbbb]/60 border-[#1a422f]'
+                    ? 'bg-[#1C1C1C] text-white border-[#1C1C1C] shadow-sm'
+                    : 'bg-[#F6F3EA] text-[#52514E] border-black/[0.06]'
                 }`}
               >
-                <CreditCard className="w-4 h-4 text-purple-400" />
+                <CreditCard className={`w-4 h-4 ${paymentMethod === 'tarjeta' ? 'text-[#F7D147]' : 'text-[#1C1C1C]'}`} />
                 <span>Tarjeta</span>
               </button>
             </div>
           </div>
 
           {/* Ticket Comandera Checkbox */}
-          <div className="p-3 rounded-2xl bg-[#02110c] border border-[#1a422f] flex items-center justify-between">
+          <div className="p-3.5 rounded-2xl bg-[#F6F3EA] border border-black/[0.06] flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Printer className="w-4 h-4 text-[#2ea06e]" />
+              <Printer className="w-4 h-4 text-[#1C1C1C]" />
               <div>
-                <span className="font-bold text-[#f3ebd6] block">Imprimir Ticket Comandera</span>
-                <span className="text-[10px] text-[#d5cbbb]/60">Disparar ticket 58mm para entregar al cliente</span>
+                <span className="font-bold text-[#1C1C1C] block">Imprimir Ticket Comandera</span>
+                <span className="text-[10px] text-[#71706B]">Disparar ticket 58mm para entregar al cliente</span>
               </div>
             </div>
             <button
               type="button"
               onClick={() => setAutoPrint(!autoPrint)}
               className={`w-6 h-6 rounded-lg border flex items-center justify-center transition-all ${
-                autoPrint ? 'bg-[#2ea06e] border-[#2ea06e] text-[#02110c]' : 'bg-[#081d15] border-[#1a422f]'
+                autoPrint ? 'bg-[#F7D147] border-black/15 text-[#1C1C1C]' : 'bg-white border-black/15'
               }`}
             >
               {autoPrint && <Check className="w-4 h-4 stroke-[3]" />}
@@ -306,19 +306,19 @@ export const ReserveActiveVehicleModal: React.FC<Props> = ({
           </div>
 
           {/* Footer Submit CTA */}
-          <div className="pt-2 border-t border-[#1a422f] flex items-center justify-between gap-3">
+          <div className="pt-2 border-t border-black/[0.06] flex items-center justify-between gap-3">
             <div>
-              <span className="text-[10px] text-[#d5cbbb]/60 uppercase font-bold block">A cobrar ahora:</span>
-              <div className="text-xl font-black text-[#2ea06e] font-mono">
+              <span className="text-[10px] text-[#71706B] uppercase font-bold block">A cobrar ahora:</span>
+              <div className="text-xl font-black text-[#1C1C1C] font-mono">
                 ${suggestedPrice.toLocaleString()}
               </div>
             </div>
 
             <button
               type="submit"
-              className="px-5 py-3.5 rounded-2xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-black text-xs tracking-wider shadow-lg active:scale-95 transition-all flex items-center gap-2"
+              className="px-6 py-3.5 rounded-full bg-[#1C1C1C] hover:bg-[#333333] text-white font-black text-xs tracking-wider shadow-md active:scale-95 transition-all flex items-center gap-2"
             >
-              <BookmarkPlus className="w-4 h-4" />
+              <BookmarkPlus className="w-4 h-4 text-[#F7D147]" />
               <span>COBRAR Y RESERVAR</span>
             </button>
           </div>

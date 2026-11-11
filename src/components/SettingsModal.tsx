@@ -114,55 +114,55 @@ export const SettingsModal: React.FC<Props> = ({ isOpen, onClose, onOpenRaftingC
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#02110c]/85 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="w-full max-w-lg rounded-3xl bg-[#081d15] border border-[#1a422f] shadow-2xl flex flex-col max-h-[90vh] overflow-hidden text-[#f3ebd6]">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-in fade-in duration-200">
+      <div className="w-full max-w-lg rounded-[28px] bg-white border border-black/[0.08] shadow-2xl flex flex-col max-h-[90vh] overflow-hidden text-[#1C1C1C]">
         {/* Header */}
-        <div className="p-4 border-b border-[#1a422f] flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-xl bg-[#02110c] border border-[#1a422f] flex items-center justify-center text-[#2ea06e]">
+        <div className="p-4 border-b border-black/[0.06] bg-[#FAF6E8] flex items-center justify-between">
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-full bg-[#1C1C1C] flex items-center justify-center text-[#F7D147]">
               ⚙️
             </div>
             <div>
-              <h3 className="text-sm font-extrabold text-[#f3ebd6]">Configuración - Eco Aventura</h3>
-              <p className="text-[11px] text-[#d5cbbb]">Multi-dispositivo, sonido y base de datos</p>
+              <h3 className="text-sm font-extrabold text-[#1C1C1C]">Configuración - Eco Aventura</h3>
+              <p className="text-[11px] text-[#71706B]">Multi-dispositivo, sonido y base de datos</p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-full text-[#d5cbbb] hover:text-[#f3ebd6]"
+            className="p-1.5 rounded-full text-[#71706B] hover:text-[#1C1C1C]"
           >
             <X className="w-4 h-4" />
           </button>
         </div>
 
         {/* Tab switcher */}
-        <div className="flex border-b border-[#1a422f] bg-[#02110c] p-1">
+        <div className="flex border-b border-black/[0.06] bg-[#F6F3EA] p-1.5 gap-1">
           <button
             onClick={() => setActiveTab('supabase')}
-            className={`flex-1 py-2 text-xs font-bold rounded-xl transition-all ${
+            className={`flex-1 py-2 text-xs font-bold rounded-full transition-all ${
               activeTab === 'supabase'
-                ? 'bg-[#1a422f] text-[#f3ebd6] shadow'
-                : 'text-[#d5cbbb]/60 hover:text-[#f3ebd6]'
+                ? 'bg-[#1C1C1C] text-white shadow-sm'
+                : 'text-[#52514E] hover:text-[#1C1C1C]'
             }`}
           >
             Supabase / Enlace Móvil
           </button>
           <button
             onClick={() => setActiveTab('audio')}
-            className={`flex-1 py-2 text-xs font-bold rounded-xl transition-all ${
+            className={`flex-1 py-2 text-xs font-bold rounded-full transition-all ${
               activeTab === 'audio'
-                ? 'bg-[#1a422f] text-[#f3ebd6] shadow'
-                : 'text-[#d5cbbb]/60 hover:text-[#f3ebd6]'
+                ? 'bg-[#1C1C1C] text-white shadow-sm'
+                : 'text-[#52514E] hover:text-[#1C1C1C]'
             }`}
           >
             Audio & Alertas
           </button>
           <button
             onClick={() => setActiveTab('data')}
-            className={`flex-1 py-2 text-xs font-bold rounded-xl transition-all ${
+            className={`flex-1 py-2 text-xs font-bold rounded-full transition-all ${
               activeTab === 'data'
-                ? 'bg-[#1a422f] text-[#f3ebd6] shadow'
-                : 'text-[#d5cbbb]/60 hover:text-[#f3ebd6]'
+                ? 'bg-[#1C1C1C] text-white shadow-sm'
+                : 'text-[#52514E] hover:text-[#1C1C1C]'
             }`}
           >
             Datos & Backup
@@ -176,15 +176,15 @@ export const SettingsModal: React.FC<Props> = ({ isOpen, onClose, onOpenRaftingC
               {/* Connection Status Box */}
               <div className={`p-3.5 rounded-2xl border text-xs space-y-1.5 ${
                 isConnected
-                  ? 'bg-emerald-950/40 border-[#2ea06e]/50 text-emerald-200'
-                  : 'bg-amber-950/40 border-amber-500/40 text-amber-200'
+                  ? 'bg-[#DCFCE7] border-[#86EFAC] text-[#166534]'
+                  : 'bg-[#FEF3C7] border-[#FDE68A] text-[#92400E]'
               }`}>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2 font-bold">
                     {isConnected ? (
-                      <Wifi className="w-4 h-4 text-[#2ea06e] animate-pulse" />
+                      <Wifi className="w-4 h-4 text-[#16A34A] animate-pulse" />
                     ) : (
-                      <Database className="w-4 h-4 text-amber-400" />
+                      <Database className="w-4 h-4 text-[#D97706]" />
                     )}
                     <span>
                       {isConnected ? 'Tiempo Real Multi-Dispositivo Conectado' : 'Modo Almacenamiento Local (1 Dispositivo)'}
@@ -194,14 +194,14 @@ export const SettingsModal: React.FC<Props> = ({ isOpen, onClose, onOpenRaftingC
                     <button
                       onClick={handleManualSync}
                       disabled={isSyncing}
-                      className="px-2.5 py-1 rounded-lg bg-[#02110c] hover:bg-[#1a422f] text-[#f3ebd6] border border-[#1a422f] text-[10px] font-bold flex items-center gap-1 active:scale-95 transition-all"
+                      className="px-2.5 py-1 rounded-full bg-white hover:bg-[#1C1C1C] hover:text-white text-[#1C1C1C] border border-black/10 text-[10px] font-bold flex items-center gap-1 active:scale-95 transition-all"
                     >
                       <RefreshCw className={`w-3 h-3 ${isSyncing ? 'animate-spin' : ''}`} />
                       <span>{isSyncing ? 'Sincronizando...' : 'Sincronizar ahora'}</span>
                     </button>
                   )}
                 </div>
-                <p className="text-[11px] opacity-80 leading-relaxed">
+                <p className="text-[11px] opacity-90 leading-relaxed">
                   {isConnected
                     ? 'Todos los celulares y computadoras conectados a esta misma base de datos verán los alquileres, flota y caja en tiempo real.'
                     : 'Para que dos o más dispositivos sincronicen en simultáneo, ingresa las credenciales de tu proyecto Supabase a continuación.'}
@@ -210,20 +210,20 @@ export const SettingsModal: React.FC<Props> = ({ isOpen, onClose, onOpenRaftingC
 
               {/* Cross-Device Share Link Card */}
               {isConnected && (
-                <div className="p-3.5 rounded-2xl bg-[#02110c] border border-[#1a422f] space-y-2.5">
-                  <div className="flex items-center gap-2 text-xs font-bold text-[#f3ebd6]">
-                    <Smartphone className="w-4 h-4 text-cyan-400" />
+                <div className="p-3.5 rounded-2xl bg-[#F6F3EA] border border-black/[0.06] space-y-2.5">
+                  <div className="flex items-center gap-2 text-xs font-bold text-[#1C1C1C]">
+                    <Smartphone className="w-4 h-4 text-[#1C1C1C]" />
                     <span>Conectar otro celular al instante (Sin escribir claves)</span>
                   </div>
-                  <p className="text-[11px] text-[#d5cbbb]/70">
+                  <p className="text-[11px] text-[#71706B]">
                     Copia este enlace y ábrelo o envíalo por WhatsApp al otro teléfono. Se configurará y sincronizará en tiempo real de forma 100% automática:
                   </p>
                   <button
                     type="button"
                     onClick={handleCopyDeviceLink}
-                    className="w-full py-2.5 px-3 rounded-xl bg-[#1a422f] hover:bg-[#265e43] text-[#f3ebd6] font-bold text-xs flex items-center justify-center gap-2 transition-all active:scale-95 border border-[#2ea06e]/40 shadow"
+                    className="w-full py-2.5 px-3 rounded-full bg-[#F7D147] hover:bg-[#f0c62d] text-[#1C1C1C] font-extrabold text-xs flex items-center justify-center gap-2 transition-all active:scale-95 shadow-sm"
                   >
-                    {copiedLink ? <Check className="w-4 h-4 text-[#2ea06e]" /> : <Copy className="w-4 h-4 text-cyan-300" />}
+                    {copiedLink ? <Check className="w-4 h-4 text-[#16A34A]" /> : <Copy className="w-4 h-4 text-[#1C1C1C]" />}
                     <span>{copiedLink ? '¡Enlace de conexión copiado!' : 'Copiar enlace para el otro celular'}</span>
                   </button>
                 </div>
@@ -232,7 +232,7 @@ export const SettingsModal: React.FC<Props> = ({ isOpen, onClose, onOpenRaftingC
               {/* Form to enter/update Supabase Credentials */}
               <form onSubmit={handleSaveSupabase} className="space-y-3">
                 <div>
-                  <label htmlFor={supabaseUrlId} className="text-xs font-bold text-[#d5cbbb] block mb-1">
+                  <label htmlFor={supabaseUrlId} className="text-xs font-bold text-[#52514E] block mb-1">
                     SUPABASE PROJECT URL
                   </label>
                   <input
@@ -241,12 +241,12 @@ export const SettingsModal: React.FC<Props> = ({ isOpen, onClose, onOpenRaftingC
                     placeholder="https://xyzcompany.supabase.co"
                     value={config.url}
                     onChange={(e) => setConfig({ ...config, url: e.target.value })}
-                    className="w-full bg-[#02110c] border border-[#1a422f] rounded-xl px-3 py-2 text-xs text-[#f3ebd6] placeholder-[#d5cbbb]/40 focus:outline-none focus:border-[#f3ebd6] font-mono"
+                    className="w-full bg-[#F6F3EA] border border-black/[0.08] rounded-xl px-3 py-2.5 text-xs text-[#1C1C1C] placeholder-[#71706B] focus:outline-none focus:border-[#1C1C1C] font-mono"
                   />
                 </div>
 
                 <div>
-                  <label htmlFor={supabaseKeyId} className="text-xs font-bold text-[#d5cbbb] block mb-1">
+                  <label htmlFor={supabaseKeyId} className="text-xs font-bold text-[#52514E] block mb-1">
                     SUPABASE ANON PUBLIC KEY
                   </label>
                   <input
@@ -255,20 +255,20 @@ export const SettingsModal: React.FC<Props> = ({ isOpen, onClose, onOpenRaftingC
                     placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
                     value={config.key}
                     onChange={(e) => setConfig({ ...config, key: e.target.value })}
-                    className="w-full bg-[#02110c] border border-[#1a422f] rounded-xl px-3 py-2 text-xs text-[#f3ebd6] placeholder-[#d5cbbb]/40 focus:outline-none focus:border-[#f3ebd6] font-mono"
+                    className="w-full bg-[#F6F3EA] border border-black/[0.08] rounded-xl px-3 py-2.5 text-xs text-[#1C1C1C] placeholder-[#71706B] focus:outline-none focus:border-[#1C1C1C] font-mono"
                   />
                 </div>
 
                 {saveStatus && (
-                  <div className="p-2.5 rounded-xl bg-[#1a422f] border border-[#2ea06e] text-[#f3ebd6] text-xs font-bold flex items-center gap-2">
-                    <Check className="w-4 h-4 text-[#2ea06e]" />
+                  <div className="p-2.5 rounded-xl bg-[#DCFCE7] border border-[#86EFAC] text-[#166534] text-xs font-bold flex items-center gap-2">
+                    <Check className="w-4 h-4 text-[#16A34A]" />
                     <span>{saveStatus}</span>
                   </div>
                 )}
 
                 <button
                   type="submit"
-                  className="w-full py-3 rounded-xl bg-[#f3ebd6] text-[#02110c] font-black text-xs tracking-wider shadow-lg active:scale-98 transition-all hover:bg-white"
+                  className="w-full py-3.5 rounded-full bg-[#1C1C1C] text-white font-black text-xs tracking-wider shadow-md active:scale-98 transition-all hover:bg-[#333333]"
                 >
                   GUARDAR Y ACTIVAR TIEMPO REAL
                 </button>
@@ -278,12 +278,12 @@ export const SettingsModal: React.FC<Props> = ({ isOpen, onClose, onOpenRaftingC
 
           {activeTab === 'audio' && (
             <div className="space-y-3.5">
-              <div className="p-3.5 rounded-2xl bg-[#02110c] border border-[#1a422f] text-xs text-[#d5cbbb]">
-                <div className="flex items-center gap-2 font-bold text-[#f3ebd6] mb-1">
-                  <Volume2 className="w-4 h-4 text-[#2ea06e]" />
+              <div className="p-3.5 rounded-2xl bg-[#F6F3EA] border border-black/[0.06] text-xs text-[#52514E]">
+                <div className="flex items-center gap-2 font-bold text-[#1C1C1C] mb-1">
+                  <Volume2 className="w-4 h-4 text-[#1C1C1C]" />
                   <span>Sintetizador Web Audio API</span>
                 </div>
-                <p className="text-[11px] text-[#d5cbbb]/70">
+                <p className="text-[11px] text-[#71706B]">
                   Las alertas y alarmas se generan por hardware directamente en el altavoz del celular, garantizando funcionamiento instantáneo en playa o parque sin conexión.
                 </p>
               </div>
@@ -292,7 +292,7 @@ export const SettingsModal: React.FC<Props> = ({ isOpen, onClose, onOpenRaftingC
                 <button
                   type="button"
                   onClick={handleTestAudioAlarm}
-                  className="w-full py-3 px-4 rounded-xl bg-rose-950/60 border border-rose-500/50 text-rose-300 text-xs font-bold flex items-center justify-between hover:bg-rose-900/60 active:scale-98 transition-all"
+                  className="w-full py-3 px-4 rounded-2xl bg-[#FEE2E2] border border-[#FCA5A5] text-[#991B1B] text-xs font-bold flex items-center justify-between hover:bg-[#FECACA] active:scale-98 transition-all"
                 >
                   <span>Probar Alarma de Tiempo Cumplido (Rojo)</span>
                   <span className="text-base">🚨</span>
@@ -301,7 +301,7 @@ export const SettingsModal: React.FC<Props> = ({ isOpen, onClose, onOpenRaftingC
                 <button
                   type="button"
                   onClick={handleTestChime}
-                  className="w-full py-3 px-4 rounded-xl bg-[#1a422f] border border-[#f3ebd6]/30 text-[#f3ebd6] text-xs font-bold flex items-center justify-between hover:bg-[#265e43] active:scale-98 transition-all"
+                  className="w-full py-3 px-4 rounded-2xl bg-[#F7D147] border border-black/10 text-[#1C1C1C] text-xs font-bold flex items-center justify-between hover:bg-[#f0c62d] active:scale-98 transition-all"
                 >
                   <span>Probar Sonido de Cobro / Caja Registradora</span>
                   <span className="text-base">🔔</span>
@@ -312,7 +312,7 @@ export const SettingsModal: React.FC<Props> = ({ isOpen, onClose, onOpenRaftingC
 
           {activeTab === 'data' && (
             <div className="space-y-3">
-              <div className="p-3 rounded-2xl bg-[#02110c] border border-[#1a422f] text-xs text-[#d5cbbb]/70">
+              <div className="p-3 rounded-2xl bg-[#F6F3EA] border border-black/[0.06] text-xs text-[#71706B]">
                 <p className="text-[11px]">
                   Herramientas de respaldo local y restauración para la flota de Eco Aventura.
                 </p>
@@ -321,13 +321,13 @@ export const SettingsModal: React.FC<Props> = ({ isOpen, onClose, onOpenRaftingC
               <button
                 type="button"
                 onClick={handleExportJSON}
-                className="w-full py-3 px-4 rounded-xl bg-[#02110c] border border-[#1a422f] text-[#f3ebd6] text-xs font-bold flex items-center justify-between hover:bg-[#1a422f] active:scale-98 transition-all"
+                className="w-full py-3 px-4 rounded-2xl bg-[#F6F3EA] border border-black/[0.06] text-[#1C1C1C] text-xs font-bold flex items-center justify-between hover:bg-[#EAE4D3] active:scale-98 transition-all"
               >
                 <div className="flex items-center gap-2">
-                  <Download className="w-4 h-4 text-[#2ea06e]" />
+                  <Download className="w-4 h-4 text-[#1C1C1C]" />
                   <span>Descargar Backup JSON Completo</span>
                 </div>
-                <span className="text-[10px] text-[#d5cbbb]/60">Incluye alquileres, caja e historial</span>
+                <span className="text-[10px] text-[#71706B]">Incluye alquileres, caja e historial</span>
               </button>
 
               {onOpenRaftingConfig && (
@@ -337,26 +337,26 @@ export const SettingsModal: React.FC<Props> = ({ isOpen, onClose, onOpenRaftingC
                     onClose();
                     onOpenRaftingConfig();
                   }}
-                  className="w-full py-3 px-4 rounded-xl bg-emerald-950/60 border border-[#2ea06e]/50 text-[#f3ebd6] text-xs font-bold flex items-center justify-between hover:bg-[#1a422f] active:scale-98 transition-all"
+                  className="w-full py-3 px-4 rounded-2xl bg-[#F7D147] border border-black/10 text-[#1C1C1C] text-xs font-bold flex items-center justify-between hover:bg-[#f0c62d] active:scale-98 transition-all"
                 >
                   <div className="flex items-center gap-2">
-                    <Send className="w-4 h-4 text-[#2ea06e]" />
+                    <Send className="w-4 h-4 text-[#1C1C1C]" />
                     <span>Plantillas de Rafting (Pomelos) y WhatsApp QR</span>
                   </div>
-                  <span className="text-[10px] text-[#2ea06e]">Editar 12 mensajes / QR</span>
+                  <span className="text-[10px] font-extrabold text-[#1C1C1C]">Editar 12 mensajes / QR</span>
                 </button>
               )}
 
               <button
                 type="button"
                 onClick={handleResetDemo}
-                className="w-full py-3 px-4 rounded-xl bg-amber-950/40 border border-amber-500/30 text-amber-300 text-xs font-bold flex items-center justify-between hover:bg-amber-950/60 active:scale-98 transition-all"
+                className="w-full py-3 px-4 rounded-2xl bg-[#FEF3C7] border border-[#FDE68A] text-[#92400E] text-xs font-bold flex items-center justify-between hover:bg-[#FDE68A] active:scale-98 transition-all"
               >
                 <div className="flex items-center gap-2">
-                  <RefreshCw className="w-4 h-4 text-amber-400" />
+                  <RefreshCw className="w-4 h-4 text-[#D97706]" />
                   <span>Reiniciar Operación a Cero (0km)</span>
                 </div>
-                <span className="text-[10px] text-amber-400">Flota libre y caja en $0</span>
+                <span className="text-[10px] text-[#92400E]">Flota libre y caja en $0</span>
               </button>
             </div>
           )}

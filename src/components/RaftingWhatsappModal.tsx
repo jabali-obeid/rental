@@ -275,34 +275,34 @@ export const RaftingWhatsappModal: React.FC<Props> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-2.5 sm:p-4 bg-[#02110c]/85 backdrop-blur-md animate-in fade-in duration-200">
-      <div className="w-full max-w-2xl rounded-3xl bg-[#081d15] border border-[#1a422f] shadow-2xl flex flex-col max-h-[92vh] overflow-hidden text-[#f3ebd6]">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-2.5 sm:p-4 bg-black/40 backdrop-blur-md animate-in fade-in duration-200">
+      <div className="w-full max-w-2xl rounded-[28px] bg-white border border-black/[0.08] shadow-2xl flex flex-col max-h-[92vh] overflow-hidden text-[#1C1C1C]">
         {/* Modal Header */}
-        <div className="px-4 py-3.5 border-b border-[#1a422f] flex items-center justify-between bg-[#02110c]/60">
+        <div className="px-4 py-3.5 border-b border-black/[0.06] flex items-center justify-between bg-[#FAF6E8]">
           <div className="flex items-center gap-2.5 min-w-0">
-            <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-emerald-700 to-[#2ea06e] border border-[#f3ebd6]/30 flex items-center justify-center shadow-lg shrink-0">
-              <Send className="w-5 h-5 text-[#02110c] stroke-[2.5]" />
+            <div className="w-10 h-10 rounded-full bg-[#1C1C1C] flex items-center justify-center shadow-sm shrink-0">
+              <Send className="w-4 h-4 text-[#F7D147] stroke-[2.5]" />
             </div>
             <div className="min-w-0">
               <div className="flex items-center gap-2">
-                <h2 className="text-sm sm:text-base font-black tracking-tight text-[#f3ebd6] truncate">
+                <h2 className="text-sm sm:text-base font-black tracking-tight text-[#1C1C1C] truncate">
                   Envío Automático Rafting (Pomelos Tour)
                 </h2>
                 <span
                   onClick={() => setActiveTab('qr')}
-                  className={`cursor-pointer inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold border transition-all ${bridgeState.whatsappReady
-                      ? 'bg-emerald-950/90 text-[#2ea06e] border-[#2ea06e]/50'
-                      : 'bg-amber-950/80 text-amber-300 border-amber-500/40'
+                  className={`cursor-pointer inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold border transition-all ${bridgeState.whatsappReady
+                      ? 'bg-[#DCFCE7] text-[#166534] border-[#86EFAC]'
+                      : 'bg-[#FEF3C7] text-[#92400E] border-[#FDE68A]'
                     }`}
                 >
                   <span
-                    className={`w-1.5 h-1.5 rounded-full ${bridgeState.whatsappReady ? 'bg-[#2ea06e] animate-pulse' : 'bg-amber-400'
+                    className={`w-1.5 h-1.5 rounded-full ${bridgeState.whatsappReady ? 'bg-[#16A34A] animate-pulse' : 'bg-[#D97706]'
                       }`}
                   />
                   <span>{bridgeState.whatsappReady ? 'QR Activo' : 'Conectar QR'}</span>
                 </span>
               </div>
-              <p className="text-[11px] text-[#d5cbbb]/80 truncate">
+              <p className="text-[11px] text-[#71706B] truncate">
                 Manda ubicación, recordatorio, info, 5 fotos del camino y contacto con solo poner el número
               </p>
             </div>
@@ -310,30 +310,30 @@ export const RaftingWhatsappModal: React.FC<Props> = ({
 
           <button
             onClick={onClose}
-            className="p-2 rounded-xl bg-[#02110c] border border-[#1a422f] text-[#d5cbbb] hover:text-[#f3ebd6] transition-all shrink-0"
+            className="p-2 rounded-full bg-white border border-black/[0.08] text-[#71706B] hover:text-[#1C1C1C] transition-all shrink-0"
           >
             <X className="w-4 h-4" />
           </button>
         </div>
 
         {/* Navigation Tabs */}
-        <div className="grid grid-cols-4 gap-1 p-1.5 bg-[#02110c] border-b border-[#1a422f]">
+        <div className="grid grid-cols-4 gap-1 p-1.5 bg-[#F6F3EA] border-b border-black/[0.06]">
           <button
             onClick={() => setActiveTab('send')}
-            className={`flex items-center justify-center gap-1.5 py-2 px-2 rounded-xl text-xs font-extrabold transition-all ${activeTab === 'send'
-                ? 'bg-[#2ea06e] text-[#02110c] shadow'
-                : 'text-[#d5cbbb]/70 hover:text-[#f3ebd6]'
+            className={`flex items-center justify-center gap-1.5 py-2 px-2 rounded-full text-xs font-extrabold transition-all ${activeTab === 'send'
+                ? 'bg-[#1C1C1C] text-white shadow-sm'
+                : 'text-[#52514E] hover:text-[#1C1C1C]'
               }`}
           >
-            <Send className="w-3.5 h-3.5" />
+            <Send className="w-3.5 h-3.5 text-[#F7D147]" />
             <span>Enviar Info</span>
           </button>
 
           <button
             onClick={() => setActiveTab('steps')}
-            className={`flex items-center justify-center gap-1.5 py-2 px-2 rounded-xl text-xs font-extrabold transition-all ${activeTab === 'steps'
-                ? 'bg-[#1a422f] text-[#f3ebd6] shadow'
-                : 'text-[#d5cbbb]/70 hover:text-[#f3ebd6]'
+            className={`flex items-center justify-center gap-1.5 py-2 px-2 rounded-full text-xs font-extrabold transition-all ${activeTab === 'steps'
+                ? 'bg-[#1C1C1C] text-white shadow-sm'
+                : 'text-[#52514E] hover:text-[#1C1C1C]'
               }`}
           >
             <Settings2 className="w-3.5 h-3.5" />
@@ -342,9 +342,9 @@ export const RaftingWhatsappModal: React.FC<Props> = ({
 
           <button
             onClick={() => setActiveTab('qr')}
-            className={`flex items-center justify-center gap-1.5 py-2 px-2 rounded-xl text-xs font-extrabold transition-all ${activeTab === 'qr'
-                ? 'bg-[#1a422f] text-[#f3ebd6] shadow'
-                : 'text-[#d5cbbb]/70 hover:text-[#f3ebd6]'
+            className={`flex items-center justify-center gap-1.5 py-2 px-2 rounded-full text-xs font-extrabold transition-all ${activeTab === 'qr'
+                ? 'bg-[#1C1C1C] text-white shadow-sm'
+                : 'text-[#52514E] hover:text-[#1C1C1C]'
               }`}
           >
             <QrCode className="w-3.5 h-3.5" />
@@ -353,9 +353,9 @@ export const RaftingWhatsappModal: React.FC<Props> = ({
 
           <button
             onClick={() => setActiveTab('history')}
-            className={`flex items-center justify-center gap-1.5 py-2 px-2 rounded-xl text-xs font-extrabold transition-all ${activeTab === 'history'
-                ? 'bg-[#1a422f] text-[#f3ebd6] shadow'
-                : 'text-[#d5cbbb]/70 hover:text-[#f3ebd6]'
+            className={`flex items-center justify-center gap-1.5 py-2 px-2 rounded-full text-xs font-extrabold transition-all ${activeTab === 'history'
+                ? 'bg-[#1C1C1C] text-white shadow-sm'
+                : 'text-[#52514E] hover:text-[#1C1C1C]'
               }`}
           >
             <History className="w-3.5 h-3.5" />
@@ -370,14 +370,14 @@ export const RaftingWhatsappModal: React.FC<Props> = ({
             <div className="space-y-4">
               {/* Main Phone Form */}
               <form onSubmit={handleAutoSend} className="space-y-3.5">
-                <div className="p-4 rounded-2xl bg-[#02110c] border border-[#1a422f] space-y-3">
+                <div className="p-4 rounded-2xl bg-[#F6F3EA] border border-black/[0.06] space-y-3">
                   <div className="flex items-center justify-between">
-                    <label className="text-xs font-extrabold uppercase tracking-wider text-[#2ea06e] flex items-center gap-1.5">
+                    <label className="text-xs font-extrabold uppercase tracking-wider text-[#1C1C1C] flex items-center gap-1.5">
                       <Phone className="w-3.5 h-3.5" />
                       <span>Teléfono de WhatsApp del Cliente</span>
                     </label>
                     {formattedPhone && (
-                      <span className="text-[11px] font-mono text-emerald-300 bg-emerald-950/70 px-2 py-0.5 rounded-md border border-emerald-500/30">
+                      <span className="text-[11px] font-mono text-[#166534] bg-[#DCFCE7] px-2.5 py-0.5 rounded-full border border-[#86EFAC] font-bold">
                         Se enviará a: +{formattedPhone}
                       </span>
                     )}
@@ -385,7 +385,7 @@ export const RaftingWhatsappModal: React.FC<Props> = ({
 
                   <div className="flex flex-col sm:flex-row gap-2">
                     <div className="relative flex-1">
-                      <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-xs font-black text-[#d5cbbb]/60 select-none">
+                      <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-xs font-black text-[#71706B] select-none">
                         🇦🇷 +54 9
                       </span>
                       <input
@@ -399,7 +399,7 @@ export const RaftingWhatsappModal: React.FC<Props> = ({
                           setSuccessMsg(null);
                         }}
                         disabled={isSending}
-                        className="w-full pl-20 pr-4 py-3.5 rounded-xl bg-[#081d15] border-2 border-[#1a422f] focus:border-[#2ea06e] text-base sm:text-lg font-extrabold text-[#f3ebd6] placeholder-[#d5cbbb]/30 focus:outline-none transition-all font-mono"
+                        className="w-full pl-20 pr-4 py-3.5 rounded-xl bg-white border-2 border-black/[0.08] focus:border-[#1C1C1C] text-base sm:text-lg font-extrabold text-[#1C1C1C] placeholder-[#71706B]/50 focus:outline-none transition-all font-mono"
                       />
                     </div>
 
@@ -409,30 +409,30 @@ export const RaftingWhatsappModal: React.FC<Props> = ({
                       value={clientLabel}
                       onChange={(e) => setClientLabel(e.target.value)}
                       disabled={isSending}
-                      className="sm:w-48 px-3.5 py-3 rounded-xl bg-[#081d15] border border-[#1a422f] focus:border-[#2ea06e] text-xs font-semibold text-[#f3ebd6] placeholder-[#d5cbbb]/40 focus:outline-none"
+                      className="sm:w-48 px-3.5 py-3 rounded-xl bg-white border border-black/[0.08] focus:border-[#1C1C1C] text-xs font-semibold text-[#1C1C1C] placeholder-[#71706B] focus:outline-none"
                     />
                   </div>
 
-                  <p className="text-[11px] text-[#d5cbbb]/60">
+                  <p className="text-[11px] text-[#71706B]">
                     Podés escribir solo característica + número (sin 0 ni 15) o pegar el número completo tal cual te aparece en WhatsApp.
                   </p>
                 </div>
 
                 {/* Live Progress Bar while sending */}
                 {isSending && progress && (
-                  <div className="p-4 rounded-2xl bg-emerald-950/50 border border-[#2ea06e] space-y-2.5 animate-pulse">
-                    <div className="flex items-center justify-between text-xs font-extrabold text-[#f3ebd6]">
+                  <div className="p-4 rounded-2xl bg-[#FEF3C7] border border-[#FDE68A] space-y-2.5 animate-pulse">
+                    <div className="flex items-center justify-between text-xs font-extrabold text-[#1C1C1C]">
                       <span className="flex items-center gap-2">
-                        <RefreshCw className="w-4 h-4 text-[#2ea06e] animate-spin" />
+                        <RefreshCw className="w-4 h-4 text-[#1C1C1C] animate-spin" />
                         <span>{progress.stepTitle}</span>
                       </span>
-                      <span className="text-[#2ea06e]">
+                      <span className="text-[#1C1C1C]">
                         {progress.currentStep} / {progress.totalSteps}
                       </span>
                     </div>
-                    <div className="w-full h-2.5 bg-[#02110c] rounded-full overflow-hidden border border-[#1a422f]">
+                    <div className="w-full h-2.5 bg-white rounded-full overflow-hidden border border-black/10">
                       <div
-                        className="h-full bg-gradient-to-r from-emerald-500 to-[#2ea06e] transition-all duration-300"
+                        className="h-full bg-[#1C1C1C] transition-all duration-300"
                         style={{
                           width: `${Math.round((progress.currentStep / Math.max(1, progress.totalSteps)) * 100)}%`,
                         }}
@@ -443,23 +443,23 @@ export const RaftingWhatsappModal: React.FC<Props> = ({
 
                 {/* Success Banner */}
                 {successMsg && (
-                  <div className="p-3.5 rounded-2xl bg-emerald-950/70 border border-[#2ea06e] text-emerald-200 text-xs font-bold flex items-center gap-2.5">
-                    <CheckCircle2 className="w-5 h-5 text-[#2ea06e] shrink-0" />
+                  <div className="p-3.5 rounded-2xl bg-[#DCFCE7] border border-[#86EFAC] text-[#166534] text-xs font-bold flex items-center gap-2.5">
+                    <CheckCircle2 className="w-5 h-5 text-[#16A34A] shrink-0" />
                     <span>{successMsg}</span>
                   </div>
                 )}
 
                 {/* Error Banner */}
                 {errorMsg && (
-                  <div className="p-3.5 rounded-2xl bg-rose-950/70 border border-rose-500/60 text-rose-200 text-xs font-bold flex items-start gap-2.5">
-                    <AlertCircle className="w-5 h-5 text-rose-400 shrink-0 mt-0.5" />
+                  <div className="p-3.5 rounded-2xl bg-[#FEE2E2] border border-[#FCA5A5] text-[#991B1B] text-xs font-bold flex items-start gap-2.5">
+                    <AlertCircle className="w-5 h-5 text-rose-600 shrink-0 mt-0.5" />
                     <div className="space-y-1">
                       <p>{errorMsg}</p>
                       {!bridgeState.whatsappReady && (
                         <button
                           type="button"
                           onClick={() => setActiveTab('qr')}
-                          className="underline text-amber-300 hover:text-amber-200 font-extrabold"
+                          className="underline text-[#1C1C1C] hover:opacity-80 font-extrabold"
                         >
                           Ir a pestaña WhatsApp QR para vincular o ver estado →
                         </button>
@@ -472,9 +472,9 @@ export const RaftingWhatsappModal: React.FC<Props> = ({
                 <button
                   type="submit"
                   disabled={isSending || !phone.trim()}
-                  className="w-full py-4 px-5 rounded-2xl bg-gradient-to-r from-[#2ea06e] to-emerald-500 hover:brightness-110 disabled:opacity-40 text-[#02110c] font-black text-sm sm:text-base tracking-wide shadow-xl shadow-emerald-950/50 flex items-center justify-center gap-2.5 active:scale-[0.99] transition-all"
+                  className="w-full py-4 px-5 rounded-full bg-[#1C1C1C] hover:bg-[#333333] disabled:opacity-40 text-white font-black text-sm sm:text-base tracking-wide shadow-lg flex items-center justify-center gap-2.5 active:scale-[0.99] transition-all"
                 >
-                  <Sparkles className="w-5 h-5 stroke-[2.5]" />
+                  <Sparkles className="w-5 h-5 stroke-[2.5] text-[#F7D147]" />
                   <span>
                     {isSending
                       ? `ENVIANDO SECUENCIA (${progress?.currentStep || 1}/${enabledSteps.length})...`
@@ -484,12 +484,12 @@ export const RaftingWhatsappModal: React.FC<Props> = ({
               </form>
 
               {/* Quick Direct / Fallback Tools (No server required) */}
-              <div className="p-3.5 rounded-2xl bg-[#02110c]/90 border border-[#1a422f] space-y-2.5">
+              <div className="p-3.5 rounded-2xl bg-[#F6F3EA] border border-black/[0.06] space-y-2.5">
                 <div className="flex items-center justify-between">
-                  <span className="text-[11px] font-extrabold uppercase tracking-wider text-[#d5cbbb]/80">
+                  <span className="text-[11px] font-extrabold uppercase tracking-wider text-[#52514E]">
                     Envío Directo desde el Celular (Sin Servidor QR)
                   </span>
-                  <span className="text-[10px] text-[#2ea06e] font-semibold">
+                  <span className="text-[10px] text-[#166534] font-bold">
                     100% disponible siempre
                   </span>
                 </div>
@@ -497,18 +497,18 @@ export const RaftingWhatsappModal: React.FC<Props> = ({
                   <button
                     type="button"
                     onClick={handleDirectWhatsAppTexts}
-                    className="py-2.5 px-3 rounded-xl bg-[#1a422f] hover:bg-[#23573e] text-[#f3ebd6] text-xs font-bold flex items-center justify-center gap-2 border border-[#2ea06e]/30 transition-all active:scale-95"
+                    className="py-2.5 px-3 rounded-full bg-[#F7D147] hover:bg-[#f0c62d] text-[#1C1C1C] text-xs font-extrabold flex items-center justify-center gap-2 transition-all active:scale-95"
                   >
-                    <ExternalLink className="w-4 h-4 text-[#2ea06e]" />
+                    <ExternalLink className="w-4 h-4 text-[#1C1C1C]" />
                     <span>Abrir WhatsApp con Textos + Links</span>
                   </button>
 
                   <button
                     type="button"
                     onClick={handleSharePhotosMobile}
-                    className="py-2.5 px-3 rounded-xl bg-[#081d15] hover:bg-[#1a422f] text-[#f3ebd6] text-xs font-bold flex items-center justify-center gap-2 border border-[#1a422f] transition-all active:scale-95"
+                    className="py-2.5 px-3 rounded-full bg-white hover:bg-[#EAE4D3] text-[#1C1C1C] text-xs font-bold flex items-center justify-center gap-2 border border-black/[0.08] transition-all active:scale-95"
                   >
-                    <Share2 className="w-4 h-4 text-cyan-400" />
+                    <Share2 className="w-4 h-4 text-[#1C1C1C]" />
                     <span>Compartir las 5 Fotos al Chat</span>
                   </button>
                 </div>
@@ -517,13 +517,13 @@ export const RaftingWhatsappModal: React.FC<Props> = ({
               {/* Compact Preview of the 12 Messages */}
               <div className="space-y-2">
                 <div className="flex items-center justify-between px-1">
-                  <h3 className="text-xs font-extrabold text-[#d5cbbb] uppercase tracking-wider">
+                  <h3 className="text-xs font-extrabold text-[#71706B] uppercase tracking-wider">
                     Secuencia que recibe el cliente ({enabledSteps.length} pasos en orden)
                   </h3>
                   <button
                     type="button"
                     onClick={() => setActiveTab('steps')}
-                    className="text-[11px] font-bold text-[#2ea06e] hover:underline"
+                    className="text-[11px] font-bold text-[#1C1C1C] hover:underline"
                   >
                     Editar mensajes o fotos →
                   </button>
@@ -533,22 +533,22 @@ export const RaftingWhatsappModal: React.FC<Props> = ({
                   {enabledSteps.map((step, idx) => (
                     <div
                       key={step.id}
-                      className="p-2.5 rounded-xl bg-[#02110c] border border-[#1a422f]/80 flex items-center justify-between gap-2.5 text-xs"
+                      className="p-2.5 rounded-2xl bg-[#F6F3EA] border border-black/[0.05] flex items-center justify-between gap-2.5 text-xs"
                     >
                       <div className="flex items-center gap-2.5 min-w-0">
-                        <span className="w-6 h-6 rounded-lg bg-[#1a422f] text-[#2ea06e] font-black text-[11px] flex items-center justify-center shrink-0">
+                        <span className="w-6 h-6 rounded-full bg-[#1C1C1C] text-[#F7D147] font-black text-[11px] flex items-center justify-center shrink-0">
                           {idx + 1}
                         </span>
                         {step.type === 'image' && step.imageUrl && (
                           <img
                             src={step.imageUrl}
                             alt={step.title}
-                            className="w-10 h-10 rounded-lg object-cover border border-[#1a422f] shrink-0"
+                            className="w-10 h-10 rounded-lg object-cover border border-black/10 shrink-0"
                           />
                         )}
                         <div className="min-w-0">
-                          <p className="font-bold text-[#f3ebd6] truncate">{step.title}</p>
-                          <p className="text-[11px] text-[#d5cbbb]/70 truncate">
+                          <p className="font-bold text-[#1C1C1C] truncate">{step.title}</p>
+                          <p className="text-[11px] text-[#71706B] truncate">
                             {step.type === 'text' && step.text}
                             {step.type === 'image' && (step.text || 'Foto de referencia enviada al chat')}
                             {step.type === 'contact' &&
@@ -561,11 +561,11 @@ export const RaftingWhatsappModal: React.FC<Props> = ({
                         <button
                           type="button"
                           onClick={() => handleCopyText(step.id, step.text!)}
-                          className="p-1.5 rounded-lg bg-[#081d15] hover:bg-[#1a422f] text-[#d5cbbb] shrink-0"
+                          className="p-1.5 rounded-full bg-white hover:bg-[#F7D147] text-[#1C1C1C] border border-black/[0.06] shrink-0"
                           title="Copiar este mensaje"
                         >
                           {copiedId === step.id ? (
-                            <Check className="w-3.5 h-3.5 text-[#2ea06e]" />
+                            <Check className="w-3.5 h-3.5 text-[#16A34A]" />
                           ) : (
                             <Copy className="w-3.5 h-3.5" />
                           )}
@@ -581,19 +581,19 @@ export const RaftingWhatsappModal: React.FC<Props> = ({
           {/* TAB 2: EDIT SEQUENCE OF MESSAGES & PHOTOS */}
           {activeTab === 'steps' && (
             <div className="space-y-4">
-              <div className="flex flex-wrap items-center justify-between gap-2 p-3 rounded-2xl bg-[#02110c] border border-[#1a422f]">
+              <div className="flex flex-wrap items-center justify-between gap-2 p-3.5 rounded-2xl bg-[#F6F3EA] border border-black/[0.06]">
                 <div>
-                  <h3 className="text-xs font-extrabold text-[#f3ebd6]">
+                  <h3 className="text-xs font-extrabold text-[#1C1C1C]">
                     Personalizar Secuencia de Mensajes y Fotos
                   </h3>
-                  <p className="text-[11px] text-[#d5cbbb]/70">
+                  <p className="text-[11px] text-[#71706B]">
                     Se envían uno por uno en este orden exacto con 1.4 seg de pausa.
                   </p>
                 </div>
                 <button
                   type="button"
                   onClick={handleResetDefaultSteps}
-                  className="px-3 py-1.5 rounded-xl bg-amber-950/60 hover:bg-amber-900/70 border border-amber-500/40 text-amber-300 text-[11px] font-bold flex items-center gap-1.5"
+                  className="px-3 py-1.5 rounded-full bg-[#FEF3C7] hover:bg-[#FDE68A] border border-[#FDE68A] text-[#92400E] text-[11px] font-bold flex items-center gap-1.5"
                 >
                   <RotateCcw className="w-3.5 h-3.5" />
                   <span>Restaurar Originales</span>
@@ -605,8 +605,8 @@ export const RaftingWhatsappModal: React.FC<Props> = ({
                   <div
                     key={step.id}
                     className={`p-3.5 rounded-2xl border transition-all space-y-2.5 ${step.enabled
-                        ? 'bg-[#02110c] border-[#1a422f]'
-                        : 'bg-[#02110c]/40 border-[#1a422f]/40 opacity-60'
+                        ? 'bg-[#F6F3EA] border-black/[0.06]'
+                        : 'bg-[#F6F3EA]/50 border-black/[0.04] opacity-60'
                       }`}
                   >
                     <div className="flex items-center justify-between gap-2">
@@ -615,9 +615,9 @@ export const RaftingWhatsappModal: React.FC<Props> = ({
                           type="checkbox"
                           checked={step.enabled}
                           onChange={() => handleToggleStep(step.id)}
-                          className="w-4 h-4 accent-[#2ea06e] rounded cursor-pointer"
+                          className="w-4 h-4 accent-[#1C1C1C] rounded cursor-pointer"
                         />
-                        <span className="px-2 py-0.5 rounded-md bg-[#1a422f] text-[#2ea06e] text-[10px] font-black uppercase">
+                        <span className="px-2.5 py-0.5 rounded-full bg-[#1C1C1C] text-[#F7D147] text-[10px] font-black uppercase">
                           {step.type === 'text'
                             ? 'Texto'
                             : step.type === 'image'
@@ -628,7 +628,7 @@ export const RaftingWhatsappModal: React.FC<Props> = ({
                           type="text"
                           value={step.title}
                           onChange={(e) => handleUpdateStepField(step.id, 'title', e.target.value)}
-                          className="bg-transparent border-b border-transparent focus:border-[#2ea06e] text-xs font-extrabold text-[#f3ebd6] focus:outline-none flex-1 min-w-0"
+                          className="bg-transparent border-b border-transparent focus:border-[#1C1C1C] text-xs font-extrabold text-[#1C1C1C] focus:outline-none flex-1 min-w-0"
                         />
                       </div>
 
@@ -637,7 +637,7 @@ export const RaftingWhatsappModal: React.FC<Props> = ({
                           type="button"
                           onClick={() => handleMoveStep(index, -1)}
                           disabled={index === 0}
-                          className="p-1 rounded-lg bg-[#081d15] hover:bg-[#1a422f] disabled:opacity-30 text-[#d5cbbb]"
+                          className="p-1.5 rounded-full bg-white hover:bg-[#EAE4D3] disabled:opacity-30 text-[#1C1C1C] border border-black/[0.06]"
                           title="Subir"
                         >
                           <ArrowUp className="w-3.5 h-3.5" />
@@ -646,7 +646,7 @@ export const RaftingWhatsappModal: React.FC<Props> = ({
                           type="button"
                           onClick={() => handleMoveStep(index, 1)}
                           disabled={index === steps.length - 1}
-                          className="p-1 rounded-lg bg-[#081d15] hover:bg-[#1a422f] disabled:opacity-30 text-[#d5cbbb]"
+                          className="p-1.5 rounded-full bg-white hover:bg-[#EAE4D3] disabled:opacity-30 text-[#1C1C1C] border border-black/[0.06]"
                           title="Bajar"
                         >
                           <ArrowDown className="w-3.5 h-3.5" />
@@ -654,7 +654,7 @@ export const RaftingWhatsappModal: React.FC<Props> = ({
                         <button
                           type="button"
                           onClick={() => handleDeleteStep(step.id)}
-                          className="p-1 rounded-lg bg-rose-950/60 hover:bg-rose-900 text-rose-300"
+                          className="p-1.5 rounded-full bg-[#FEE2E2] hover:bg-[#FECACA] text-[#991B1B]"
                           title="Eliminar paso"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
@@ -667,7 +667,7 @@ export const RaftingWhatsappModal: React.FC<Props> = ({
                         rows={3}
                         value={step.text || ''}
                         onChange={(e) => handleUpdateStepField(step.id, 'text', e.target.value)}
-                        className="w-full rounded-xl bg-[#081d15] border border-[#1a422f] p-2.5 text-xs text-[#f3ebd6] focus:outline-none focus:border-[#2ea06e]"
+                        className="w-full rounded-xl bg-white border border-black/[0.08] p-2.5 text-xs text-[#1C1C1C] focus:outline-none focus:border-[#1C1C1C]"
                       />
                     )}
 
@@ -677,7 +677,7 @@ export const RaftingWhatsappModal: React.FC<Props> = ({
                           <img
                             src={step.imageUrl}
                             alt={step.title}
-                            className="w-24 h-20 rounded-xl object-cover border border-[#1a422f] shrink-0"
+                            className="w-24 h-20 rounded-xl object-cover border border-black/10 shrink-0"
                           />
                         )}
                         <div className="flex-1 w-full space-y-2">
@@ -686,10 +686,10 @@ export const RaftingWhatsappModal: React.FC<Props> = ({
                             placeholder="Texto o pie de foto opcional..."
                             value={step.text || ''}
                             onChange={(e) => handleUpdateStepField(step.id, 'text', e.target.value)}
-                            className="w-full rounded-xl bg-[#081d15] border border-[#1a422f] px-3 py-2 text-xs text-[#f3ebd6] focus:outline-none focus:border-[#2ea06e]"
+                            className="w-full rounded-xl bg-white border border-black/[0.08] px-3 py-2 text-xs text-[#1C1C1C] focus:outline-none focus:border-[#1C1C1C]"
                           />
-                          <label className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#1a422f] hover:bg-[#23573e] text-[#f3ebd6] text-[11px] font-bold cursor-pointer">
-                            <ImageIcon className="w-3.5 h-3.5 text-[#2ea06e]" />
+                          <label className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#1C1C1C] hover:bg-[#333333] text-white text-[11px] font-bold cursor-pointer">
+                            <ImageIcon className="w-3.5 h-3.5 text-[#F7D147]" />
                             <span>Cambiar Foto desde el dispositivo</span>
                             <input
                               type="file"
@@ -705,7 +705,7 @@ export const RaftingWhatsappModal: React.FC<Props> = ({
                     {step.type === 'contact' && (
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                         <div>
-                          <label className="text-[10px] font-bold text-[#d5cbbb]/70 block mb-1">
+                          <label className="text-[10px] font-bold text-[#71706B] block mb-1">
                             Nombre del Contacto (Prestador Rafting)
                           </label>
                           <input
@@ -714,11 +714,11 @@ export const RaftingWhatsappModal: React.FC<Props> = ({
                             onChange={(e) =>
                               handleUpdateStepField(step.id, 'contactName', e.target.value)
                             }
-                            className="w-full rounded-xl bg-[#081d15] border border-[#1a422f] px-3 py-2 text-xs text-[#f3ebd6]"
+                            className="w-full rounded-xl bg-white border border-black/[0.08] px-3 py-2 text-xs text-[#1C1C1C]"
                           />
                         </div>
                         <div>
-                          <label className="text-[10px] font-bold text-[#d5cbbb]/70 block mb-1">
+                          <label className="text-[10px] font-bold text-[#71706B] block mb-1">
                             Teléfono de Contacto (WhatsApp)
                           </label>
                           <input
@@ -727,18 +727,18 @@ export const RaftingWhatsappModal: React.FC<Props> = ({
                             onChange={(e) =>
                               handleUpdateStepField(step.id, 'contactPhone', e.target.value)
                             }
-                            className="w-full rounded-xl bg-[#081d15] border border-[#1a422f] px-3 py-2 text-xs text-[#f3ebd6] font-mono"
+                            className="w-full rounded-xl bg-white border border-black/[0.08] px-3 py-2 text-xs text-[#1C1C1C] font-mono"
                           />
                         </div>
                         <div className="sm:col-span-2">
-                          <label className="text-[10px] font-bold text-[#d5cbbb]/70 block mb-1">
+                          <label className="text-[10px] font-bold text-[#71706B] block mb-1">
                             Mensaje acompañando al contacto
                           </label>
                           <input
                             type="text"
                             value={step.text || ''}
                             onChange={(e) => handleUpdateStepField(step.id, 'text', e.target.value)}
-                            className="w-full rounded-xl bg-[#081d15] border border-[#1a422f] px-3 py-2 text-xs text-[#f3ebd6]"
+                            className="w-full rounded-xl bg-white border border-black/[0.08] px-3 py-2 text-xs text-[#1C1C1C]"
                           />
                         </div>
                       </div>
@@ -752,28 +752,28 @@ export const RaftingWhatsappModal: React.FC<Props> = ({
                 <button
                   type="button"
                   onClick={() => handleAddStep('text')}
-                  className="py-2.5 px-3 rounded-xl bg-[#1a422f] hover:bg-[#23573e] text-[#f3ebd6] text-xs font-bold flex items-center justify-center gap-1.5"
+                  className="py-2.5 px-3 rounded-full bg-[#1C1C1C] hover:bg-[#333333] text-white text-xs font-bold flex items-center justify-center gap-1.5"
                 >
-                  <Plus className="w-3.5 h-3.5" />
-                  <MessageSquare className="w-3.5 h-3.5 text-[#2ea06e]" />
+                  <Plus className="w-3.5 h-3.5 text-[#F7D147]" />
+                  <MessageSquare className="w-3.5 h-3.5 text-[#F7D147]" />
                   <span>+ Texto</span>
                 </button>
                 <button
                   type="button"
                   onClick={() => handleAddStep('image')}
-                  className="py-2.5 px-3 rounded-xl bg-[#1a422f] hover:bg-[#23573e] text-[#f3ebd6] text-xs font-bold flex items-center justify-center gap-1.5"
+                  className="py-2.5 px-3 rounded-full bg-[#1C1C1C] hover:bg-[#333333] text-white text-xs font-bold flex items-center justify-center gap-1.5"
                 >
-                  <Plus className="w-3.5 h-3.5" />
-                  <ImageIcon className="w-3.5 h-3.5 text-cyan-400" />
+                  <Plus className="w-3.5 h-3.5 text-[#F7D147]" />
+                  <ImageIcon className="w-3.5 h-3.5 text-[#F7D147]" />
                   <span>+ Foto</span>
                 </button>
                 <button
                   type="button"
                   onClick={() => handleAddStep('contact')}
-                  className="py-2.5 px-3 rounded-xl bg-[#1a422f] hover:bg-[#23573e] text-[#f3ebd6] text-xs font-bold flex items-center justify-center gap-1.5"
+                  className="py-2.5 px-3 rounded-full bg-[#1C1C1C] hover:bg-[#333333] text-white text-xs font-bold flex items-center justify-center gap-1.5"
                 >
-                  <Plus className="w-3.5 h-3.5" />
-                  <UserCheck className="w-3.5 h-3.5 text-amber-400" />
+                  <Plus className="w-3.5 h-3.5 text-[#F7D147]" />
+                  <UserCheck className="w-3.5 h-3.5 text-[#F7D147]" />
                   <span>+ Contacto</span>
                 </button>
               </div>
@@ -786,23 +786,23 @@ export const RaftingWhatsappModal: React.FC<Props> = ({
               {/* Live Connection Card */}
               <div
                 className={`p-4 rounded-2xl border space-y-3 ${bridgeState.whatsappReady
-                    ? 'bg-emerald-950/40 border-[#2ea06e]/60'
-                    : 'bg-[#02110c] border-[#1a422f]'
+                    ? 'bg-[#DCFCE7] border-[#86EFAC]'
+                    : 'bg-[#F6F3EA] border-black/[0.06]'
                   }`}
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2.5">
                     <Wifi
-                      className={`w-5 h-5 ${bridgeState.whatsappReady ? 'text-[#2ea06e] animate-pulse' : 'text-amber-400'
+                      className={`w-5 h-5 ${bridgeState.whatsappReady ? 'text-[#16A34A] animate-pulse' : 'text-[#D97706]'
                         }`}
                     />
                     <div>
-                      <h3 className="text-xs sm:text-sm font-extrabold text-[#f3ebd6]">
+                      <h3 className="text-xs sm:text-sm font-extrabold text-[#1C1C1C]">
                         {bridgeState.whatsappReady
                           ? `¡WhatsApp Vinculado! (${bridgeState.whatsappNumber || 'Activo'})`
                           : bridgeState.statusText}
                       </h3>
-                      <p className="text-[11px] text-[#d5cbbb]/70">
+                      <p className="text-[11px] text-[#71706B]">
                         {bridgeState.whatsappReady
                           ? 'Todos los celulares pueden disparar los 12 mensajes en segundo plano.'
                           : 'Escaneá el código QR desde tu WhatsApp > Dispositivos vinculados.'}
@@ -813,7 +813,7 @@ export const RaftingWhatsappModal: React.FC<Props> = ({
                   <button
                     type="button"
                     onClick={handleRefreshQr}
-                    className="px-3 py-1.5 rounded-xl bg-[#081d15] hover:bg-[#1a422f] border border-[#1a422f] text-xs font-bold flex items-center gap-1.5"
+                    className="px-3 py-1.5 rounded-full bg-white hover:bg-[#EAE4D3] border border-black/[0.08] text-xs font-bold flex items-center gap-1.5 text-[#1C1C1C]"
                   >
                     <RefreshCw className={`w-3.5 h-3.5 ${isCheckingQr ? 'animate-spin' : ''}`} />
                     <span>Actualizar</span>
@@ -822,30 +822,30 @@ export const RaftingWhatsappModal: React.FC<Props> = ({
 
                 {/* QR Code Display if available */}
                 {!bridgeState.whatsappReady && bridgeState.qrDataUrl && (
-                  <div className="flex flex-col items-center justify-center p-4 bg-white rounded-2xl max-w-xs mx-auto space-y-2 shadow-xl">
+                  <div className="flex flex-col items-center justify-center p-4 bg-white rounded-2xl max-w-xs mx-auto space-y-2 shadow-md border border-black/10">
                     <img
                       src={bridgeState.qrDataUrl}
                       alt="Código QR de WhatsApp"
                       className="w-56 h-56 object-contain"
                     />
-                    <span className="text-[11px] font-extrabold text-[#02110c] text-center">
+                    <span className="text-[11px] font-extrabold text-[#1C1C1C] text-center">
                       Abrí WhatsApp en tu teléfono → Dispositivos vinculados → Vincular un dispositivo
                     </span>
                   </div>
                 )}
 
                 {!bridgeState.connected && (
-                  <div className="p-3.5 rounded-xl bg-[#081d15] border border-[#1a422f] text-xs space-y-2">
-                    <p className="font-extrabold text-amber-300">
+                  <div className="p-3.5 rounded-xl bg-white border border-black/[0.06] text-xs space-y-2">
+                    <p className="font-extrabold text-[#92400E]">
                       ¿Cómo encender el servidor WhatsApp QR gratuito?
                     </p>
-                    <p className="text-[11px] text-[#d5cbbb]/80 leading-relaxed">
+                    <p className="text-[11px] text-[#52514E] leading-relaxed">
                       En la carpeta del proyecto tenés listo el puente automático. Corré este comando en la terminal (o dejalo corriendo en una PC/servidor conectado a tu Supabase):
                     </p>
-                    <code className="block p-2.5 rounded-lg bg-[#02110c] border border-[#1a422f] text-[#2ea06e] font-mono text-[11px] select-all">
+                    <code className="block p-2.5 rounded-lg bg-[#1C1C1C] text-[#F7D147] font-mono text-[11px] select-all">
                       npm run whatsapp-bridge
                     </code>
-                    <p className="text-[11px] text-[#d5cbbb]/70">
+                    <p className="text-[11px] text-[#71706B]">
                       Al encenderlo, el código QR aparece automáticamente acá arriba y cualquier celular en 4G conectado a tu Supabase podrá enviar toda la secuencia con 1 clic.
                     </p>
                   </div>
@@ -856,7 +856,7 @@ export const RaftingWhatsappModal: React.FC<Props> = ({
                     <button
                       type="button"
                       onClick={() => raftingWhatsappService.requestLogoutOrNewQr()}
-                      className="text-[11px] text-rose-400 hover:underline font-bold"
+                      className="text-[11px] text-[#991B1B] hover:underline font-bold"
                     >
                       Cerrar sesión de este número / Cambiar WhatsApp
                     </button>
@@ -867,9 +867,9 @@ export const RaftingWhatsappModal: React.FC<Props> = ({
               {/* Bridge / Evolution API Configuration */}
               <form
                 onSubmit={handleSaveBridgeSettings}
-                className="p-4 rounded-2xl bg-[#02110c] border border-[#1a422f] space-y-3"
+                className="p-4 rounded-2xl bg-[#F6F3EA] border border-black/[0.06] space-y-3"
               >
-                <h4 className="text-xs font-extrabold text-[#f3ebd6] uppercase tracking-wider">
+                <h4 className="text-xs font-extrabold text-[#1C1C1C] uppercase tracking-wider">
                   Ajustes Avanzados de Conexión
                 </h4>
 
@@ -877,9 +877,9 @@ export const RaftingWhatsappModal: React.FC<Props> = ({
                   <button
                     type="button"
                     onClick={() => setBridgeConfig({ ...bridgeConfig, provider: 'bridge' })}
-                    className={`py-2 px-3 rounded-xl text-xs font-bold border ${bridgeConfig.provider === 'bridge'
-                        ? 'bg-[#1a422f] border-[#2ea06e] text-[#f3ebd6]'
-                        : 'bg-[#081d15] border-[#1a422f] text-[#d5cbbb]/60'
+                    className={`py-2 px-3 rounded-full text-xs font-bold border ${bridgeConfig.provider === 'bridge'
+                        ? 'bg-[#1C1C1C] border-[#1C1C1C] text-white'
+                        : 'bg-white border-black/[0.06] text-[#52514E]'
                       }`}
                   >
                     Servidor QR Incluido (Supabase / Local)
@@ -887,9 +887,9 @@ export const RaftingWhatsappModal: React.FC<Props> = ({
                   <button
                     type="button"
                     onClick={() => setBridgeConfig({ ...bridgeConfig, provider: 'evolution' })}
-                    className={`py-2 px-3 rounded-xl text-xs font-bold border ${bridgeConfig.provider === 'evolution'
-                        ? 'bg-[#1a422f] border-[#2ea06e] text-[#f3ebd6]'
-                        : 'bg-[#081d15] border-[#1a422f] text-[#d5cbbb]/60'
+                    className={`py-2 px-3 rounded-full text-xs font-bold border ${bridgeConfig.provider === 'evolution'
+                        ? 'bg-[#1C1C1C] border-[#1C1C1C] text-white'
+                        : 'bg-white border-black/[0.06] text-[#52514E]'
                       }`}
                   >
                     Evolution API Externa
@@ -899,7 +899,7 @@ export const RaftingWhatsappModal: React.FC<Props> = ({
                 {bridgeConfig.provider === 'bridge' ? (
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                      <label className="text-[11px] font-bold text-[#d5cbbb] block mb-1">
+                      <label className="text-[11px] font-bold text-[#52514E] block mb-1">
                         URL del Servidor QR (Local o Nube)
                       </label>
                       <input
@@ -909,11 +909,11 @@ export const RaftingWhatsappModal: React.FC<Props> = ({
                           setBridgeConfig({ ...bridgeConfig, bridgeHttpUrl: e.target.value })
                         }
                         placeholder="http://localhost:3100"
-                        className="w-full rounded-xl bg-[#081d15] border border-[#1a422f] px-3 py-2 text-xs text-[#f3ebd6] font-mono"
+                        className="w-full rounded-xl bg-white border border-black/[0.08] px-3 py-2 text-xs text-[#1C1C1C] font-mono"
                       />
                     </div>
                     <div>
-                      <label className="text-[11px] font-bold text-[#d5cbbb] block mb-1">
+                      <label className="text-[11px] font-bold text-[#52514E] block mb-1">
                         Pausa entre cada mensaje (ms)
                       </label>
                       <input
@@ -928,14 +928,14 @@ export const RaftingWhatsappModal: React.FC<Props> = ({
                             delayMs: Number(e.target.value) || 1400,
                           })
                         }
-                        className="w-full rounded-xl bg-[#081d15] border border-[#1a422f] px-3 py-2 text-xs text-[#f3ebd6] font-mono"
+                        className="w-full rounded-xl bg-white border border-black/[0.08] px-3 py-2 text-xs text-[#1C1C1C] font-mono"
                       />
                     </div>
                   </div>
                 ) : (
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
                     <div>
-                      <label className="text-[11px] font-bold text-[#d5cbbb] block mb-1">
+                      <label className="text-[11px] font-bold text-[#52514E] block mb-1">
                         Evolution API URL
                       </label>
                       <input
@@ -945,11 +945,11 @@ export const RaftingWhatsappModal: React.FC<Props> = ({
                           setBridgeConfig({ ...bridgeConfig, evolutionUrl: e.target.value })
                         }
                         placeholder="https://api.tudominio.com"
-                        className="w-full rounded-xl bg-[#081d15] border border-[#1a422f] px-3 py-2 text-xs text-[#f3ebd6] font-mono"
+                        className="w-full rounded-xl bg-white border border-black/[0.08] px-3 py-2 text-xs text-[#1C1C1C] font-mono"
                       />
                     </div>
                     <div>
-                      <label className="text-[11px] font-bold text-[#d5cbbb] block mb-1">
+                      <label className="text-[11px] font-bold text-[#52514E] block mb-1">
                         API Key
                       </label>
                       <input
@@ -959,11 +959,11 @@ export const RaftingWhatsappModal: React.FC<Props> = ({
                           setBridgeConfig({ ...bridgeConfig, evolutionApiKey: e.target.value })
                         }
                         placeholder="Global / Instance Key"
-                        className="w-full rounded-xl bg-[#081d15] border border-[#1a422f] px-3 py-2 text-xs text-[#f3ebd6] font-mono"
+                        className="w-full rounded-xl bg-white border border-black/[0.08] px-3 py-2 text-xs text-[#1C1C1C] font-mono"
                       />
                     </div>
                     <div>
-                      <label className="text-[11px] font-bold text-[#d5cbbb] block mb-1">
+                      <label className="text-[11px] font-bold text-[#52514E] block mb-1">
                         Nombre de Instancia
                       </label>
                       <input
@@ -973,7 +973,7 @@ export const RaftingWhatsappModal: React.FC<Props> = ({
                           setBridgeConfig({ ...bridgeConfig, evolutionInstance: e.target.value })
                         }
                         placeholder="eco-aventura"
-                        className="w-full rounded-xl bg-[#081d15] border border-[#1a422f] px-3 py-2 text-xs text-[#f3ebd6] font-mono"
+                        className="w-full rounded-xl bg-white border border-black/[0.08] px-3 py-2 text-xs text-[#1C1C1C] font-mono"
                       />
                     </div>
                   </div>
@@ -981,7 +981,7 @@ export const RaftingWhatsappModal: React.FC<Props> = ({
 
                 <button
                   type="submit"
-                  className="w-full py-2.5 rounded-xl bg-[#f3ebd6] text-[#02110c] font-black text-xs hover:bg-white transition-all"
+                  className="w-full py-3 rounded-full bg-[#1C1C1C] text-white font-black text-xs hover:bg-[#333333] transition-all"
                 >
                   Guardar Configuración de Envío
                 </button>
@@ -993,7 +993,7 @@ export const RaftingWhatsappModal: React.FC<Props> = ({
           {activeTab === 'history' && (
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <h3 className="text-xs font-extrabold text-[#f3ebd6]">
+                <h3 className="text-xs font-extrabold text-[#1C1C1C]">
                   Últimos clientes a los que se les envió Info de Rafting
                 </h3>
                 {history.length > 0 && (
@@ -1003,7 +1003,7 @@ export const RaftingWhatsappModal: React.FC<Props> = ({
                       raftingWhatsappService.clearHistory();
                       setHistory([]);
                     }}
-                    className="text-[11px] text-rose-400 hover:underline font-bold"
+                    className="text-[11px] text-[#991B1B] hover:underline font-bold"
                   >
                     Limpiar historial
                   </button>
@@ -1011,7 +1011,7 @@ export const RaftingWhatsappModal: React.FC<Props> = ({
               </div>
 
               {history.length === 0 ? (
-                <div className="p-8 rounded-2xl bg-[#02110c] border border-[#1a422f] text-center text-xs text-[#d5cbbb]/60">
+                <div className="p-8 rounded-2xl bg-[#F6F3EA] border border-black/[0.06] text-center text-xs text-[#71706B]">
                   Todavía no se registraron envíos de info de Rafting en este dispositivo.
                 </div>
               ) : (
@@ -1019,20 +1019,20 @@ export const RaftingWhatsappModal: React.FC<Props> = ({
                   {history.map((item) => (
                     <div
                       key={item.id}
-                      className="p-3 rounded-2xl bg-[#02110c] border border-[#1a422f] flex items-center justify-between gap-3 text-xs"
+                      className="p-3.5 rounded-2xl bg-[#F6F3EA] border border-black/[0.06] flex items-center justify-between gap-3 text-xs"
                     >
                       <div>
                         <div className="flex items-center gap-2">
-                          <span className="font-mono font-extrabold text-[#f3ebd6]">
+                          <span className="font-mono font-extrabold text-[#1C1C1C]">
                             +{item.formattedPhone}
                           </span>
                           {item.clientLabel && (
-                            <span className="px-2 py-0.5 rounded-full bg-[#1a422f] text-[#2ea06e] text-[10px] font-bold">
+                            <span className="px-2.5 py-0.5 rounded-full bg-[#F7D147] text-[#1C1C1C] text-[10px] font-bold">
                               {item.clientLabel}
                             </span>
                           )}
                         </div>
-                        <p className="text-[11px] text-[#d5cbbb]/60 mt-0.5">
+                        <p className="text-[11px] text-[#71706B] mt-0.5">
                           {new Date(item.sentAt).toLocaleString('es-AR', {
                             day: '2-digit',
                             month: '2-digit',
@@ -1056,7 +1056,7 @@ export const RaftingWhatsappModal: React.FC<Props> = ({
                           setClientLabel(item.clientLabel || '');
                           setActiveTab('send');
                         }}
-                        className="px-3 py-1.5 rounded-xl bg-[#1a422f] hover:bg-[#23573e] text-[#f3ebd6] text-[11px] font-bold shrink-0"
+                        className="px-3.5 py-1.5 rounded-full bg-[#1C1C1C] hover:bg-[#333333] text-white text-[11px] font-bold shrink-0"
                       >
                         Reenviar
                       </button>

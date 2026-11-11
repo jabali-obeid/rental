@@ -83,24 +83,24 @@ export const FinishRentalModal: React.FC<Props> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-[#02110c]/85 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="w-full max-w-lg max-h-[92vh] overflow-y-auto rounded-t-3xl sm:rounded-3xl bg-[#081d15] border border-[#1a422f] shadow-2xl flex flex-col text-[#f3ebd6]">
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/40 backdrop-blur-sm animate-in fade-in duration-200">
+      <div className="w-full max-w-lg max-h-[92vh] overflow-y-auto rounded-t-[28px] sm:rounded-[28px] bg-white border border-black/[0.08] shadow-2xl flex flex-col text-[#1C1C1C]">
         {/* Modal Top Header */}
-        <div className="sticky top-0 bg-[#081d15]/95 backdrop-blur-md px-5 py-4 border-b border-[#1a422f] flex items-center justify-between z-10">
+        <div className="sticky top-0 bg-[#FAF6E8]/95 backdrop-blur-md px-5 py-4 border-b border-black/[0.06] flex items-center justify-between z-10">
           <div>
             <div className="flex items-center gap-2">
-              <span className="px-2 py-0.5 rounded-lg bg-[#02110c] text-[#f3ebd6] font-mono font-bold text-xs border border-[#1a422f]">
+              <span className="px-2.5 py-0.5 rounded-full bg-[#1C1C1C] text-white font-mono font-bold text-xs">
                 {unit?.codeNumber || 'Unidad'}
               </span>
-              <h2 className="text-base font-extrabold text-[#f3ebd6]">Finalizar Alquiler</h2>
+              <h2 className="text-base font-extrabold text-[#1C1C1C]">Finalizar Alquiler</h2>
             </div>
-            <p className="text-xs text-[#d5cbbb] mt-0.5">
-              Cliente: <span className="text-[#f3ebd6] font-semibold">{rental.customerName}</span>
+            <p className="text-xs text-[#71706B] mt-0.5">
+              Cliente: <span className="text-[#1C1C1C] font-semibold">{rental.customerName}</span>
             </p>
           </div>
           <button
             onClick={onClose}
-            className="p-2 rounded-full text-[#d5cbbb] hover:text-[#f3ebd6] hover:bg-[#1a422f] active:scale-95 transition-all"
+            className="p-2 rounded-full text-[#71706B] hover:text-[#1C1C1C] hover:bg-white active:scale-95 transition-all"
           >
             <X className="w-5 h-5" />
           </button>
@@ -108,23 +108,23 @@ export const FinishRentalModal: React.FC<Props> = ({
 
         <div className="p-5 space-y-4">
           {/* CRITICAL ALERT BANNER: IDENTITY / GUARANTEE DOCUMENT RETURN */}
-          <div className="relative overflow-hidden rounded-2xl bg-[#1a422f] border-2 border-[#f3ebd6] p-4 shadow-xl shadow-[#02110c]/80 animate-pulse-fast">
+          <div className="relative overflow-hidden rounded-2xl bg-[#F7D147] border border-black/10 p-4 shadow-md">
             <div className="flex items-start gap-3">
-              <div className="p-2.5 rounded-xl bg-[#f3ebd6] text-[#02110c] shrink-0 mt-0.5 font-black">
+              <div className="p-2.5 rounded-xl bg-[#1C1C1C] text-[#F7D147] shrink-0 mt-0.5 font-black">
                 <AlertTriangle className="w-6 h-6 stroke-[2.5]" />
               </div>
               <div className="space-y-1">
-                <h3 className="text-sm font-black uppercase tracking-wide text-[#f3ebd6]">
+                <h3 className="text-sm font-black uppercase tracking-wide text-[#1C1C1C]">
                   RECORDAR DEVOLVER DOCUMENTO DE IDENTIDAD / GARANTÍA
                 </h3>
                 <div className="flex flex-wrap items-center gap-2 pt-1 text-xs">
-                  <span className="px-2.5 py-1 rounded-lg bg-[#02110c] text-[#f3ebd6] font-bold border border-[#f3ebd6]/40 flex items-center gap-1.5">
-                    <FileText className="w-3.5 h-3.5 text-[#2ea06e]" />
+                  <span className="px-3 py-1 rounded-full bg-white text-[#1C1C1C] font-bold border border-black/10 flex items-center gap-1.5">
+                    <FileText className="w-3.5 h-3.5 text-[#1C1C1C]" />
                     <span>{rental.docType}</span>
                   </span>
-                  <span className="px-2.5 py-1 rounded-lg bg-[#02110c] text-[#f3ebd6] font-mono font-black border border-[#f3ebd6]/60 flex items-center gap-1.5">
+                  <span className="px-3 py-1 rounded-full bg-[#1C1C1C] text-white font-mono font-black flex items-center gap-1.5">
                     <span>🗄️ UBICACIÓN:</span>
-                    <span className="text-[#f3ebd6] underline underline-offset-2">{rental.docLocker}</span>
+                    <span className="text-[#F7D147] underline underline-offset-2">{rental.docLocker}</span>
                   </span>
                 </div>
               </div>
@@ -132,12 +132,12 @@ export const FinishRentalModal: React.FC<Props> = ({
 
             {/* Document photo preview if available */}
             {rental.docPhotoUrl && (
-              <div className="mt-3 pt-3 border-t border-[#f3ebd6]/20">
-                <p className="text-[11px] font-semibold text-[#f3ebd6] mb-1">Foto de garantía registrada:</p>
+              <div className="mt-3 pt-3 border-t border-black/10">
+                <p className="text-[11px] font-semibold text-[#1C1C1C] mb-1">Foto de garantía registrada:</p>
                 <img
                   src={rental.docPhotoUrl}
                   alt="Foto Documento de Garantía"
-                  className="w-full max-h-36 object-cover rounded-xl border border-[#f3ebd6]/30 shadow"
+                  className="w-full max-h-36 object-cover rounded-xl border border-black/15 shadow"
                 />
               </div>
             )}
@@ -148,17 +148,17 @@ export const FinishRentalModal: React.FC<Props> = ({
             <div
               className={`rounded-2xl border p-3.5 flex items-center justify-between ${
                 defaultPenalty > 0
-                  ? 'bg-rose-500/10 border-rose-500/30'
-                  : 'bg-amber-500/10 border-amber-500/30'
+                  ? 'bg-[#FEE2E2] border-[#FCA5A5]'
+                  : 'bg-[#FEF3C7] border-[#FDE68A]'
               }`}
             >
               <div className="flex items-center gap-2.5">
-                <Clock className={`w-5 h-5 ${defaultPenalty > 0 ? 'text-rose-400' : 'text-amber-400'}`} />
+                <Clock className={`w-5 h-5 ${defaultPenalty > 0 ? 'text-rose-600' : 'text-amber-600'}`} />
                 <div>
-                  <div className={`text-xs font-bold ${defaultPenalty > 0 ? 'text-rose-300' : 'text-amber-300'}`}>
+                  <div className={`text-xs font-bold ${defaultPenalty > 0 ? 'text-[#991B1B]' : 'text-[#92400E]'}`}>
                     Demora de {overdueMinutes} min ({penaltyLabel})
                   </div>
-                  <div className="text-[11px] text-[#d5cbbb]">
+                  <div className="text-[11px] text-[#52514E]">
                     {defaultPenalty > 0
                       ? 'Redondeado a billetes argentinos en circulación'
                       : 'Dentro de los primeros 10 min de flexibilidad sin cargo'}
@@ -166,8 +166,8 @@ export const FinishRentalModal: React.FC<Props> = ({
                 </div>
               </div>
               <div className="text-right">
-                <span className="text-xs text-rose-400 block font-semibold">Mora sugerida</span>
-                <span className="text-base font-extrabold text-white">
+                <span className="text-xs text-[#991B1B] block font-semibold">Mora sugerida</span>
+                <span className="text-base font-extrabold text-[#1C1C1C]">
                   +${defaultPenalty.toLocaleString()}
                 </span>
               </div>
@@ -175,24 +175,24 @@ export const FinishRentalModal: React.FC<Props> = ({
           )}
 
           {/* Price Breakdown & Editable Adjustments */}
-          <div className="rounded-2xl bg-[#02110c]/80 border border-[#1a422f] p-4 space-y-3">
-            <h4 className="text-xs font-bold uppercase tracking-wider text-[#d5cbbb]/70">
+          <div className="rounded-2xl bg-[#F6F3EA] border border-black/[0.06] p-4 space-y-3">
+            <h4 className="text-xs font-bold uppercase tracking-wider text-[#71706B]">
               Liquidación del Servicio
             </h4>
 
             {/* Base Price */}
             <div className="flex items-center justify-between text-sm">
-              <span className="text-[#d5cbbb]">Tarifa base pactada ({rental.durationMinutes} min):</span>
-              <span className="font-semibold text-[#f3ebd6]">${rental.basePrice.toLocaleString()}</span>
+              <span className="text-[#52514E]">Tarifa base pactada ({rental.durationMinutes} min):</span>
+              <span className="font-semibold text-[#1C1C1C]">${rental.basePrice.toLocaleString()}</span>
             </div>
 
             {/* Penalty adjustment */}
             <div className="flex items-center justify-between gap-3 text-sm">
-              <label htmlFor="penalty-input" className="text-rose-400 font-medium flex items-center gap-1">
+              <label htmlFor="penalty-input" className="text-[#991B1B] font-medium flex items-center gap-1">
                 <span>Recargo por mora / retraso:</span>
               </label>
               <div className="flex items-center gap-1.5 w-32">
-                <span className="text-rose-400 font-bold">$</span>
+                <span className="text-[#991B1B] font-bold">$</span>
                 <input
                   id="penalty-input"
                   type="number"
@@ -200,16 +200,16 @@ export const FinishRentalModal: React.FC<Props> = ({
                   step="100"
                   value={penaltyPrice}
                   onChange={(e) => setPenaltyPrice(Math.max(0, Number(e.target.value) || 0))}
-                  className="w-full bg-[#081d15] border border-[#1a422f] rounded-lg px-2 py-1 text-right text-white font-bold focus:outline-none focus:border-rose-500 text-sm"
+                  className="w-full bg-white border border-black/[0.08] rounded-xl px-2.5 py-1 text-right text-[#1C1C1C] font-bold focus:outline-none focus:border-rose-500 text-sm"
                 />
               </div>
             </div>
 
             {/* Discount */}
             <div className="flex items-center justify-between gap-3 text-sm">
-              <label htmlFor="discount-input" className="text-[#d5cbbb]">Descuento o bonificación:</label>
+              <label htmlFor="discount-input" className="text-[#52514E]">Descuento o bonificación:</label>
               <div className="flex items-center gap-1.5 w-32">
-                <span className="text-[#d5cbbb] font-bold">-$</span>
+                <span className="text-[#52514E] font-bold">-$</span>
                 <input
                   id="discount-input"
                   type="number"
@@ -217,18 +217,18 @@ export const FinishRentalModal: React.FC<Props> = ({
                   step="100"
                   value={discount}
                   onChange={(e) => setDiscount(Math.max(0, Number(e.target.value) || 0))}
-                  className="w-full bg-[#081d15] border border-[#1a422f] rounded-lg px-2 py-1 text-right text-[#2ea06e] font-bold focus:outline-none focus:border-[#2ea06e] text-sm"
+                  className="w-full bg-white border border-black/[0.08] rounded-xl px-2.5 py-1 text-right text-[#166534] font-bold focus:outline-none focus:border-[#1C1C1C] text-sm"
                 />
               </div>
             </div>
 
-            <div className="pt-2 border-t border-[#1a422f] flex items-baseline justify-between">
-              <span className="text-sm font-bold text-[#f3ebd6] uppercase tracking-wider">
+            <div className="pt-2 border-t border-black/[0.06] flex items-baseline justify-between">
+              <span className="text-sm font-bold text-[#1C1C1C] uppercase tracking-wider">
                 Total a Cobrar:
               </span>
               <div className="flex items-baseline gap-1">
-                <span className="text-xs text-[#2ea06e] font-bold">$</span>
-                <span className="text-2xl font-black text-[#f3ebd6] tracking-tight">
+                <span className="text-xs text-[#166534] font-bold">$</span>
+                <span className="text-2xl font-black text-[#1C1C1C] tracking-tight">
                   {finalTotal.toLocaleString()}
                 </span>
               </div>
@@ -243,13 +243,13 @@ export const FinishRentalModal: React.FC<Props> = ({
                 : 'max-h-0 opacity-0 -translate-y-4 pointer-events-none'
             }`}
           >
-            <div className="p-3.5 rounded-2xl bg-[#02110c] border border-amber-500/40 space-y-2.5 shadow-inner">
+            <div className="p-3.5 rounded-2xl bg-[#FEF3C7] border border-[#FDE68A] space-y-2.5">
               <div className="flex items-center justify-between">
-                <label className="text-xs font-bold uppercase tracking-wider text-amber-300 flex items-center gap-1.5">
-                  <Banknote className="w-4 h-4 text-amber-400" />
+                <label className="text-xs font-bold uppercase tracking-wider text-[#92400E] flex items-center gap-1.5">
+                  <Banknote className="w-4 h-4 text-[#92400E]" />
                   <span>Método de Pago para la Mora (${penaltyPrice.toLocaleString()})</span>
                 </label>
-                <span className="text-[10px] text-amber-400/80 font-mono font-bold animate-pulse">A Cobrar</span>
+                <span className="text-[10px] text-[#92400E] font-mono font-bold animate-pulse">A Cobrar</span>
               </div>
 
               <div className="grid grid-cols-3 gap-2">
@@ -258,11 +258,11 @@ export const FinishRentalModal: React.FC<Props> = ({
                   onClick={() => setPaymentMethod('efectivo')}
                   className={`flex flex-col items-center justify-center p-3 rounded-xl border text-xs font-bold transition-all ${
                     paymentMethod === 'efectivo'
-                      ? 'bg-[#1a422f] border-[#f3ebd6] text-[#f3ebd6] ring-1 ring-[#f3ebd6]'
-                      : 'bg-[#081d15] border-[#1a422f] text-[#d5cbbb] hover:text-[#f3ebd6]'
+                      ? 'bg-[#1C1C1C] border-[#1C1C1C] text-white'
+                      : 'bg-white border-black/[0.06] text-[#52514E] hover:text-[#1C1C1C]'
                   }`}
                 >
-                  <Banknote className="w-5 h-5 mb-1 text-[#2ea06e]" />
+                  <Banknote className={`w-5 h-5 mb-1 ${paymentMethod === 'efectivo' ? 'text-[#F7D147]' : 'text-[#16A34A]'}`} />
                   <span>Efectivo</span>
                 </button>
 
@@ -271,11 +271,11 @@ export const FinishRentalModal: React.FC<Props> = ({
                   onClick={() => setPaymentMethod('transferencia')}
                   className={`flex flex-col items-center justify-center p-3 rounded-xl border text-xs font-bold transition-all ${
                     paymentMethod === 'transferencia'
-                      ? 'bg-[#1a422f] border-[#f3ebd6] text-[#f3ebd6] ring-1 ring-[#f3ebd6]'
-                      : 'bg-[#081d15] border-[#1a422f] text-[#d5cbbb] hover:text-[#f3ebd6]'
+                      ? 'bg-[#1C1C1C] border-[#1C1C1C] text-white'
+                      : 'bg-white border-black/[0.06] text-[#52514E] hover:text-[#1C1C1C]'
                   }`}
                 >
-                  <Smartphone className="w-5 h-5 mb-1 text-cyan-400" />
+                  <Smartphone className={`w-5 h-5 mb-1 ${paymentMethod === 'transferencia' ? 'text-[#F7D147]' : 'text-[#1C1C1C]'}`} />
                   <span>Transferencia</span>
                 </button>
 
@@ -284,11 +284,11 @@ export const FinishRentalModal: React.FC<Props> = ({
                   onClick={() => setPaymentMethod('tarjeta')}
                   className={`flex flex-col items-center justify-center p-3 rounded-xl border text-xs font-bold transition-all ${
                     paymentMethod === 'tarjeta'
-                      ? 'bg-[#1a422f] border-[#f3ebd6] text-[#f3ebd6] ring-1 ring-[#f3ebd6]'
-                      : 'bg-[#081d15] border-[#1a422f] text-[#d5cbbb] hover:text-[#f3ebd6]'
+                      ? 'bg-[#1C1C1C] border-[#1C1C1C] text-white'
+                      : 'bg-white border-black/[0.06] text-[#52514E] hover:text-[#1C1C1C]'
                   }`}
                 >
-                  <CreditCard className="w-5 h-5 mb-1 text-purple-400" />
+                  <CreditCard className={`w-5 h-5 mb-1 ${paymentMethod === 'tarjeta' ? 'text-[#F7D147]' : 'text-[#1C1C1C]'}`} />
                   <span>Tarjeta</span>
                 </button>
               </div>
@@ -297,19 +297,19 @@ export const FinishRentalModal: React.FC<Props> = ({
         </div>
 
         {/* Modal Bottom Fixed Confirmation */}
-        <div className="p-4 bg-[#081d15] border-t border-[#1a422f] sticky bottom-0">
+        <div className="p-4 bg-[#FAF6E8] border-t border-black/[0.06] sticky bottom-0">
           <button
             onClick={handleConfirmFinish}
             disabled={isSubmitting}
-            className="w-full py-4 px-5 rounded-2xl bg-[#f3ebd6] hover:bg-white text-[#02110c] font-black text-sm sm:text-base shadow-xl shadow-[#000000]/50 active:scale-98 transition-all flex items-center justify-center gap-2"
+            className="w-full py-4 px-5 rounded-full bg-[#1C1C1C] hover:bg-[#333333] text-white font-black text-sm sm:text-base shadow-lg active:scale-98 transition-all flex items-center justify-center gap-2"
           >
-            <CheckCircle2 className="w-5 h-5 stroke-[2.5]" />
+            <CheckCircle2 className="w-5 h-5 stroke-[2.5] text-[#F7D147]" />
             <span>
               {penaltyPrice > 0
                 ? `COBRAR MORA ($${penaltyPrice.toLocaleString()}) Y LIBERAR`
                 : 'CONFIRMAR DEVOLUCIÓN Y LIBERAR UNIDAD'}
             </span>
-            <Sparkles className="w-4 h-4 text-[#02110c]" />
+            <Sparkles className="w-4 h-4 text-[#F7D147]" />
           </button>
         </div>
       </div>
