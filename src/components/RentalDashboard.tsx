@@ -104,45 +104,45 @@ export const RentalDashboard: React.FC<Props> = ({
   return (
     <div className="space-y-5 pb-24">
       {/* STAFFWYN HERO HEADER: Greeting + Big Right KPIs + Segmented Pill Progress Bar */}
-      <div className="pt-1 sm:pt-3 space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 px-1">
+      <div className="pt-1 sm:pt-3 space-y-3 sm:space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 sm:gap-4 px-1">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-widest text-[#71706B] mb-1">
+            <p className="text-[11px] sm:text-xs font-semibold uppercase tracking-widest text-[#71706B] mb-0.5 sm:mb-1">
               Panel Operativo en Tiempo Real
             </p>
-            <h2 className="text-2xl sm:text-4xl font-medium tracking-tight text-[#1C1C1C]">
+            <h2 className="text-xl sm:text-4xl font-medium tracking-tight text-[#1C1C1C]">
               Hola, Eco Aventura
             </h2>
           </div>
 
-          {/* 3 Big Clean KPI Counters (Staffwyn Top-Right Style) */}
-          <div className="flex items-center gap-6 sm:gap-10">
+          {/* 3 Big Clean KPI Counters */}
+          <div className="grid grid-cols-3 sm:flex items-center gap-3 sm:gap-10 bg-white/60 sm:bg-transparent p-2.5 sm:p-0 rounded-2xl border border-black/[0.04] sm:border-0">
             <div>
-              <div className="flex items-center gap-1.5 text-[11px] font-medium text-[#71706B] mb-0.5">
-                <Clock className="w-3.5 h-3.5" />
+              <div className="flex items-center gap-1 sm:gap-1.5 text-[10px] sm:text-[11px] font-medium text-[#71706B] mb-0.5">
+                <Clock className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
                 <span>En pista</span>
               </div>
-              <div className="text-2xl sm:text-4xl font-normal tracking-tight text-[#1C1C1C]">
+              <div className="text-xl sm:text-4xl font-normal tracking-tight text-[#1C1C1C]">
                 {counts.all}
               </div>
             </div>
 
             <div>
-              <div className="flex items-center gap-1.5 text-[11px] font-medium text-[#71706B] mb-0.5">
-                <CheckCircle2 className="w-3.5 h-3.5" />
-                <span>Disponibles</span>
+              <div className="flex items-center gap-1 sm:gap-1.5 text-[10px] sm:text-[11px] font-medium text-[#71706B] mb-0.5">
+                <CheckCircle2 className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+                <span>Libres</span>
               </div>
-              <div className="text-2xl sm:text-4xl font-normal tracking-tight text-[#1C1C1C]">
+              <div className="text-xl sm:text-4xl font-normal tracking-tight text-[#1C1C1C]">
                 {fleetStats.availableUnits}
               </div>
             </div>
 
             <div>
-              <div className="flex items-center gap-1.5 text-[11px] font-medium text-[#71706B] mb-0.5">
-                <Bike className="w-3.5 h-3.5" />
-                <span>Flota total</span>
+              <div className="flex items-center gap-1 sm:gap-1.5 text-[10px] sm:text-[11px] font-medium text-[#71706B] mb-0.5">
+                <Bike className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+                <span>Flota</span>
               </div>
-              <div className="text-2xl sm:text-4xl font-normal tracking-tight text-[#1C1C1C]">
+              <div className="text-xl sm:text-4xl font-normal tracking-tight text-[#1C1C1C]">
                 {fleetStats.totalUnits}
               </div>
             </div>
@@ -151,28 +151,35 @@ export const RentalDashboard: React.FC<Props> = ({
 
         {/* Staffwyn Segmented Rounded-Full Progress Bar */}
         <div className="space-y-1.5 px-1">
-          <div className="flex items-center gap-1.5 w-full h-9 sm:h-10">
+          <div className="flex items-center gap-1 sm:gap-1.5 w-full h-8 sm:h-10">
             <div
               style={{ width: `${fleetStats.pActive}%` }}
-              className="h-full rounded-full bg-[#1C1C1C] text-white text-xs font-bold flex items-center justify-center px-3 transition-all duration-500 shadow-sm"
+              className="h-full rounded-full bg-[#1C1C1C] text-white text-[11px] sm:text-xs font-bold flex items-center justify-center px-1.5 sm:px-3 transition-all duration-500 shadow-sm truncate whitespace-nowrap overflow-hidden"
+              title={`${counts.green} en tiempo`}
             >
-              {counts.green} en tiempo
+              <span className="sm:inline">{counts.green}</span>
+              <span className="hidden xs:inline ml-1">en tiempo</span>
             </div>
             <div
               style={{ width: `${fleetStats.pAttention}%` }}
-              className="h-full rounded-full bg-[#F7D147] text-[#1C1C1C] text-xs font-bold flex items-center justify-center px-3 transition-all duration-500 shadow-sm"
+              className="h-full rounded-full bg-[#F7D147] text-[#1C1C1C] text-[11px] sm:text-xs font-bold flex items-center justify-center px-1.5 sm:px-3 transition-all duration-500 shadow-sm truncate whitespace-nowrap overflow-hidden"
+              title={`${counts.waiting + counts.yellow} atención`}
             >
-              {counts.waiting + counts.yellow} atención
+              <span className="sm:inline">{counts.waiting + counts.yellow}</span>
+              <span className="hidden xs:inline ml-1">atención</span>
             </div>
             <div
               style={{ width: `${fleetStats.pAvail}%` }}
-              className="h-full rounded-full bg-diagonal-stripes border border-black/10 text-[#1C1C1C] text-xs font-bold flex items-center justify-center px-3 transition-all duration-500"
+              className="h-full rounded-full bg-diagonal-stripes border border-black/10 text-[#1C1C1C] text-[11px] sm:text-xs font-bold flex items-center justify-center px-1.5 sm:px-3 transition-all duration-500 truncate whitespace-nowrap overflow-hidden"
+              title={`${fleetStats.availableUnits} libres`}
             >
-              {fleetStats.availableUnits} libres
+              <span className="sm:inline">{fleetStats.availableUnits}</span>
+              <span className="hidden xs:inline ml-1">libres</span>
             </div>
             <div
               style={{ width: `${fleetStats.pMaint}%` }}
-              className="h-full rounded-full bg-[#EAE4D3] text-[#1C1C1C] text-xs font-bold flex items-center justify-center px-2.5 transition-all duration-500"
+              className="h-full rounded-full bg-[#EAE4D3] text-[#1C1C1C] text-[11px] sm:text-xs font-bold flex items-center justify-center px-1 sm:px-2.5 transition-all duration-500 truncate whitespace-nowrap overflow-hidden"
+              title={`${counts.red} mora`}
             >
               {counts.red}
             </div>

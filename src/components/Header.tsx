@@ -30,36 +30,36 @@ export const Header: React.FC<Props> = ({
   };
 
   return (
-    <header className="sticky top-0 z-30 bg-[#FAF6E8]/85 backdrop-blur-md border-b border-black/[0.05] pt-safe px-3 sm:px-6 py-2.5 sm:py-3.5 w-full max-w-full overflow-hidden">
-      <div className="max-w-7xl mx-auto flex items-center justify-between gap-2 sm:gap-3 w-full min-w-0">
-        {/* Brand Pill & Status (Staffwyn Left Pill Style) */}
-        <div className="flex items-center gap-2 min-w-0 shrink">
-          <div className="flex items-center gap-2.5 bg-white/95 border border-black/[0.06] rounded-full pl-2 pr-3.5 py-1.5 shadow-[0_2px_10px_rgb(0,0,0,0.03)]">
+    <header className="sticky top-0 z-30 bg-[#FAF6E8]/90 backdrop-blur-md border-b border-black/[0.05] pt-safe px-3 sm:px-6 py-2 sm:py-3.5 w-full max-w-full overflow-hidden">
+      <div className="max-w-7xl mx-auto flex items-center justify-between gap-2 w-full min-w-0">
+        {/* Brand Pill & Status */}
+        <div className="flex items-center gap-1.5 min-w-0 shrink">
+          <div className="flex items-center gap-2 bg-white/95 border border-black/[0.06] rounded-full pl-1.5 sm:pl-2 pr-2.5 sm:pr-3.5 py-1 sm:py-1.5 shadow-[0_2px_10px_rgb(0,0,0,0.03)] min-w-0">
             <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-[#1C1C1C] flex items-center justify-center text-[#F7D147] shrink-0">
               <Compass className="w-4 h-4 stroke-[2.2]" />
             </div>
             <div className="min-w-0">
-              <div className="flex items-center gap-1.5">
+              <div className="flex items-center gap-1 sm:gap-1.5">
                 <h1 className="text-xs sm:text-sm font-bold tracking-tight text-[#1C1C1C] leading-none truncate">
                   Eco Aventura
                 </h1>
                 <button
                   onClick={onOpenSettings}
                   title={isCloud ? "Enlace en la nube activo (Multi-dispositivo en tiempo real)" : "Modo Local (Haz clic para configurar Supabase y sincronizar otros dispositivos)"}
-                  className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-bold border transition-all shrink-0 ${
+                  className={`inline-flex items-center gap-1 px-1.5 sm:px-2 py-0.5 rounded-full text-[9px] font-bold border transition-all shrink-0 ${
                     isCloud
                       ? 'bg-[#DCFCE7] text-[#166534] border-[#86EFAC]'
                       : 'bg-[#FEF3C7] text-[#92400E] border-[#FDE68A]'
                   }`}
                 >
                   <span className={`w-1.5 h-1.5 rounded-full ${isCloud ? 'bg-[#16A34A] animate-pulse' : 'bg-[#D97706]'}`}></span>
-                  <span>{isCloud ? 'Nube' : 'Local'}</span>
+                  <span className="hidden xs:inline">{isCloud ? 'Nube' : 'Local'}</span>
                 </button>
               </div>
-              <div className="flex items-center gap-1.5 mt-0.5">
+              <div className="flex items-center gap-1 sm:gap-1.5 mt-0.5">
                 <span className="w-1.5 h-1.5 rounded-full bg-[#16A34A] animate-pulse shrink-0"></span>
                 <span className="text-[10px] font-medium text-[#71706B] truncate">
-                  {activeCount} {activeCount === 1 ? 'alquiler activo' : 'alquileres activos'}
+                  {activeCount} {activeCount === 1 ? 'activo' : 'activos'}
                 </span>
               </div>
             </div>
@@ -127,44 +127,44 @@ export const Header: React.FC<Props> = ({
         )}
 
         {/* Action Controls (Staffwyn Right Circular Buttons + Pill Actions) */}
-        <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+        <div className="flex items-center gap-1 sm:gap-2 shrink-0">
           {/* Quick Rafting Info WhatsApp Button */}
           <button
             onClick={onOpenRafting}
             title="Enviar Pack de Info Rafting (Pomelos Tour) por WhatsApp"
-            className="flex items-center gap-1.5 px-3 sm:px-3.5 py-2 sm:py-2.5 rounded-full bg-[#F7D147] hover:bg-[#f0c62d] border border-black/[0.08] text-[#1C1C1C] font-extrabold text-xs shadow-sm active:scale-95 transition-all shrink-0"
+            className="flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3.5 py-1.5 sm:py-2.5 rounded-full bg-[#F7D147] hover:bg-[#f0c62d] border border-black/[0.08] text-[#1C1C1C] font-extrabold text-[11px] sm:text-xs shadow-sm active:scale-95 transition-all shrink-0"
           >
             <Send className="w-3.5 h-3.5 stroke-[2.5]" />
-            <span>Info Rafting</span>
+            <span className="hidden xs:inline">Info </span><span>Rafting</span>
           </button>
 
           {/* Sound Toggle (Circular White Button) */}
           <button
             onClick={handleToggleSound}
             aria-label="Alternar alertas sonoras"
-            className={`w-9 h-9 sm:w-10 sm:h-10 rounded-full border flex items-center justify-center transition-all shadow-sm ${
+            className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full border flex items-center justify-center transition-all shadow-sm shrink-0 ${
               soundEnabled
                 ? 'bg-white border-black/[0.08] text-[#1C1C1C] hover:bg-[#F6F3EA]'
                 : 'bg-white/60 border-black/[0.05] text-[#71706B]/50'
             }`}
             title={soundEnabled ? 'Alertas sonoras activas' : 'Alertas silenciadas'}
           >
-            {soundEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
+            {soundEnabled ? <Volume2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> : <VolumeX className="w-3.5 h-3.5 sm:w-4 sm:h-4" />}
           </button>
 
           {/* Settings Modal Button (Circular White Button) */}
           <button
             onClick={onOpenSettings}
             aria-label="Configuración y base de datos"
-            className="w-9 h-9 sm:w-10 sm:h-10 rounded-full border border-black/[0.08] bg-white text-[#1C1C1C] hover:bg-[#F6F3EA] flex items-center justify-center transition-all shadow-sm"
+            className="w-8 h-8 sm:w-10 sm:h-10 rounded-full border border-black/[0.08] bg-white text-[#1C1C1C] hover:bg-[#F6F3EA] flex items-center justify-center transition-all shadow-sm shrink-0"
           >
-            <Settings className="w-4 h-4" />
+            <Settings className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
           </button>
 
           {/* Quick New Rental Button (Solid Charcoal Pill) */}
           <button
             onClick={onOpenNewRental}
-            className="flex items-center gap-1 sm:gap-1.5 px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-full bg-[#1C1C1C] text-white font-bold text-xs sm:text-sm shadow-md active:scale-95 transition-all hover:bg-[#333333] shrink-0"
+            className="flex items-center gap-1 sm:gap-1.5 px-3 sm:px-4 py-1.5 sm:py-2.5 rounded-full bg-[#1C1C1C] text-white font-bold text-xs sm:text-sm shadow-md active:scale-95 transition-all hover:bg-[#333333] shrink-0"
           >
             <Plus className="w-3.5 h-3.5 sm:w-4 sm:h-4 stroke-[3] text-[#F7D147]" />
             <span>Alquilar</span>

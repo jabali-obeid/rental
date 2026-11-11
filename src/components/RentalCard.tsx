@@ -89,52 +89,52 @@ export const RentalCard: React.FC<Props> = ({
 
   return (
     <div
-      className={`relative rounded-[28px] border p-4 sm:p-5 transition-all duration-300 flex flex-col justify-between ${cardStyles}`}
+      className={`relative rounded-[24px] sm:rounded-[28px] border p-3.5 sm:p-5 transition-all duration-300 flex flex-col justify-between ${cardStyles}`}
     >
       {/* Top Banner: Unit code, Category, Traffic Status */}
       <div>
-        <div className="flex items-center justify-between gap-2 mb-3">
-          <div className="flex items-center gap-2">
-            <span className="px-3 py-1 rounded-full bg-[#1C1C1C] text-white font-mono font-black text-xs tracking-wide">
+        <div className="flex items-center justify-between gap-1.5 mb-2.5 sm:mb-3">
+          <div className="flex items-center gap-1.5 sm:gap-2 min-w-0">
+            <span className="px-2.5 sm:px-3 py-1 rounded-full bg-[#1C1C1C] text-white font-mono font-black text-xs tracking-wide shrink-0">
               {unitCode}
             </span>
-            <div className="flex items-center gap-1.5 text-xs text-[#52514E] font-semibold">
-              <span className="text-[#1C1C1C]">
-                <CategoryIcon name={category?.icon || 'Bike'} className="w-4 h-4" />
+            <div className="flex items-center gap-1 sm:gap-1.5 text-xs text-[#52514E] font-semibold min-w-0">
+              <span className="text-[#1C1C1C] shrink-0">
+                <CategoryIcon name={category?.icon || 'Bike'} className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
               </span>
-              <span className="truncate max-w-[120px]">{categoryName}</span>
+              <span className="truncate max-w-[100px] sm:max-w-[140px]">{categoryName}</span>
             </div>
           </div>
 
-          <span className={`px-3 py-1 rounded-full text-[11px] font-bold tracking-wide ${badgeStyles}`}>
+          <span className={`px-2.5 sm:px-3 py-1 rounded-full text-[10px] sm:text-[11px] font-bold tracking-wide shrink-0 ${badgeStyles}`}>
             {statusText}
           </span>
         </div>
 
         {/* Center Countdown Display (Staffwyn Schedule / Dark Accent Card Style) */}
-        <div className={`my-2.5 rounded-2xl p-3.5 border flex items-center justify-between shadow-sm ${timeBoxStyles}`}>
-          <div>
-            <span className={`text-[10px] uppercase font-semibold block tracking-wider ${
+        <div className={`my-2 sm:my-2.5 rounded-2xl p-2.5 sm:p-3.5 border flex items-center justify-between shadow-sm ${timeBoxStyles}`}>
+          <div className="min-w-0">
+            <span className={`text-[9px] sm:text-[10px] uppercase font-semibold block tracking-wider truncate ${
               trafficLight === 'GREEN' || trafficLight === 'RED' ? 'text-white/65' : 'text-[#1C1C1C]/70'
             }`}>
               {isWaitingStart
-                ? 'Tiempo Contratado (En Espera)'
+                ? 'Tiempo Contratado'
                 : isExpired
                 ? 'Demora transcurrida'
                 : 'Tiempo Restante'}
             </span>
-            <div className="flex items-baseline gap-2">
-              <span className={`font-mono text-3xl tracking-tight ${timeStyles}`}>
+            <div className="flex items-baseline gap-1.5 sm:gap-2">
+              <span className={`font-mono text-2xl sm:text-3xl tracking-tight ${timeStyles}`}>
                 {formattedTime}
               </span>
               {isWaitingStart && (
-                <span className="text-[11px] font-extrabold text-[#1C1C1C] uppercase tracking-wide">
-                  pausado
+                <span className="text-[10px] sm:text-[11px] font-extrabold text-[#1C1C1C] uppercase tracking-wide">
+                  pausa
                 </span>
               )}
               {isExpired && (
-                <span className="text-xs font-bold text-rose-400 uppercase tracking-wide">
-                  min mora
+                <span className="text-[11px] sm:text-xs font-bold text-rose-400 uppercase tracking-wide">
+                  mora
                 </span>
               )}
             </div>
@@ -146,7 +146,7 @@ export const RentalCard: React.FC<Props> = ({
               type="button"
               onClick={handleLaunchTimer}
               title="Iniciar cuenta regresiva ahora"
-              className="flex items-center gap-1.5 px-4 py-2.5 rounded-full bg-[#1C1C1C] hover:bg-[#333333] active:scale-95 transition-all text-white font-black text-xs shadow-md"
+              className="flex items-center gap-1 sm:gap-1.5 px-3 sm:px-4 py-2 sm:py-2.5 rounded-full bg-[#1C1C1C] hover:bg-[#333333] active:scale-95 transition-all text-white font-black text-xs shadow-md shrink-0"
             >
               <Play className="w-3.5 h-3.5 fill-current text-[#F7D147]" />
               <span>INICIAR</span>
@@ -155,14 +155,14 @@ export const RentalCard: React.FC<Props> = ({
             <button
               onClick={handleQuickExtend}
               title="Extender 15 minutos"
-              className={`flex flex-col items-center justify-center px-3 py-1.5 rounded-xl border active:scale-95 transition-all ${
+              className={`flex flex-col items-center justify-center px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl border active:scale-95 transition-all shrink-0 ${
                 trafficLight === 'GREEN' || trafficLight === 'RED'
                   ? 'bg-white/10 border-white/15 hover:bg-white/20 text-white'
                   : 'bg-[#1C1C1C] border-[#1C1C1C] text-white'
               }`}
             >
-              <PlusCircle className="w-4 h-4 text-[#F7D147] mb-0.5" />
-              <span className="text-[10px] font-bold">+15 min</span>
+              <PlusCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#F7D147] mb-0.5" />
+              <span className="text-[9px] sm:text-[10px] font-bold">+15 min</span>
             </button>
           )}
         </div>
