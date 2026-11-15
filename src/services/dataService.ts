@@ -1,5 +1,6 @@
 import { Category, Unit, Rental, CashMovement, CashShiftSummary, RentalCategoryBreakdownItem, UnitStatus, DailyClosing, Reservation, PaymentMethod } from '../types';
 import { getSupabase, isSupabaseConfigured } from './supabaseClient';
+import { googleSheetsService } from './googleSheetsService';
 
 const STORAGE_KEY_CATEGORIES = 'rentflow_data_categories';
 const STORAGE_KEY_UNITS = 'rentflow_data_units';
@@ -442,7 +443,8 @@ class DataService {
     localStorage.setItem(STORAGE_KEY_UNITS, JSON.stringify(updatedUnits));
 
     // Register initial cash payment
-    const rentalCategoryName = this.getCategories().find((c) => c.id === rental.categoryId)?.name || 'Alquiler';
+    const rentalCategory = this.getCategories().find((c) => c.id === rental.categoryId);
+    const rentalCategoryName = rentalCategory?.name || 'Alquiler';
     this.addCashMovement({
       type: 'ingreso_alquiler',
       category: rentalCategoryName,
@@ -454,6 +456,7 @@ class DataService {
     });
 
     this.pushRentalToSupabase(rental);
+    googleSheetsService.syncRentalCreate(rental, rentalCategory);
     this.notify();
     return rental;
   }
@@ -476,7 +479,11 @@ class DataService {
       return r;
     });
     localStorage.setItem(STORAGE_KEY_RENTALS, JSON.stringify(rentals));
-    if (updatedRental) this.pushRentalToSupabase(updatedRental);
+    if (updatedRental) {
+      this.pushRentalToSupabase(updatedRental);
+      const cat = this.getCategories().find((c) => c.id === updatedRental!.categoryId);
+      googleSheetsService.syncRentalUpdateTimes(updatedRental, cat);
+    }
     this.notify();
   }
 
@@ -496,7 +503,11 @@ class DataService {
       return r;
     });
     localStorage.setItem(STORAGE_KEY_RENTALS, JSON.stringify(rentals));
-    if (updatedRental) this.pushRentalToSupabase(updatedRental);
+    if (updatedRental) {
+      this.pushRentalToSupabase(updatedRental);
+      const cat = this.getCategories().find((c) => c.id === updatedRental!.categoryId);
+      googleSheetsService.syncRentalUpdateTimes(updatedRental, cat);
+    }
     this.notify();
   }
 
@@ -562,7 +573,11 @@ class DataService {
       });
     }
 
-    if (updatedRental) this.pushRentalToSupabase(updatedRental);
+    if (updatedRental) {
+      this.pushRentalToSupabase(updatedRental);
+      const cat = this.getCategories().find((c) => c.id === updatedRental!.categoryId);
+      googleSheetsService.syncRentalFinish(updatedRental, cat);
+    }
     this.notify();
   }
 
@@ -593,7 +608,11 @@ class DataService {
     localStorage.setItem(STORAGE_KEY_UNITS, JSON.stringify(updatedUnits));
     if (freedUnit) this.pushUnitToSupabase(freedUnit);
 
-    if (updatedRental) this.pushRentalToSupabase(updatedRental);
+    if (updatedRental) {
+      this.pushRentalToSupabase(updatedRental);
+      const cat = this.getCategories().find((c) => c.id === updatedRental!.categoryId);
+      googleSheetsService.syncRentalCancel(updatedRental, cat);
+    }
     this.notify();
   }
 

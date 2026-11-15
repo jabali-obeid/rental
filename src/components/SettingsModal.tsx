@@ -1,5 +1,6 @@
 import React, { useState, useId } from 'react';
 import { getStoredSupabaseConfig, saveSupabaseConfig, getShareableConfigUrl, isSupabaseConfigured } from '../services/supabaseClient';
+import { getGoogleSheetsWebhookUrl, saveGoogleSheetsWebhookUrl, isGoogleSheetsConfigured, googleSheetsService } from '../services/googleSheetsService';
 import { soundService } from '../services/sound';
 import { dataService } from '../services/dataService';
 import { raftingWhatsappService } from '../services/raftingWhatsappService';
@@ -29,6 +30,8 @@ export const SettingsModal: React.FC<Props> = ({ isOpen, onClose, onOpenRaftingC
   const supabaseKeyId = useId();
 
   const [config, setConfig] = useState(getStoredSupabaseConfig());
+  const [sheetsUrl, setSheetsUrl] = useState(getGoogleSheetsWebhookUrl());
+  const [sheetsStatus, setSheetsStatus] = useState<string>('');
   const [saveStatus, setSaveStatus] = useState<string>('');
   const [copiedLink, setCopiedLink] = useState<boolean>(false);
   const [isSyncing, setIsSyncing] = useState<boolean>(false);
@@ -312,6 +315,57 @@ export const SettingsModal: React.FC<Props> = ({ isOpen, onClose, onOpenRaftingC
 
           {activeTab === 'data' && (
             <div className="space-y-3">
+              {/* Google Sheets Auto-Sync */}
+              <div className="p-3.5 rounded-2xl bg-[#F6F3EA] border border-black/[0.06] space-y-2.5">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2 font-bold text-xs text-[#1C1C1C]">
+                    <span>📊</span>
+                    <span>Sincronización Google Sheets (Excel)</span>
+                  </div>
+                  <span
+                    className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                      isGoogleSheetsConfigured()
+                        ? 'bg-emerald-100 text-emerald-800'
+                        : 'bg-zinc-200 text-zinc-600'
+                    }`}
+                  >
+                    {isGoogleSheetsConfigured() ? 'Activo' : 'Sin configurar'}
+                  </span>
+                </div>
+                <p className="text-[11px] text-[#71706B]">
+                  Escribe cada alquiler en su pestaña (CARROS, KARTING, MONOPATIN, KAYAK) y lo pinta de rosa al devolverlo.
+                </p>
+                <input
+                  type="url"
+                  value={sheetsUrl}
+                  onChange={(e) => setSheetsUrl(e.target.value)}
+                  placeholder="https://script.google.com/macros/s/.../exec"
+                  className="w-full px-3 py-2 rounded-xl bg-white border border-black/10 text-xs text-[#1C1C1C] focus:outline-none focus:ring-2 focus:ring-[#1C1C1C]/20"
+                />
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      saveGoogleSheetsWebhookUrl(sheetsUrl);
+                      if (sheetsUrl.trim()) {
+                        await googleSheetsService.testConnection();
+                        soundService.playSuccess();
+                        setSheetsStatus('URL guardada y ping enviado al Sheet.');
+                      } else {
+                        setSheetsStatus('Sincronización desactivada.');
+                      }
+                      setTimeout(() => setSheetsStatus(''), 3500);
+                    }}
+                    className="flex-1 py-2 px-3 rounded-xl bg-[#1C1C1C] text-white text-xs font-bold hover:bg-black transition-all"
+                  >
+                    Guardar y Probar Conexión
+                  </button>
+                </div>
+                {sheetsStatus && (
+                  <p className="text-[11px] font-semibold text-emerald-700">{sheetsStatus}</p>
+                )}
+              </div>
+
               <div className="p-3 rounded-2xl bg-[#F6F3EA] border border-black/[0.06] text-xs text-[#71706B]">
                 <p className="text-[11px]">
                   Herramientas de respaldo local y restauración para la flota de Eco Aventura.
