@@ -1,6 +1,8 @@
 import { Category, Rental } from '../types';
 
 const STORAGE_KEY_GSHEETS_URL = 'rentflow_gsheets_webhook_url';
+const DEFAULT_GSHEETS_WEBHOOK_URL =
+  'https://script.google.com/macros/s/AKfycbzYPhZmCl-hRF7JfqisoeOqY1VcVOdgr1W4vwvE-Hr6wQGvq07M6j16KYF4XWTHZNdXxg/exec';
 
 export interface SheetTarget {
   sheetName: string;
@@ -11,7 +13,8 @@ export function getGoogleSheetsWebhookUrl(): string {
   const stored = localStorage.getItem(STORAGE_KEY_GSHEETS_URL);
   if (stored && stored.trim()) return stored.trim();
   const envUrl = import.meta.env.VITE_GSHEETS_WEBHOOK_URL;
-  return typeof envUrl === 'string' ? envUrl.trim() : '';
+  if (typeof envUrl === 'string' && envUrl.trim()) return envUrl.trim();
+  return DEFAULT_GSHEETS_WEBHOOK_URL;
 }
 
 export function saveGoogleSheetsWebhookUrl(url: string): void {
