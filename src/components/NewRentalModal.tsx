@@ -1,11 +1,11 @@
 import React, { useState, useId, useMemo, useEffect } from 'react';
-import { Unit, DocType, PaymentMethod } from '../types';
+import { Unit, PaymentMethod } from '../types';
 import { dataService } from '../services/dataService';
 import { soundService } from '../services/sound';
 import { CategoryIcon } from './CategoryIcon';
+import { CircularTimePicker } from './CircularTimePicker';
 import {
   X,
-  Camera,
   Play,
   User,
   Phone,
@@ -13,8 +13,7 @@ import {
   Smartphone,
   CreditCard,
   ShieldCheck,
-  Check,
-  Trash2
+  Check
 } from 'lucide-react';
 
 interface Props {
@@ -23,12 +22,10 @@ interface Props {
 }
 
 export const NewRentalModal: React.FC<Props> = ({ isOpen, onClose }) => {
-  const durationInputId = useId();
-  const cameraInputId = useId();
   const customPriceInputId = useId();
   const customerNameId = useId();
   const customerPhoneId = useId();
-  const docLockerId = useId();
+  const guaranteeItemId = useId();
 
   const categories = dataService.getCategories();
   const units = dataService.getUnits();
@@ -54,10 +51,7 @@ export const NewRentalModal: React.FC<Props> = ({ isOpen, onClose }) => {
     : (availableUnitsForSelected[0]?.id || '');
 
   // Duration
-  const [durationMode, setDurationMode] = useState<'30' | '60' | 'custom'>('30');
-  const [customMinutes, setCustomMinutes] = useState<number>(45);
-
-  const durationMinutes = durationMode === '30' ? 30 : durationMode === '60' ? 60 : customMinutes;
+  const [durationMinutes, setDurationMinutes] = useState<number>(30);
 
   const activeCategory = categories.find((c) => c.id === selectedCategoryId) || categories[0];
 
@@ -92,28 +86,12 @@ export const NewRentalModal: React.FC<Props> = ({ isOpen, onClose }) => {
   // Reset custom price when duration or category changes
   useEffect(() => {
     setCustomPrice(null);
-  }, [selectedCategoryId, durationMode]);
+  }, [selectedCategoryId, durationMinutes]);
 
-  // Customer info
+  // Customer & Guarantee info
   const [customerName, setCustomerName] = useState<string>('');
   const [customerPhone, setCustomerPhone] = useState<string>('');
-
-  // Warranty & Document retention
-  const [docType, setDocType] = useState<DocType>('DNI');
-  const [docLocker, setDocLocker] = useState<string>('Casillero 01');
-  const [docPhotoUrl, setDocPhotoUrl] = useState<string>('');
-
-  // Handle Photo Capture
-  const handlePhotoCapture = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        setDocPhotoUrl(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
+  const [guaranteeItem, setGuaranteeItem] = useState<string>('');
 
   const handleStartRental = (e: React.FormEvent) => {
     e.preventDefault();
@@ -125,8 +103,8 @@ export const NewRentalModal: React.FC<Props> = ({ isOpen, onClose }) => {
       alert('Ingresa el nombre del cliente');
       return;
     }
-    if (!docLocker.trim()) {
-      alert('Indica el casillero o ubicación de la garantía retenida');
+    if (!guaranteeItem.trim()) {
+      alert('Indica qué dejó en garantía');
       return;
     }
 
@@ -141,9 +119,8 @@ export const NewRentalModal: React.FC<Props> = ({ isOpen, onClose }) => {
       startTime: now.toISOString(),
       durationMinutes,
       expectedEndTime: expectedEnd.toISOString(),
-      docType,
-      docLocker: docLocker.trim(),
-      docPhotoUrl: docPhotoUrl || undefined,
+      docType: 'Otro',
+      docLocker: guaranteeItem.trim(),
       basePrice: finalPrice,
       penaltyPrice: 0,
       discount: 0,
@@ -156,7 +133,7 @@ export const NewRentalModal: React.FC<Props> = ({ isOpen, onClose }) => {
 
     setCustomerName('');
     setCustomerPhone('');
-    setDocPhotoUrl('');
+    setGuaranteeItem('');
     setCustomPrice(null);
   };
 
@@ -290,199 +267,78 @@ export const NewRentalModal: React.FC<Props> = ({ isOpen, onClose }) => {
             )}
           </div>
 
-          {/* STEP 3: PREDEFINED DURATION BUTTONS */}
+          {/* STEP 3: CIRCULAR TIME PICKER WITH 15/30/60 SHORTCUTS */}
           <div>
             <label className="text-xs font-bold uppercase tracking-wider text-[#71706B] block mb-2">
               3. Duración del Alquiler
             </label>
-            <div className="grid grid-cols-3 gap-2">
-              <button
-                type="button"
-                onClick={() => {
-                  setDurationMode('30');
-                  setCustomPrice(null);
-                }}
-                className={`py-2.5 px-3 rounded-full text-xs font-bold border transition-all text-center ${
-                  durationMode === '30'
-                    ? 'bg-[#1C1C1C] border-[#1C1C1C] text-white shadow-sm'
-                    : 'bg-[#F6F3EA] border-black/[0.06] text-[#52514E] hover:text-[#1C1C1C]'
-                }`}
-              >
-                30 minutos
-              </button>
-
-              <button
-                type="button"
-                onClick={() => {
-                  setDurationMode('60');
-                  setCustomPrice(null);
-                }}
-                className={`py-2.5 px-3 rounded-full text-xs font-bold border transition-all text-center ${
-                  durationMode === '60'
-                    ? 'bg-[#1C1C1C] border-[#1C1C1C] text-white shadow-sm'
-                    : 'bg-[#F6F3EA] border-black/[0.06] text-[#52514E] hover:text-[#1C1C1C]'
-                }`}
-              >
-                1 hora
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setDurationMode('custom')}
-                className={`py-2.5 px-3 rounded-full text-xs font-bold border transition-all text-center ${
-                  durationMode === 'custom'
-                    ? 'bg-[#1C1C1C] border-[#1C1C1C] text-white shadow-sm'
-                    : 'bg-[#F6F3EA] border-black/[0.06] text-[#52514E] hover:text-[#1C1C1C]'
-                }`}
-              >
-                Personalizado
-              </button>
-            </div>
-
-            {durationMode === 'custom' && (
-              <div className="mt-2.5 p-3 rounded-2xl bg-[#F6F3EA] border border-black/[0.06] flex items-center justify-between gap-3">
-                <label htmlFor={durationInputId} className="text-xs font-semibold text-[#52514E]">Minutos totales:</label>
-                <div className="flex items-center gap-2">
-                  <input
-                    id={durationInputId}
-                    type="number"
-                    min="10"
-                    max="300"
-                    step="5"
-                    value={customMinutes}
-                    onChange={(e) => setCustomMinutes(Math.max(5, Number(e.target.value) || 30))}
-                    className="w-20 bg-white border border-black/[0.08] rounded-xl px-2 py-1 text-center font-bold text-[#1C1C1C] text-sm"
-                  />
-                  <span className="text-xs text-[#52514E]">min</span>
-                </div>
-              </div>
-            )}
+            <CircularTimePicker
+              value={durationMinutes}
+              onChange={(minutes) => {
+                setDurationMinutes(minutes);
+                setCustomPrice(null);
+              }}
+            />
           </div>
 
-          {/* STEP 4: GUARANTEE & IDENTITY DOCUMENT REGISTRATION */}
+          {/* STEP 4: SIMPLE GUARANTEE (NAME & WHAT THEY LEFT) */}
           <div className="rounded-2xl bg-[#F6F3EA] border border-black/[0.06] p-4 space-y-3">
             <div className="flex items-center justify-between">
               <span className="text-xs font-bold uppercase tracking-wider text-[#1C1C1C] flex items-center gap-1.5">
                 <ShieldCheck className="w-4 h-4 text-[#16A34A]" />
-                <span>4. Retención de Garantía / Documento</span>
+                <span>4. Garantía y Cliente</span>
               </span>
               <span className="text-[10px] bg-[#DCFCE7] text-[#166534] px-2 py-0.5 rounded-full font-bold">Requerido</span>
             </div>
 
-            {/* Doc Type pills */}
-            <div className="flex flex-wrap gap-1.5">
-              {(['DNI', 'Licencia', 'Pasaporte', 'Cédula', 'Otro'] as DocType[]).map((type) => (
-                <button
-                  key={type}
-                  type="button"
-                  onClick={() => setDocType(type)}
-                  className={`px-3 py-1 rounded-full text-xs font-bold transition-all ${
-                    docType === type
-                      ? 'bg-[#1C1C1C] text-white shadow-sm'
-                      : 'bg-white text-[#52514E] border border-black/[0.06] hover:text-[#1C1C1C]'
-                  }`}
-                >
-                  {type}
-                </button>
-              ))}
-            </div>
-
-            {/* Physical Locker & Photo */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
               <div>
-                <label htmlFor={docLockerId} className="text-[11px] font-semibold text-[#52514E] block mb-1">
-                  Casillero / Gaveta física:
+                <label htmlFor={customerNameId} className="text-[11px] font-semibold text-[#52514E] block mb-1">
+                  Nombre *
                 </label>
-                <input
-                  id={docLockerId}
-                  type="text"
-                  required
-                  placeholder="Ej: Casillero 04, Sobre 2"
-                  value={docLocker}
-                  onChange={(e) => setDocLocker(e.target.value)}
-                  className="w-full bg-white border border-black/[0.08] rounded-xl px-3 py-2 text-xs font-bold text-[#1C1C1C] placeholder-[#71706B] focus:outline-none focus:border-[#1C1C1C]"
-                />
-                <div className="flex gap-1 mt-1.5 overflow-x-auto pb-1">
-                  {['C-01', 'C-02', 'C-03', 'C-04', 'C-05', 'C-06', 'C-07', 'C-08'].map((code) => (
-                    <button
-                      key={code}
-                      type="button"
-                      onClick={() => setDocLocker(`Casillero ${code.replace('C-', '')}`)}
-                      className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-white text-[#52514E] border border-black/[0.06] hover:bg-[#F7D147] hover:text-[#1C1C1C] shrink-0"
-                    >
-                      {code}
-                    </button>
-                  ))}
+                <div className="relative">
+                  <User className="w-4 h-4 text-[#71706B] absolute left-3 top-2.5" />
+                  <input
+                    id={customerNameId}
+                    type="text"
+                    required
+                    placeholder="Ej: Marcelo Fernández"
+                    value={customerName}
+                    onChange={(e) => setCustomerName(e.target.value)}
+                    className="w-full bg-white border border-black/[0.08] rounded-xl pl-9 pr-3 py-2 text-xs font-bold text-[#1C1C1C] placeholder-[#71706B] focus:outline-none focus:border-[#1C1C1C]"
+                  />
                 </div>
               </div>
 
-              {/* Quick Camera photo capture */}
               <div>
-                <label className="text-[11px] font-semibold text-[#52514E] block mb-1">
-                  Foto rápida de garantía (opcional):
+                <label htmlFor={guaranteeItemId} className="text-[11px] font-semibold text-[#52514E] block mb-1">
+                  ¿Qué dejó? *
                 </label>
-                {docPhotoUrl ? (
-                  <div className="relative rounded-xl overflow-hidden border border-black/[0.08]">
-                    <img src={docPhotoUrl} alt="Foto Doc" className="w-full h-16 object-cover" />
-                    <button
-                      type="button"
-                      onClick={() => setDocPhotoUrl('')}
-                      className="absolute top-1 right-1 p-1 rounded-full bg-white/90 text-rose-600 hover:bg-white"
-                    >
-                      <Trash2 className="w-3.5 h-3.5" />
-                    </button>
-                  </div>
-                ) : (
-                  <label htmlFor={cameraInputId} className="w-full h-16 rounded-xl border border-dashed border-black/20 bg-white flex flex-col items-center justify-center gap-1 cursor-pointer hover:bg-[#FAF6E8] text-[#52514E]">
-                    <Camera className="w-4 h-4 text-[#1C1C1C]" />
-                    <span className="text-[10px] font-semibold text-[#1C1C1C]">Tocar para tomar foto</span>
-                    <input
-                      id={cameraInputId}
-                      type="file"
-                      accept="image/*"
-                      capture="environment"
-                      onChange={handlePhotoCapture}
-                      className="hidden"
-                    />
-                  </label>
-                )}
-              </div>
-            </div>
-          </div>
-
-          {/* STEP 5: CUSTOMER INFORMATION */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-            <div>
-              <label htmlFor={customerNameId} className="text-xs font-bold uppercase tracking-wider text-[#71706B] block mb-1">
-                5. Nombre del Cliente *
-              </label>
-              <div className="relative">
-                <User className="w-4 h-4 text-[#71706B] absolute left-3 top-3" />
                 <input
-                  id={customerNameId}
+                  id={guaranteeItemId}
                   type="text"
                   required
-                  placeholder="Ej: Marcelo Fernández"
-                  value={customerName}
-                  onChange={(e) => setCustomerName(e.target.value)}
-                  className="w-full bg-[#F6F3EA] border border-black/[0.08] rounded-xl pl-9 pr-3 py-2.5 text-xs text-[#1C1C1C] placeholder-[#71706B] focus:outline-none focus:border-[#1C1C1C]"
+                  placeholder="Ej: DNI, Llaves, Celular..."
+                  value={guaranteeItem}
+                  onChange={(e) => setGuaranteeItem(e.target.value)}
+                  className="w-full bg-white border border-black/[0.08] rounded-xl px-3 py-2 text-xs font-bold text-[#1C1C1C] placeholder-[#71706B] focus:outline-none focus:border-[#1C1C1C]"
                 />
               </div>
             </div>
 
             <div>
-              <label htmlFor={customerPhoneId} className="text-xs font-bold uppercase tracking-wider text-[#71706B] block mb-1">
-                Teléfono de Contacto
+              <label htmlFor={customerPhoneId} className="text-[11px] font-semibold text-[#52514E] block mb-1">
+                Teléfono de Contacto (Opcional)
               </label>
               <div className="relative">
-                <Phone className="w-4 h-4 text-[#71706B] absolute left-3 top-3" />
+                <Phone className="w-4 h-4 text-[#71706B] absolute left-3 top-2.5" />
                 <input
                   id={customerPhoneId}
                   type="tel"
                   placeholder="Ej: 11 5566-7788"
                   value={customerPhone}
                   onChange={(e) => setCustomerPhone(e.target.value)}
-                  className="w-full bg-[#F6F3EA] border border-black/[0.08] rounded-xl pl-9 pr-3 py-2.5 text-xs text-[#1C1C1C] placeholder-[#71706B] focus:outline-none focus:border-[#1C1C1C]"
+                  className="w-full bg-white border border-black/[0.08] rounded-xl pl-9 pr-3 py-2 text-xs text-[#1C1C1C] placeholder-[#71706B] focus:outline-none focus:border-[#1C1C1C]"
                 />
               </div>
             </div>

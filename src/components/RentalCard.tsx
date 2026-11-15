@@ -229,13 +229,11 @@ export const RentalCard: React.FC<Props> = ({
             )}
           </div>
 
-          {/* Retention Guarantee Locker */}
+          {/* Simplified Guarantee: only what they left */}
           <div className="flex items-center justify-between bg-[#F6F3EA] px-3.5 py-2 rounded-2xl border border-black/[0.05] text-[11px]">
-            <span className="text-[#71706B] font-medium">Garantía / Doc:</span>
-            <span className="font-extrabold text-[#1C1C1C] flex items-center gap-1.5">
-              <span>🗄️ {rental.docLocker}</span>
-              <span className="text-black/20">|</span>
-              <span className="text-[#52514E]">{rental.docType}</span>
+            <span className="text-[#71706B] font-medium">Dejó en garantía:</span>
+            <span className="font-extrabold text-[#1C1C1C] truncate max-w-[180px]">
+              {rental.docLocker || 'Sin especificar'}
             </span>
           </div>
 

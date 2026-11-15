@@ -107,7 +107,7 @@ export const FinishRentalModal: React.FC<Props> = ({
         </div>
 
         <div className="p-5 space-y-4">
-          {/* CRITICAL ALERT BANNER: IDENTITY / GUARANTEE DOCUMENT RETURN */}
+          {/* CRITICAL ALERT BANNER: GUARANTEE RETURN */}
           <div className="relative overflow-hidden rounded-2xl bg-[#F7D147] border border-black/10 p-4 shadow-md">
             <div className="flex items-start gap-3">
               <div className="p-2.5 rounded-xl bg-[#1C1C1C] text-[#F7D147] shrink-0 mt-0.5 font-black">
@@ -115,32 +115,19 @@ export const FinishRentalModal: React.FC<Props> = ({
               </div>
               <div className="space-y-1">
                 <h3 className="text-sm font-black uppercase tracking-wide text-[#1C1C1C]">
-                  RECORDAR DEVOLVER DOCUMENTO DE IDENTIDAD / GARANTÍA
+                  RECORDAR DEVOLVER GARANTÍA
                 </h3>
                 <div className="flex flex-wrap items-center gap-2 pt-1 text-xs">
-                  <span className="px-3 py-1 rounded-full bg-white text-[#1C1C1C] font-bold border border-black/10 flex items-center gap-1.5">
-                    <FileText className="w-3.5 h-3.5 text-[#1C1C1C]" />
-                    <span>{rental.docType}</span>
+                  <span className="px-3 py-1 rounded-full bg-white text-[#1C1C1C] font-bold border border-black/10">
+                    {rental.customerName}
                   </span>
-                  <span className="px-3 py-1 rounded-full bg-[#1C1C1C] text-white font-mono font-black flex items-center gap-1.5">
-                    <span>🗄️ UBICACIÓN:</span>
-                    <span className="text-[#F7D147] underline underline-offset-2">{rental.docLocker}</span>
+                  <span className="px-3 py-1 rounded-full bg-[#1C1C1C] text-white font-bold flex items-center gap-1.5">
+                    <span>Dejó:</span>
+                    <span className="text-[#F7D147]">{rental.docLocker || 'Sin especificar'}</span>
                   </span>
                 </div>
               </div>
             </div>
-
-            {/* Document photo preview if available */}
-            {rental.docPhotoUrl && (
-              <div className="mt-3 pt-3 border-t border-black/10">
-                <p className="text-[11px] font-semibold text-[#1C1C1C] mb-1">Foto de garantía registrada:</p>
-                <img
-                  src={rental.docPhotoUrl}
-                  alt="Foto Documento de Garantía"
-                  className="w-full max-h-36 object-cover rounded-xl border border-black/15 shadow"
-                />
-              </div>
-            )}
           </div>
 
           {/* Time & Late Surcharge Notice */}

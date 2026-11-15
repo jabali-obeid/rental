@@ -1,9 +1,10 @@
 import React, { useState, useId, useMemo } from 'react';
-import { Rental, Category, Unit, DocType, PaymentMethod } from '../types';
+import { Rental, Category, Unit, PaymentMethod } from '../types';
 import { dataService } from '../services/dataService';
 import { soundService } from '../services/sound';
 import { printThermalTicket } from '../services/printerService';
-import { BookmarkPlus, Printer, Clock, Banknote, Smartphone, CreditCard, X, Check, AlertCircle } from 'lucide-react';
+import { CircularTimePicker } from './CircularTimePicker';
+import { BookmarkPlus, Printer, Banknote, Smartphone, CreditCard, X, Check, AlertCircle } from 'lucide-react';
 
 interface Props {
   rental: Rental;
@@ -24,8 +25,7 @@ export const ReserveActiveVehicleModal: React.FC<Props> = ({
 
   const [customerName, setCustomerName] = useState<string>('');
   const [customerPhone, setCustomerPhone] = useState<string>('');
-  const [docType, setDocType] = useState<DocType>('DNI');
-  const [docLocker, setDocLocker] = useState<string>('Casillero 01');
+  const [guaranteeItem, setGuaranteeItem] = useState<string>('');
   const [durationMinutes, setDurationMinutes] = useState<number>(30);
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('efectivo');
   const [autoPrint, setAutoPrint] = useState<boolean>(true);
@@ -66,8 +66,8 @@ export const ReserveActiveVehicleModal: React.FC<Props> = ({
       basePrice: suggestedPrice,
       totalPrice: suggestedPrice,
       paymentMethod,
-      docType,
-      docLocker: docLocker.trim(),
+      docType: 'Otro',
+      docLocker: guaranteeItem.trim(),
     });
 
     soundService.playCashRegister();
@@ -83,8 +83,8 @@ export const ReserveActiveVehicleModal: React.FC<Props> = ({
         customerPhone: customerPhone.trim(),
         durationMinutes,
         expectedTime: expectedReturnTime,
-        docLocker: docLocker.trim(),
-        docType,
+        docLocker: guaranteeItem.trim(),
+        docType: 'Otro',
         totalPrice: suggestedPrice,
         paymentMethod,
         ticketId: reservation.id,
@@ -170,76 +170,29 @@ export const ReserveActiveVehicleModal: React.FC<Props> = ({
             </div>
           </div>
 
-          {/* Guarantee Locker & Document */}
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label htmlFor={lockerId} className="block text-xs font-bold text-[#52514E] mb-1">
-                Casillero de Garantía
-              </label>
-              <select
-                id={lockerId}
-                value={docLocker}
-                onChange={(e) => setDocLocker(e.target.value)}
-                className="w-full bg-[#F6F3EA] border border-black/[0.08] rounded-xl px-3 py-2.5 text-xs text-[#1C1C1C] focus:outline-none focus:border-[#1C1C1C]"
-              >
-                {Array.from({ length: 24 }, (_, i) => `Casillero ${String(i + 1).padStart(2, '0')}`).map((loc) => (
-                  <option key={loc} value={loc} className="bg-white text-[#1C1C1C]">
-                    🗄️ {loc}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-xs font-bold text-[#52514E] mb-1">Tipo de Documento</label>
-              <div className="flex gap-1">
-                {(['DNI', 'Licencia', 'Llaves', 'Otro'] as DocType[]).map((t) => (
-                  <button
-                    key={t}
-                    type="button"
-                    onClick={() => setDocType(t)}
-                    className={`flex-1 py-2 rounded-full text-[11px] font-bold border transition-all ${
-                      docType === t
-                        ? 'bg-[#1C1C1C] text-white border-[#1C1C1C]'
-                        : 'bg-[#F6F3EA] text-[#52514E] border-black/[0.06]'
-                    }`}
-                  >
-                    {t}
-                  </button>
-                ))}
-              </div>
-            </div>
+          {/* Simplified Guarantee: what they leave */}
+          <div>
+            <label htmlFor={lockerId} className="block text-xs font-bold text-[#52514E] mb-1">
+              ¿Qué deja en garantía? *
+            </label>
+            <input
+              id={lockerId}
+              type="text"
+              required
+              placeholder="Ej: DNI, Llaves, Celular..."
+              value={guaranteeItem}
+              onChange={(e) => setGuaranteeItem(e.target.value)}
+              className="w-full bg-[#F6F3EA] border border-black/[0.08] rounded-xl px-3 py-2.5 text-xs text-[#1C1C1C] focus:outline-none focus:border-[#1C1C1C]"
+            />
           </div>
 
           {/* Duration Selector */}
           <div>
-            <label className="block text-xs font-bold text-[#52514E] mb-1">Duración Reservada</label>
-            <div className="grid grid-cols-2 gap-2">
-              <button
-                type="button"
-                onClick={() => setDurationMinutes(30)}
-                className={`py-2.5 rounded-full font-bold border flex items-center justify-center gap-1.5 transition-all ${
-                  durationMinutes === 30
-                    ? 'bg-[#1C1C1C] text-white border-[#1C1C1C]'
-                    : 'bg-[#F6F3EA] text-[#52514E] border-black/[0.06]'
-                }`}
-              >
-                <Clock className="w-3.5 h-3.5" />
-                <span>30 Minutos</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => setDurationMinutes(60)}
-                className={`py-2.5 rounded-full font-bold border flex items-center justify-center gap-1.5 transition-all ${
-                  durationMinutes === 60
-                    ? 'bg-[#1C1C1C] text-white border-[#1C1C1C]'
-                    : 'bg-[#F6F3EA] text-[#52514E] border-black/[0.06]'
-                }`}
-              >
-                <Clock className="w-3.5 h-3.5" />
-                <span>1 Hora (60m)</span>
-              </button>
-            </div>
+            <label className="block text-xs font-bold text-[#52514E] mb-1.5">Duración Reservada</label>
+            <CircularTimePicker
+              value={durationMinutes}
+              onChange={setDurationMinutes}
+            />
           </div>
 
           {/* Payment Method (Pago Anticipado) */}
