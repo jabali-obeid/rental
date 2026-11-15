@@ -82,14 +82,14 @@ const INITIAL_CATEGORIES: Category[] = [
     slug: 'kayaks-simples',
     icon: 'Ship',
     color: '#06b6d4',
-    defaultRate30m: 18000,
-    defaultRate60m: 30000,
-    cashRate30m: 18000,
-    cashRate60m: 30000,
-    digitalRate30m: 18000,
-    digitalRate60m: 30000,
-    penaltyRate10Min: 6000,
-    penaltyRatePerMin: 600,
+    defaultRate30m: 10000,
+    defaultRate60m: 20000,
+    cashRate30m: 10000,
+    cashRate60m: 20000,
+    digitalRate30m: 10000,
+    digitalRate60m: 20000,
+    penaltyRate10Min: 4000,
+    penaltyRatePerMin: 400,
     isActive: true,
   },
   {
@@ -98,14 +98,14 @@ const INITIAL_CATEGORIES: Category[] = [
     slug: 'kayaks-dobles',
     icon: 'Ship',
     color: '#0284c7',
-    defaultRate30m: 35000,
-    defaultRate60m: 60000,
-    cashRate30m: 35000,
-    cashRate60m: 60000,
-    digitalRate30m: 35000,
-    digitalRate60m: 60000,
-    penaltyRate10Min: 10000,
-    penaltyRatePerMin: 1000,
+    defaultRate30m: 20000,
+    defaultRate60m: 40000,
+    cashRate30m: 20000,
+    cashRate60m: 40000,
+    digitalRate30m: 20000,
+    digitalRate60m: 40000,
+    penaltyRate10Min: 7000,
+    penaltyRatePerMin: 700,
     isActive: true,
   },
 ];
@@ -190,6 +190,22 @@ class DataService {
     } else {
       if (!localStorage.getItem(STORAGE_KEY_CATEGORIES)) {
         localStorage.setItem(STORAGE_KEY_CATEGORIES, JSON.stringify(INITIAL_CATEGORIES));
+      } else if (!localStorage.getItem('rentflow_kayak_rates_v2')) {
+        try {
+          const raw = localStorage.getItem(STORAGE_KEY_CATEGORIES);
+          const cats: Category[] = raw ? JSON.parse(raw) : [];
+          const updated = cats.map((c) => {
+            if (c.id === 'c-kayaks-simples' || c.slug === 'kayaks-simples') {
+              return { ...c, defaultRate30m: 10000, defaultRate60m: 20000, cashRate30m: 10000, cashRate60m: 20000, digitalRate30m: 10000, digitalRate60m: 20000 };
+            }
+            if (c.id === 'c-kayaks-dobles' || c.slug === 'kayaks-dobles') {
+              return { ...c, defaultRate30m: 20000, defaultRate60m: 40000, cashRate30m: 20000, cashRate60m: 40000, digitalRate30m: 20000, digitalRate60m: 40000 };
+            }
+            return c;
+          });
+          localStorage.setItem(STORAGE_KEY_CATEGORIES, JSON.stringify(updated));
+          localStorage.setItem('rentflow_kayak_rates_v2', '1');
+        } catch {}
       }
       if (!localStorage.getItem(STORAGE_KEY_UNITS)) {
         localStorage.setItem(STORAGE_KEY_UNITS, JSON.stringify(INITIAL_UNITS));
