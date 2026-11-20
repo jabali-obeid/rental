@@ -15,8 +15,8 @@ export const BottomNavigation: React.FC<Props> = ({
   activeRentalsCount,
 }) => {
   return (
-    <nav className="md:hidden fixed bottom-0 left-0 right-0 z-30 bg-white/95 backdrop-blur-lg border-t border-black/[0.08] pb-safe shadow-[0_-4px_20px_rgb(0,0,0,0.05)]">
-      <div className="max-w-md mx-auto grid grid-cols-4 h-16 px-2 items-center gap-1">
+    <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-30 bg-white/95 backdrop-blur-lg border-t border-black/[0.08] pb-safe shadow-[0_-4px_20px_rgb(0,0,0,0.05)]">
+      <div className="max-w-lg mx-auto grid grid-cols-4 h-16 px-2 items-center gap-1">
         {/* Tab 1: Alquileres en curso */}
         <button
           onClick={() => onChangeTab('dashboard')}
