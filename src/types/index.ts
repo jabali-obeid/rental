@@ -127,3 +127,9 @@ export interface Reservation {
   dispatchedAt?: string;
 }
 
+export interface DailyTicketCounters {
+  bungee: number;
+  palestra: number;
+  updatedAt: string;
+}
+

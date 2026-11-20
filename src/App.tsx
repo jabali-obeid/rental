@@ -1,18 +1,37 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, lazy, Suspense } from 'react';
 import { Rental } from './types';
 import { dataService } from './services/dataService';
 import { Header } from './components/Header';
 import { RentalDashboard } from './components/RentalDashboard';
-import { NewRentalModal } from './components/NewRentalModal';
-import { FinishRentalModal } from './components/FinishRentalModal';
-import { ReserveActiveVehicleModal } from './components/ReserveActiveVehicleModal';
-import { InventoryModule } from './components/InventoryModule';
-import { CashRegisterModule } from './components/CashRegisterModule';
-import { StatsReportsModule } from './components/StatsReportsModule';
-import { SettingsModal } from './components/SettingsModal';
-import { RaftingWhatsappModal } from './components/RaftingWhatsappModal';
 import { PinAuthLock } from './components/PinAuthLock';
 import { BottomNavigation, ActiveTab } from './components/BottomNavigation';
+import { FeedbackHost } from './components/FeedbackHost';
+import { TicketsDrawer } from './components/TicketsDrawer';
+
+const InventoryModule = lazy(() =>
+  import('./components/InventoryModule').then((m) => ({ default: m.InventoryModule }))
+);
+const CashRegisterModule = lazy(() =>
+  import('./components/CashRegisterModule').then((m) => ({ default: m.CashRegisterModule }))
+);
+const StatsReportsModule = lazy(() =>
+  import('./components/StatsReportsModule').then((m) => ({ default: m.StatsReportsModule }))
+);
+const NewRentalModal = lazy(() =>
+  import('./components/NewRentalModal').then((m) => ({ default: m.NewRentalModal }))
+);
+const FinishRentalModal = lazy(() =>
+  import('./components/FinishRentalModal').then((m) => ({ default: m.FinishRentalModal }))
+);
+const ReserveActiveVehicleModal = lazy(() =>
+  import('./components/ReserveActiveVehicleModal').then((m) => ({ default: m.ReserveActiveVehicleModal }))
+);
+const SettingsModal = lazy(() =>
+  import('./components/SettingsModal').then((m) => ({ default: m.SettingsModal }))
+);
+const RaftingWhatsappModal = lazy(() =>
+  import('./components/RaftingWhatsappModal').then((m) => ({ default: m.RaftingWhatsappModal }))
+);
 
 export function App() {
   const [, setVersion] = useState<number>(0);
@@ -42,10 +61,19 @@ export function App() {
   const allRentals = dataService.getRentals();
   const activeRentals = dataService.getActiveRentals();
   const cashMovements = dataService.getCashMovements();
+  const ticketCounters = dataService.getTicketCounters();
 
-  const handleFinishRentalClick = (rental: Rental) => {
+  const handleOpenNewRental = useCallback(() => {
+    setIsNewRentalOpen(true);
+  }, []);
+
+  const handleFinishRentalClick = useCallback((rental: Rental) => {
     setFinishRentalTarget(rental);
-  };
+  }, []);
+
+  const handleReserveRentalClick = useCallback((rental: Rental) => {
+    setReserveRentalTarget(rental);
+  }, []);
 
   const finishCategory = finishRentalTarget
     ? categories.find((c) => c.id === finishRentalTarget.categoryId)
@@ -56,7 +84,7 @@ export function App() {
     : undefined;
 
   return (
-    <div className="min-h-full w-full max-w-full overflow-x-hidden bg-gradient-to-br from-[#FCFBF7] via-[#FAF5E4] to-[#F4E6BA] text-[#1C1C1C] flex flex-col font-['Plus_Jakarta_Sans',sans-serif]">
+    <div className="min-h-full w-full max-w-full overflow-x-hidden bg-gradient-to-br from-[#FCFBF7] via-[#FAF5E4] to-[#F4E6BA] text-eco-dark flex flex-col font-['Plus_Jakarta_Sans',sans-serif]">
       {/* Header with responsive desktop nav */}
       <Header
         activeCount={activeRentals.length}
@@ -77,27 +105,35 @@ export function App() {
             rentals={activeRentals}
             categories={categories}
             units={units}
-            onOpenNewRental={() => setIsNewRentalOpen(true)}
+            onOpenNewRental={handleOpenNewRental}
             onFinishRental={handleFinishRentalClick}
-            onReserveRental={(rental) => setReserveRentalTarget(rental)}
+            onReserveRental={handleReserveRentalClick}
           />
         )}
 
-        {activeTab === 'inventory' && (
-          <InventoryModule units={units} categories={categories} />
-        )}
+        <Suspense
+          fallback={
+            <div className="py-12 text-center text-xs font-semibold text-eco-creamMuted">
+              Cargando módulo...
+            </div>
+          }
+        >
+          {activeTab === 'inventory' && (
+            <InventoryModule units={units} categories={categories} />
+          )}
 
-        {activeTab === 'cash' && (
-          <CashRegisterModule movements={cashMovements} />
-        )}
+          {activeTab === 'cash' && (
+            <CashRegisterModule movements={cashMovements} />
+          )}
 
-        {activeTab === 'stats' && (
-          <StatsReportsModule
-            rentals={allRentals}
-            categories={categories}
-            units={units}
-          />
-        )}
+          {activeTab === 'stats' && (
+            <StatsReportsModule
+              rentals={allRentals}
+              categories={categories}
+              units={units}
+            />
+          )}
+        </Suspense>
       </main>
 
       {/* Bottom Sticky Navigation */}
@@ -107,49 +143,64 @@ export function App() {
         activeRentalsCount={activeRentals.length}
       />
 
-      {/* Modals */}
-      <NewRentalModal
-        isOpen={isNewRentalOpen}
-        onClose={() => setIsNewRentalOpen(false)}
-      />
+      {/* Lazy-loaded Modals (chunks fetched only when opened) */}
+      <Suspense fallback={null}>
+        {isNewRentalOpen && (
+          <NewRentalModal
+            isOpen={isNewRentalOpen}
+            onClose={() => setIsNewRentalOpen(false)}
+          />
+        )}
 
-      <FinishRentalModal
-        isOpen={Boolean(finishRentalTarget)}
-        rental={finishRentalTarget}
-        category={finishCategory}
-        unit={finishUnit}
-        onClose={() => setFinishRentalTarget(null)}
-      />
+        {finishRentalTarget && (
+          <FinishRentalModal
+            isOpen={Boolean(finishRentalTarget)}
+            rental={finishRentalTarget}
+            category={finishCategory}
+            unit={finishUnit}
+            onClose={() => setFinishRentalTarget(null)}
+          />
+        )}
 
-      {/* Reserve Modal for active vehicle */}
-      {reserveRentalTarget && (
-        <ReserveActiveVehicleModal
-          rental={reserveRentalTarget}
-          category={categories.find((c) => c.id === reserveRentalTarget.categoryId)}
-          unit={units.find((u) => u.id === reserveRentalTarget.unitId)}
-          onClose={() => setReserveRentalTarget(null)}
-        />
-      )}
+        {reserveRentalTarget && (
+          <ReserveActiveVehicleModal
+            rental={reserveRentalTarget}
+            category={categories.find((c) => c.id === reserveRentalTarget.categoryId)}
+            unit={units.find((u) => u.id === reserveRentalTarget.unitId)}
+            onClose={() => setReserveRentalTarget(null)}
+          />
+        )}
 
-      <SettingsModal
-        isOpen={isSettingsOpen}
-        onClose={() => setIsSettingsOpen(false)}
-        onOpenRaftingConfig={() => {
-          setRaftingInitialTab('steps');
-          setIsRaftingOpen(true);
-        }}
-      />
+        {isSettingsOpen && (
+          <SettingsModal
+            isOpen={isSettingsOpen}
+            onClose={() => setIsSettingsOpen(false)}
+            onOpenRaftingConfig={() => {
+              setRaftingInitialTab('steps');
+              setIsRaftingOpen(true);
+            }}
+          />
+        )}
 
-      <RaftingWhatsappModal
-        isOpen={isRaftingOpen}
-        onClose={() => setIsRaftingOpen(false)}
-        initialTab={raftingInitialTab}
-      />
+        {isRaftingOpen && (
+          <RaftingWhatsappModal
+            isOpen={isRaftingOpen}
+            onClose={() => setIsRaftingOpen(false)}
+            initialTab={raftingInitialTab}
+          />
+        )}
+      </Suspense>
+
+      {/* Right-to-Left Slide-Over Drawer for Bungee & Palestra Tickets */}
+      <TicketsDrawer counters={ticketCounters} />
 
       {/* Screen Blur PIN Security Lock */}
       {isLocked && (
         <PinAuthLock onUnlock={() => setIsLocked(false)} />
       )}
+
+      {/* Global Toast & Confirm/Prompt Host */}
+      <FeedbackHost />
     </div>
   );
 }

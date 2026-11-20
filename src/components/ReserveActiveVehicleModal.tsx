@@ -4,6 +4,8 @@ import { dataService } from '../services/dataService';
 import { soundService } from '../services/sound';
 import { printThermalTicket } from '../services/printerService';
 import { CircularTimePicker } from './CircularTimePicker';
+import { useDialogA11y } from '../hooks/useDialogA11y';
+import { uiFeedback } from '../services/uiFeedback';
 import { BookmarkPlus, Printer, Banknote, Smartphone, CreditCard, X, Check, AlertCircle } from 'lucide-react';
 
 interface Props {
@@ -19,9 +21,12 @@ export const ReserveActiveVehicleModal: React.FC<Props> = ({
   unit,
   onClose,
 }) => {
+  const titleId = useId();
   const customerNameId = useId();
   const customerPhoneId = useId();
   const lockerId = useId();
+
+  const dialogRef = useDialogA11y(true, onClose);
 
   const [customerName, setCustomerName] = useState<string>('');
   const [customerPhone, setCustomerPhone] = useState<string>('');
@@ -53,7 +58,7 @@ export const ReserveActiveVehicleModal: React.FC<Props> = ({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!customerName.trim()) {
-      alert('Ingresa el nombre del cliente para la reserva');
+      uiFeedback.toast('Ingresa el nombre del cliente para la reserva.', 'error');
       return;
     }
 
@@ -96,28 +101,42 @@ export const ReserveActiveVehicleModal: React.FC<Props> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-md animate-in fade-in duration-200">
-      <div className="w-full max-w-lg rounded-[28px] bg-white border border-black/[0.08] shadow-2xl overflow-hidden flex flex-col max-h-[90vh] text-[#1C1C1C]">
-        
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby={titleId}
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onClose();
+      }}
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-md animate-in fade-in duration-200"
+    >
+      <div
+        ref={dialogRef}
+        tabIndex={-1}
+        className="w-full max-w-lg rounded-[28px] bg-white border border-black/[0.08] shadow-2xl overflow-hidden flex flex-col max-h-[90vh] text-eco-dark focus:outline-none"
+      >
+
         {/* Header */}
-        <div className="p-4 sm:p-5 border-b border-black/[0.06] bg-[#FAF6E8] flex items-center justify-between">
+        <div className="p-4 sm:p-5 border-b border-black/[0.06] bg-eco-cream flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <div className="w-10 h-10 rounded-full bg-[#F7D147] flex items-center justify-center text-[#1C1C1C]">
+            <div className="w-10 h-10 rounded-full bg-eco-gold flex items-center justify-center text-eco-dark">
               <BookmarkPlus className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="text-base font-black text-[#1C1C1C]">
+              <h3 id={titleId} className="text-base font-black text-eco-dark">
                 Reservar {unit?.codeNumber || 'Unidad'}
               </h3>
-              <p className="text-xs text-[#71706B]">
+              <p className="text-xs text-eco-creamMuted">
                 Turno siguiente al regresar de pista ({expectedReturnTime} hs aprox.)
               </p>
             </div>
           </div>
 
           <button
+            type="button"
+            aria-label="Cerrar"
             onClick={onClose}
-            className="w-8 h-8 rounded-full bg-white border border-black/[0.08] text-[#71706B] hover:text-[#1C1C1C] flex items-center justify-center active:scale-95"
+            className="w-8 h-8 rounded-full bg-white border border-black/[0.08] text-eco-creamMuted hover:text-eco-dark flex items-center justify-center active:scale-95"
           >
             <X className="w-4 h-4" />
           </button>
@@ -125,23 +144,23 @@ export const ReserveActiveVehicleModal: React.FC<Props> = ({
 
         {/* Content Form */}
         <form onSubmit={handleSubmit} className="p-4 sm:p-5 overflow-y-auto space-y-4 text-xs">
-          
+
           {/* Active Status Info Alert */}
-          <div className="p-3.5 rounded-2xl bg-[#F6F3EA] border border-black/[0.06] flex items-center justify-between text-xs">
+          <div className="p-3.5 rounded-2xl bg-eco-surface border border-black/[0.06] flex items-center justify-between text-xs">
             <div>
-              <span className="text-[10px] text-[#71706B] uppercase font-bold block">En uso actual por:</span>
-              <span className="font-extrabold text-[#1C1C1C]">{rental.customerName}</span>
+              <span className="text-[10px] text-eco-creamMuted uppercase font-bold block">En uso actual por:</span>
+              <span className="font-extrabold text-eco-dark">{rental.customerName}</span>
             </div>
             <div className="text-right">
               <span className="text-[10px] text-[#92400E] uppercase font-bold block">Regresa aprox:</span>
-              <span className="font-mono font-bold text-[#1C1C1C] text-sm">{expectedReturnTime} hs</span>
+              <span className="font-mono font-bold text-eco-dark text-sm">{expectedReturnTime} hs</span>
             </div>
           </div>
 
           {/* Customer Name & Phone */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label htmlFor={customerNameId} className="block text-xs font-bold text-[#52514E] mb-1">
+              <label htmlFor={customerNameId} className="block text-xs font-bold text-eco-creamDark mb-1">
                 Cliente que reserva *
               </label>
               <input
@@ -151,12 +170,12 @@ export const ReserveActiveVehicleModal: React.FC<Props> = ({
                 placeholder="Nombre y Apellido"
                 value={customerName}
                 onChange={(e) => setCustomerName(e.target.value)}
-                className="w-full bg-[#F6F3EA] border border-black/[0.08] rounded-xl px-3 py-2.5 text-xs text-[#1C1C1C] focus:outline-none focus:border-[#1C1C1C]"
+                className="w-full bg-eco-surface border border-black/[0.08] rounded-xl px-3 py-2.5 text-xs text-eco-dark focus:outline-none focus:border-eco-dark"
               />
             </div>
 
             <div>
-              <label htmlFor={customerPhoneId} className="block text-xs font-bold text-[#52514E] mb-1">
+              <label htmlFor={customerPhoneId} className="block text-xs font-bold text-eco-creamDark mb-1">
                 WhatsApp de contacto (Opcional)
               </label>
               <input
@@ -165,14 +184,14 @@ export const ReserveActiveVehicleModal: React.FC<Props> = ({
                 placeholder="Ej: 341 555-1234"
                 value={customerPhone}
                 onChange={(e) => setCustomerPhone(e.target.value)}
-                className="w-full bg-[#F6F3EA] border border-black/[0.08] rounded-xl px-3 py-2.5 text-xs text-[#1C1C1C] focus:outline-none focus:border-[#1C1C1C]"
+                className="w-full bg-eco-surface border border-black/[0.08] rounded-xl px-3 py-2.5 text-xs text-eco-dark focus:outline-none focus:border-eco-dark"
               />
             </div>
           </div>
 
           {/* Simplified Guarantee: what they leave */}
           <div>
-            <label htmlFor={lockerId} className="block text-xs font-bold text-[#52514E] mb-1">
+            <label htmlFor={lockerId} className="block text-xs font-bold text-eco-creamDark mb-1">
               ¿Qué deja en garantía? *
             </label>
             <input
@@ -182,13 +201,13 @@ export const ReserveActiveVehicleModal: React.FC<Props> = ({
               placeholder="Ej: DNI, Llaves, Celular..."
               value={guaranteeItem}
               onChange={(e) => setGuaranteeItem(e.target.value)}
-              className="w-full bg-[#F6F3EA] border border-black/[0.08] rounded-xl px-3 py-2.5 text-xs text-[#1C1C1C] focus:outline-none focus:border-[#1C1C1C]"
+              className="w-full bg-eco-surface border border-black/[0.08] rounded-xl px-3 py-2.5 text-xs text-eco-dark focus:outline-none focus:border-eco-dark"
             />
           </div>
 
           {/* Duration Selector */}
           <div>
-            <label className="block text-xs font-bold text-[#52514E] mb-1.5">Duración Reservada</label>
+            <label className="block text-xs font-bold text-eco-creamDark mb-1.5">Duración Reservada</label>
             <CircularTimePicker
               value={durationMinutes}
               onChange={setDurationMinutes}
@@ -197,62 +216,58 @@ export const ReserveActiveVehicleModal: React.FC<Props> = ({
 
           {/* Payment Method (Pago Anticipado) */}
           <div>
-            <label className="block text-xs font-bold text-[#52514E] mb-1">Cobro Anticipado en Caja *</label>
+            <label className="block text-xs font-bold text-eco-creamDark mb-1">Cobro Anticipado en Caja *</label>
             <div className="grid grid-cols-3 gap-2">
               <button
                 type="button"
                 onClick={() => setPaymentMethod('efectivo')}
-                className={`py-2.5 rounded-full font-bold border flex items-center justify-center gap-1.5 transition-all ${
-                  paymentMethod === 'efectivo'
-                    ? 'bg-[#1C1C1C] text-white border-[#1C1C1C] shadow-sm'
-                    : 'bg-[#F6F3EA] text-[#52514E] border-black/[0.06]'
-                }`}
+                className={`py-2.5 rounded-full font-bold border flex items-center justify-center gap-1.5 transition-all ${paymentMethod === 'efectivo'
+                  ? 'bg-eco-dark text-white border-eco-dark shadow-sm'
+                  : 'bg-eco-surface text-eco-creamDark border-black/[0.06]'
+                  }`}
               >
-                <Banknote className={`w-4 h-4 ${paymentMethod === 'efectivo' ? 'text-[#F7D147]' : 'text-[#16A34A]'}`} />
+                <Banknote className={`w-4 h-4 ${paymentMethod === 'efectivo' ? 'text-eco-gold' : 'text-eco-leaf'}`} />
                 <span>Efectivo</span>
               </button>
               <button
                 type="button"
                 onClick={() => setPaymentMethod('transferencia')}
-                className={`py-2.5 rounded-full font-bold border flex items-center justify-center gap-1.5 transition-all ${
-                  paymentMethod === 'transferencia'
-                    ? 'bg-[#1C1C1C] text-white border-[#1C1C1C] shadow-sm'
-                    : 'bg-[#F6F3EA] text-[#52514E] border-black/[0.06]'
-                }`}
+                className={`py-2.5 rounded-full font-bold border flex items-center justify-center gap-1.5 transition-all ${paymentMethod === 'transferencia'
+                  ? 'bg-eco-dark text-white border-eco-dark shadow-sm'
+                  : 'bg-eco-surface text-eco-creamDark border-black/[0.06]'
+                  }`}
               >
-                <Smartphone className={`w-4 h-4 ${paymentMethod === 'transferencia' ? 'text-[#F7D147]' : 'text-[#1C1C1C]'}`} />
+                <Smartphone className={`w-4 h-4 ${paymentMethod === 'transferencia' ? 'text-eco-gold' : 'text-eco-dark'}`} />
                 <span>Transfer.</span>
               </button>
               <button
                 type="button"
                 onClick={() => setPaymentMethod('tarjeta')}
-                className={`py-2.5 rounded-full font-bold border flex items-center justify-center gap-1.5 transition-all ${
-                  paymentMethod === 'tarjeta'
-                    ? 'bg-[#1C1C1C] text-white border-[#1C1C1C] shadow-sm'
-                    : 'bg-[#F6F3EA] text-[#52514E] border-black/[0.06]'
-                }`}
+                className={`py-2.5 rounded-full font-bold border flex items-center justify-center gap-1.5 transition-all ${paymentMethod === 'tarjeta'
+                  ? 'bg-eco-dark text-white border-eco-dark shadow-sm'
+                  : 'bg-eco-surface text-eco-creamDark border-black/[0.06]'
+                  }`}
               >
-                <CreditCard className={`w-4 h-4 ${paymentMethod === 'tarjeta' ? 'text-[#F7D147]' : 'text-[#1C1C1C]'}`} />
+                <CreditCard className={`w-4 h-4 ${paymentMethod === 'tarjeta' ? 'text-eco-gold' : 'text-eco-dark'}`} />
                 <span>Tarjeta</span>
               </button>
             </div>
           </div>
 
           {/* Ticket Comandera Checkbox */}
-          <div className="p-3.5 rounded-2xl bg-[#F6F3EA] border border-black/[0.06] flex items-center justify-between">
+          <div className="p-3.5 rounded-2xl bg-eco-surface border border-black/[0.06] flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Printer className="w-4 h-4 text-[#1C1C1C]" />
+              <Printer className="w-4 h-4 text-eco-dark" />
               <div>
-                <span className="font-bold text-[#1C1C1C] block">Imprimir Ticket Comandera</span>
-                <span className="text-[10px] text-[#71706B]">Disparar ticket 58mm para entregar al cliente</span>
+                <span className="font-bold text-eco-dark block">Imprimir Ticket Comandera</span>
+                <span className="text-[10px] text-eco-creamMuted">Disparar ticket 58mm para entregar al cliente</span>
               </div>
             </div>
             <button
               type="button"
               onClick={() => setAutoPrint(!autoPrint)}
-              className={`w-6 h-6 rounded-lg border flex items-center justify-center transition-all ${
-                autoPrint ? 'bg-[#F7D147] border-black/15 text-[#1C1C1C]' : 'bg-white border-black/15'
-              }`}
+              className={`w-6 h-6 rounded-lg border flex items-center justify-center transition-all ${autoPrint ? 'bg-eco-gold border-black/15 text-eco-dark' : 'bg-white border-black/15'
+                }`}
             >
               {autoPrint && <Check className="w-4 h-4 stroke-[3]" />}
             </button>
@@ -261,17 +276,17 @@ export const ReserveActiveVehicleModal: React.FC<Props> = ({
           {/* Footer Submit CTA */}
           <div className="pt-2 border-t border-black/[0.06] flex items-center justify-between gap-3">
             <div>
-              <span className="text-[10px] text-[#71706B] uppercase font-bold block">A cobrar ahora:</span>
-              <div className="text-xl font-black text-[#1C1C1C] font-mono">
+              <span className="text-[10px] text-eco-creamMuted uppercase font-bold block">A cobrar ahora:</span>
+              <div className="text-xl font-black text-eco-dark font-mono">
                 ${suggestedPrice.toLocaleString()}
               </div>
             </div>
 
             <button
               type="submit"
-              className="px-6 py-3.5 rounded-full bg-[#1C1C1C] hover:bg-[#333333] text-white font-black text-xs tracking-wider shadow-md active:scale-95 transition-all flex items-center gap-2"
+              className="px-6 py-3.5 rounded-full bg-eco-dark hover:bg-eco-forestLight text-white font-black text-xs tracking-wider shadow-md active:scale-95 transition-all flex items-center gap-2"
             >
-              <BookmarkPlus className="w-4 h-4 text-[#F7D147]" />
+              <BookmarkPlus className="w-4 h-4 text-eco-gold" />
               <span>COBRAR Y RESERVAR</span>
             </button>
           </div>

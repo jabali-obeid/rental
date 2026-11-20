@@ -4,6 +4,8 @@ import { getGoogleSheetsWebhookUrl, saveGoogleSheetsWebhookUrl, isGoogleSheetsCo
 import { soundService } from '../services/sound';
 import { dataService } from '../services/dataService';
 import { raftingWhatsappService } from '../services/raftingWhatsappService';
+import { useDialogA11y } from '../hooks/useDialogA11y';
+import { uiFeedback } from '../services/uiFeedback';
 import {
   X,
   Database,
@@ -26,8 +28,11 @@ interface Props {
 }
 
 export const SettingsModal: React.FC<Props> = ({ isOpen, onClose, onOpenRaftingConfig }) => {
+  const titleId = useId();
   const supabaseUrlId = useId();
   const supabaseKeyId = useId();
+
+  const dialogRef = useDialogA11y(isOpen, onClose);
 
   const [config, setConfig] = useState(getStoredSupabaseConfig());
   const [sheetsUrl, setSheetsUrl] = useState(getGoogleSheetsWebhookUrl());
@@ -66,14 +71,14 @@ export const SettingsModal: React.FC<Props> = ({ isOpen, onClose, onOpenRaftingC
       setSaveStatus('¡Sincronización completada con la nube!');
       setTimeout(() => setSaveStatus(''), 3000);
     } else {
-      alert('No se pudo sincronizar. Verifica la conexión a internet y las credenciales.');
+      uiFeedback.toast('No se pudo sincronizar. Verifica la conexión a internet y las credenciales.', 'error');
     }
   };
 
   const handleCopyDeviceLink = () => {
     const link = getShareableConfigUrl();
     if (!link) {
-      alert('Ingresa y guarda primero la URL y la Key de Supabase para generar el enlace.');
+      uiFeedback.toast('Ingresa y guarda primero la URL y la Key de Supabase para generar el enlace.', 'error');
       return;
     }
     navigator.clipboard.writeText(link);
@@ -89,10 +94,17 @@ export const SettingsModal: React.FC<Props> = ({ isOpen, onClose, onOpenRaftingC
     soundService.playCashRegister();
   };
 
-  const handleResetDemo = () => {
-    if (window.confirm('¿Deseas reiniciar la operación a cero (0km)? Se liberarán todas las unidades de la flota y se vaciarán los alquileres y la caja a $0 para comenzar limpios.')) {
+  const handleResetDemo = async () => {
+    const confirmed = await uiFeedback.confirm({
+      title: 'Reiniciar operación a cero',
+      message: '¿Deseas reiniciar la operación a cero (0km)? Se liberarán todas las unidades de la flota y se vaciarán los alquileres y la caja a $0 para comenzar limpios.',
+      confirmLabel: 'Sí, reiniciar a $0',
+      destructive: true,
+    });
+    if (confirmed) {
       dataService.resetToCleanState();
       soundService.playSuccess();
+      uiFeedback.toast('Sistema reiniciado a $0.', 'success');
       onClose();
     }
   };
@@ -117,35 +129,49 @@ export const SettingsModal: React.FC<Props> = ({ isOpen, onClose, onOpenRaftingC
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="w-full max-w-lg rounded-[28px] bg-white border border-black/[0.08] shadow-2xl flex flex-col max-h-[90vh] overflow-hidden text-[#1C1C1C]">
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby={titleId}
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onClose();
+      }}
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-in fade-in duration-200"
+    >
+      <div
+        ref={dialogRef}
+        tabIndex={-1}
+        className="w-full max-w-lg rounded-[28px] bg-white border border-black/[0.08] shadow-2xl flex flex-col max-h-[90vh] overflow-hidden text-eco-dark focus:outline-none"
+      >
         {/* Header */}
-        <div className="p-4 border-b border-black/[0.06] bg-[#FAF6E8] flex items-center justify-between">
+        <div className="p-4 border-b border-black/[0.06] bg-eco-cream flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-full bg-[#1C1C1C] flex items-center justify-center text-[#F7D147]">
+            <div className="w-8 h-8 rounded-full bg-eco-dark flex items-center justify-center text-eco-gold">
               ⚙️
             </div>
             <div>
-              <h3 className="text-sm font-extrabold text-[#1C1C1C]">Configuración - Eco Aventura</h3>
-              <p className="text-[11px] text-[#71706B]">Multi-dispositivo, sonido y base de datos</p>
+              <h3 id={titleId} className="text-sm font-extrabold text-eco-dark">Configuración - Eco Aventura</h3>
+              <p className="text-[11px] text-eco-creamMuted">Multi-dispositivo, sonido y base de datos</p>
             </div>
           </div>
           <button
+            type="button"
+            aria-label="Cerrar"
             onClick={onClose}
-            className="p-1.5 rounded-full text-[#71706B] hover:text-[#1C1C1C]"
+            className="p-1.5 rounded-full text-eco-creamMuted hover:text-eco-dark"
           >
             <X className="w-4 h-4" />
           </button>
         </div>
 
         {/* Tab switcher */}
-        <div className="flex border-b border-black/[0.06] bg-[#F6F3EA] p-1.5 gap-1">
+        <div className="flex border-b border-black/[0.06] bg-eco-surface p-1.5 gap-1">
           <button
             onClick={() => setActiveTab('supabase')}
             className={`flex-1 py-2 text-xs font-bold rounded-full transition-all ${
               activeTab === 'supabase'
-                ? 'bg-[#1C1C1C] text-white shadow-sm'
-                : 'text-[#52514E] hover:text-[#1C1C1C]'
+                ? 'bg-eco-dark text-white shadow-sm'
+                : 'text-eco-creamDark hover:text-eco-dark'
             }`}
           >
             Supabase / Enlace Móvil
@@ -154,8 +180,8 @@ export const SettingsModal: React.FC<Props> = ({ isOpen, onClose, onOpenRaftingC
             onClick={() => setActiveTab('audio')}
             className={`flex-1 py-2 text-xs font-bold rounded-full transition-all ${
               activeTab === 'audio'
-                ? 'bg-[#1C1C1C] text-white shadow-sm'
-                : 'text-[#52514E] hover:text-[#1C1C1C]'
+                ? 'bg-eco-dark text-white shadow-sm'
+                : 'text-eco-creamDark hover:text-eco-dark'
             }`}
           >
             Audio & Alertas
@@ -164,8 +190,8 @@ export const SettingsModal: React.FC<Props> = ({ isOpen, onClose, onOpenRaftingC
             onClick={() => setActiveTab('data')}
             className={`flex-1 py-2 text-xs font-bold rounded-full transition-all ${
               activeTab === 'data'
-                ? 'bg-[#1C1C1C] text-white shadow-sm'
-                : 'text-[#52514E] hover:text-[#1C1C1C]'
+                ? 'bg-eco-dark text-white shadow-sm'
+                : 'text-eco-creamDark hover:text-eco-dark'
             }`}
           >
             Datos & Backup
@@ -185,7 +211,7 @@ export const SettingsModal: React.FC<Props> = ({ isOpen, onClose, onOpenRaftingC
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2 font-bold">
                     {isConnected ? (
-                      <Wifi className="w-4 h-4 text-[#16A34A] animate-pulse" />
+                      <Wifi className="w-4 h-4 text-eco-leaf animate-pulse" />
                     ) : (
                       <Database className="w-4 h-4 text-[#D97706]" />
                     )}
@@ -197,7 +223,7 @@ export const SettingsModal: React.FC<Props> = ({ isOpen, onClose, onOpenRaftingC
                     <button
                       onClick={handleManualSync}
                       disabled={isSyncing}
-                      className="px-2.5 py-1 rounded-full bg-white hover:bg-[#1C1C1C] hover:text-white text-[#1C1C1C] border border-black/10 text-[10px] font-bold flex items-center gap-1 active:scale-95 transition-all"
+                      className="px-2.5 py-1 rounded-full bg-white hover:bg-eco-dark hover:text-white text-eco-dark border border-black/10 text-[10px] font-bold flex items-center gap-1 active:scale-95 transition-all"
                     >
                       <RefreshCw className={`w-3 h-3 ${isSyncing ? 'animate-spin' : ''}`} />
                       <span>{isSyncing ? 'Sincronizando...' : 'Sincronizar ahora'}</span>
@@ -213,20 +239,20 @@ export const SettingsModal: React.FC<Props> = ({ isOpen, onClose, onOpenRaftingC
 
               {/* Cross-Device Share Link Card */}
               {isConnected && (
-                <div className="p-3.5 rounded-2xl bg-[#F6F3EA] border border-black/[0.06] space-y-2.5">
-                  <div className="flex items-center gap-2 text-xs font-bold text-[#1C1C1C]">
-                    <Smartphone className="w-4 h-4 text-[#1C1C1C]" />
+                <div className="p-3.5 rounded-2xl bg-eco-surface border border-black/[0.06] space-y-2.5">
+                  <div className="flex items-center gap-2 text-xs font-bold text-eco-dark">
+                    <Smartphone className="w-4 h-4 text-eco-dark" />
                     <span>Conectar otro celular al instante (Sin escribir claves)</span>
                   </div>
-                  <p className="text-[11px] text-[#71706B]">
+                  <p className="text-[11px] text-eco-creamMuted">
                     Copia este enlace y ábrelo o envíalo por WhatsApp al otro teléfono. Se configurará y sincronizará en tiempo real de forma 100% automática:
                   </p>
                   <button
                     type="button"
                     onClick={handleCopyDeviceLink}
-                    className="w-full py-2.5 px-3 rounded-full bg-[#F7D147] hover:bg-[#f0c62d] text-[#1C1C1C] font-extrabold text-xs flex items-center justify-center gap-2 transition-all active:scale-95 shadow-sm"
+                    className="w-full py-2.5 px-3 rounded-full bg-eco-gold hover:bg-[#f0c62d] text-eco-dark font-extrabold text-xs flex items-center justify-center gap-2 transition-all active:scale-95 shadow-sm"
                   >
-                    {copiedLink ? <Check className="w-4 h-4 text-[#16A34A]" /> : <Copy className="w-4 h-4 text-[#1C1C1C]" />}
+                    {copiedLink ? <Check className="w-4 h-4 text-eco-leaf" /> : <Copy className="w-4 h-4 text-eco-dark" />}
                     <span>{copiedLink ? '¡Enlace de conexión copiado!' : 'Copiar enlace para el otro celular'}</span>
                   </button>
                 </div>
@@ -235,7 +261,7 @@ export const SettingsModal: React.FC<Props> = ({ isOpen, onClose, onOpenRaftingC
               {/* Form to enter/update Supabase Credentials */}
               <form onSubmit={handleSaveSupabase} className="space-y-3">
                 <div>
-                  <label htmlFor={supabaseUrlId} className="text-xs font-bold text-[#52514E] block mb-1">
+                  <label htmlFor={supabaseUrlId} className="text-xs font-bold text-eco-creamDark block mb-1">
                     SUPABASE PROJECT URL
                   </label>
                   <input
@@ -244,12 +270,12 @@ export const SettingsModal: React.FC<Props> = ({ isOpen, onClose, onOpenRaftingC
                     placeholder="https://xyzcompany.supabase.co"
                     value={config.url}
                     onChange={(e) => setConfig({ ...config, url: e.target.value })}
-                    className="w-full bg-[#F6F3EA] border border-black/[0.08] rounded-xl px-3 py-2.5 text-xs text-[#1C1C1C] placeholder-[#71706B] focus:outline-none focus:border-[#1C1C1C] font-mono"
+                    className="w-full bg-eco-surface border border-black/[0.08] rounded-xl px-3 py-2.5 text-xs text-eco-dark placeholder-eco-creamMuted focus:outline-none focus:border-eco-dark font-mono"
                   />
                 </div>
 
                 <div>
-                  <label htmlFor={supabaseKeyId} className="text-xs font-bold text-[#52514E] block mb-1">
+                  <label htmlFor={supabaseKeyId} className="text-xs font-bold text-eco-creamDark block mb-1">
                     SUPABASE ANON PUBLIC KEY
                   </label>
                   <input
@@ -258,20 +284,20 @@ export const SettingsModal: React.FC<Props> = ({ isOpen, onClose, onOpenRaftingC
                     placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
                     value={config.key}
                     onChange={(e) => setConfig({ ...config, key: e.target.value })}
-                    className="w-full bg-[#F6F3EA] border border-black/[0.08] rounded-xl px-3 py-2.5 text-xs text-[#1C1C1C] placeholder-[#71706B] focus:outline-none focus:border-[#1C1C1C] font-mono"
+                    className="w-full bg-eco-surface border border-black/[0.08] rounded-xl px-3 py-2.5 text-xs text-eco-dark placeholder-eco-creamMuted focus:outline-none focus:border-eco-dark font-mono"
                   />
                 </div>
 
                 {saveStatus && (
                   <div className="p-2.5 rounded-xl bg-[#DCFCE7] border border-[#86EFAC] text-[#166534] text-xs font-bold flex items-center gap-2">
-                    <Check className="w-4 h-4 text-[#16A34A]" />
+                    <Check className="w-4 h-4 text-eco-leaf" />
                     <span>{saveStatus}</span>
                   </div>
                 )}
 
                 <button
                   type="submit"
-                  className="w-full py-3.5 rounded-full bg-[#1C1C1C] text-white font-black text-xs tracking-wider shadow-md active:scale-98 transition-all hover:bg-[#333333]"
+                  className="w-full py-3.5 rounded-full bg-eco-dark text-white font-black text-xs tracking-wider shadow-md active:scale-98 transition-all hover:bg-eco-forestLight"
                 >
                   GUARDAR Y ACTIVAR TIEMPO REAL
                 </button>
@@ -281,12 +307,12 @@ export const SettingsModal: React.FC<Props> = ({ isOpen, onClose, onOpenRaftingC
 
           {activeTab === 'audio' && (
             <div className="space-y-3.5">
-              <div className="p-3.5 rounded-2xl bg-[#F6F3EA] border border-black/[0.06] text-xs text-[#52514E]">
-                <div className="flex items-center gap-2 font-bold text-[#1C1C1C] mb-1">
-                  <Volume2 className="w-4 h-4 text-[#1C1C1C]" />
+              <div className="p-3.5 rounded-2xl bg-eco-surface border border-black/[0.06] text-xs text-eco-creamDark">
+                <div className="flex items-center gap-2 font-bold text-eco-dark mb-1">
+                  <Volume2 className="w-4 h-4 text-eco-dark" />
                   <span>Sintetizador Web Audio API</span>
                 </div>
-                <p className="text-[11px] text-[#71706B]">
+                <p className="text-[11px] text-eco-creamMuted">
                   Las alertas y alarmas se generan por hardware directamente en el altavoz del celular, garantizando funcionamiento instantáneo en playa o parque sin conexión.
                 </p>
               </div>
@@ -304,7 +330,7 @@ export const SettingsModal: React.FC<Props> = ({ isOpen, onClose, onOpenRaftingC
                 <button
                   type="button"
                   onClick={handleTestChime}
-                  className="w-full py-3 px-4 rounded-2xl bg-[#F7D147] border border-black/10 text-[#1C1C1C] text-xs font-bold flex items-center justify-between hover:bg-[#f0c62d] active:scale-98 transition-all"
+                  className="w-full py-3 px-4 rounded-2xl bg-eco-gold border border-black/10 text-eco-dark text-xs font-bold flex items-center justify-between hover:bg-[#f0c62d] active:scale-98 transition-all"
                 >
                   <span>Probar Sonido de Cobro / Caja Registradora</span>
                   <span className="text-base">🔔</span>
@@ -316,9 +342,9 @@ export const SettingsModal: React.FC<Props> = ({ isOpen, onClose, onOpenRaftingC
           {activeTab === 'data' && (
             <div className="space-y-3">
               {/* Google Sheets Auto-Sync */}
-              <div className="p-3.5 rounded-2xl bg-[#F6F3EA] border border-black/[0.06] space-y-2.5">
+              <div className="p-3.5 rounded-2xl bg-eco-surface border border-black/[0.06] space-y-2.5">
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2 font-bold text-xs text-[#1C1C1C]">
+                  <div className="flex items-center gap-2 font-bold text-xs text-eco-dark">
                     <span>📊</span>
                     <span>Sincronización Google Sheets (Excel)</span>
                   </div>
@@ -332,7 +358,7 @@ export const SettingsModal: React.FC<Props> = ({ isOpen, onClose, onOpenRaftingC
                     {isGoogleSheetsConfigured() ? 'Activo' : 'Sin configurar'}
                   </span>
                 </div>
-                <p className="text-[11px] text-[#71706B]">
+                <p className="text-[11px] text-eco-creamMuted">
                   Escribe cada alquiler en su pestaña (CARROS, KARTING, MONOPATIN, KAYAK) y lo pinta de rosa al devolverlo.
                 </p>
                 <input
@@ -340,7 +366,7 @@ export const SettingsModal: React.FC<Props> = ({ isOpen, onClose, onOpenRaftingC
                   value={sheetsUrl}
                   onChange={(e) => setSheetsUrl(e.target.value)}
                   placeholder="https://script.google.com/macros/s/.../exec"
-                  className="w-full px-3 py-2 rounded-xl bg-white border border-black/10 text-xs text-[#1C1C1C] focus:outline-none focus:ring-2 focus:ring-[#1C1C1C]/20"
+                  className="w-full px-3 py-2 rounded-xl bg-white border border-black/10 text-xs text-eco-dark focus:outline-none focus:ring-2 focus:ring-eco-dark/20"
                 />
                 <div className="flex gap-2">
                   <button
@@ -356,7 +382,7 @@ export const SettingsModal: React.FC<Props> = ({ isOpen, onClose, onOpenRaftingC
                       }
                       setTimeout(() => setSheetsStatus(''), 3500);
                     }}
-                    className="flex-1 py-2 px-3 rounded-xl bg-[#1C1C1C] text-white text-xs font-bold hover:bg-black transition-all"
+                    className="flex-1 py-2 px-3 rounded-xl bg-eco-dark text-white text-xs font-bold hover:bg-black transition-all"
                   >
                     Guardar y Probar Conexión
                   </button>
@@ -366,7 +392,7 @@ export const SettingsModal: React.FC<Props> = ({ isOpen, onClose, onOpenRaftingC
                 )}
               </div>
 
-              <div className="p-3 rounded-2xl bg-[#F6F3EA] border border-black/[0.06] text-xs text-[#71706B]">
+              <div className="p-3 rounded-2xl bg-eco-surface border border-black/[0.06] text-xs text-eco-creamMuted">
                 <p className="text-[11px]">
                   Herramientas de respaldo local y restauración para la flota de Eco Aventura.
                 </p>
@@ -375,13 +401,13 @@ export const SettingsModal: React.FC<Props> = ({ isOpen, onClose, onOpenRaftingC
               <button
                 type="button"
                 onClick={handleExportJSON}
-                className="w-full py-3 px-4 rounded-2xl bg-[#F6F3EA] border border-black/[0.06] text-[#1C1C1C] text-xs font-bold flex items-center justify-between hover:bg-[#EAE4D3] active:scale-98 transition-all"
+                className="w-full py-3 px-4 rounded-2xl bg-eco-surface border border-black/[0.06] text-eco-dark text-xs font-bold flex items-center justify-between hover:bg-[#EAE4D3] active:scale-98 transition-all"
               >
                 <div className="flex items-center gap-2">
-                  <Download className="w-4 h-4 text-[#1C1C1C]" />
+                  <Download className="w-4 h-4 text-eco-dark" />
                   <span>Descargar Backup JSON Completo</span>
                 </div>
-                <span className="text-[10px] text-[#71706B]">Incluye alquileres, caja e historial</span>
+                <span className="text-[10px] text-eco-creamMuted">Incluye alquileres, caja e historial</span>
               </button>
 
               {onOpenRaftingConfig && (
@@ -391,13 +417,13 @@ export const SettingsModal: React.FC<Props> = ({ isOpen, onClose, onOpenRaftingC
                     onClose();
                     onOpenRaftingConfig();
                   }}
-                  className="w-full py-3 px-4 rounded-2xl bg-[#F7D147] border border-black/10 text-[#1C1C1C] text-xs font-bold flex items-center justify-between hover:bg-[#f0c62d] active:scale-98 transition-all"
+                  className="w-full py-3 px-4 rounded-2xl bg-eco-gold border border-black/10 text-eco-dark text-xs font-bold flex items-center justify-between hover:bg-[#f0c62d] active:scale-98 transition-all"
                 >
                   <div className="flex items-center gap-2">
-                    <Send className="w-4 h-4 text-[#1C1C1C]" />
+                    <Send className="w-4 h-4 text-eco-dark" />
                     <span>Plantillas de Rafting (Pomelos) y WhatsApp QR</span>
                   </div>
-                  <span className="text-[10px] font-extrabold text-[#1C1C1C]">Editar 12 mensajes / QR</span>
+                  <span className="text-[10px] font-extrabold text-eco-dark">Editar 12 mensajes / QR</span>
                 </button>
               )}
 

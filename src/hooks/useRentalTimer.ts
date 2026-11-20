@@ -1,6 +1,7 @@
-import { useState, useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { Rental, Category } from '../types';
 import { soundService } from '../services/sound';
+import { useSharedNow } from './useSharedNow';
 
 export type TrafficLight = 'WAITING' | 'GREEN' | 'YELLOW' | 'RED';
 
@@ -119,23 +120,11 @@ export interface TimerStatus {
 }
 
 export function useRentalTimer(rental: Rental, category?: Category): TimerStatus {
-  const [, setTick] = useState<number>(0);
   const alerted5mRef = useRef<boolean>(false);
   const alertedExpiredRef = useRef<boolean>(false);
   const waitingStart = isRentalWaitingStart(rental);
 
-  useEffect(() => {
-    // If rental is finished, canceled, or waiting for manual start, don't tick
-    if (rental.status !== 'activo' || waitingStart) return;
-
-    const interval = setInterval(() => {
-      setTick((t) => t + 1);
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, [rental.status, waitingStart]);
-
-  const now = Date.now();
+  const now = useSharedNow(rental.status === 'activo' && !waitingStart);
   const startTime = new Date(rental.startTime).getTime();
   const expectedEnd = new Date(rental.expectedEndTime).getTime();
   const totalDurationMs = Math.max(1, expectedEnd - startTime);

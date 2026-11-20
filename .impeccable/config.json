@@ -1,0 +1,17 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "cream-palette",
+        "value": "*",
+        "files": [
+          "index.html"
+        ],
+        "createdAt": "2026-11-20T22:29:10.127Z",
+        "reason": "Incumbent Eco Aventura brand palette (#FAF5E4) in tailwind.config.js and DESIGN.md"
+      }
+    ]
+  }
+}

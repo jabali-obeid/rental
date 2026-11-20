@@ -105,7 +105,7 @@ export const CircularTimePicker: React.FC<CircularTimePickerProps> = ({
   const thumbY = center + thumbR * Math.sin(thumbAngleRad);
 
   return (
-    <div className="rounded-3xl bg-[#F6F3EA] border border-black/[0.06] p-3.5 space-y-3 select-none">
+    <div className="rounded-3xl bg-eco-surface border border-black/[0.06] p-3.5 space-y-3 select-none">
       {/* Shortcut Pills: 15 / 30 / 60 min */}
       <div className="grid grid-cols-3 gap-2">
         {presets.map((preset) => {
@@ -117,8 +117,8 @@ export const CircularTimePicker: React.FC<CircularTimePickerProps> = ({
               onClick={() => onChange(preset)}
               className={`py-2 px-3 rounded-full text-xs font-extrabold border transition-all text-center active:scale-95 ${
                 isActive
-                  ? 'bg-[#1C1C1C] border-[#1C1C1C] text-[#F7D147] shadow-sm'
-                  : 'bg-white border-black/[0.06] text-[#52514E] hover:text-[#1C1C1C]'
+                  ? 'bg-eco-dark border-eco-dark text-eco-gold shadow-sm'
+                  : 'bg-white border-black/[0.06] text-eco-creamDark hover:text-eco-dark'
               }`}
             >
               {preset} min
@@ -195,14 +195,14 @@ export const CircularTimePicker: React.FC<CircularTimePickerProps> = ({
               mins
             </span>
             {value > 60 && (
-              <span className="text-[10px] font-bold text-[#F7D147] mt-0.5">
+              <span className="text-[10px] font-bold text-eco-gold mt-0.5">
                 {Math.floor(value / 60)}h {value % 60 > 0 ? `${value % 60}m` : ''}
               </span>
             )}
           </div>
         </div>
 
-        <p className="text-[10px] font-medium text-[#71706B] mt-1.5">
+        <p className="text-[10px] font-medium text-eco-creamMuted mt-1.5">
           Mantén y gira el círculo para ajustar a mano
         </p>
       </div>
@@ -212,14 +212,14 @@ export const CircularTimePicker: React.FC<CircularTimePickerProps> = ({
         <button
           type="button"
           onClick={() => onChange(clampMinutes(value - 5))}
-          className="py-2 rounded-2xl bg-white border border-black/[0.08] text-sm font-black text-[#1C1C1C] hover:bg-[#EAE4D3] active:scale-95 transition-all shadow-sm"
+          className="py-2 rounded-2xl bg-white border border-black/[0.08] text-sm font-black text-eco-dark hover:bg-[#EAE4D3] active:scale-95 transition-all shadow-sm"
         >
           -5
         </button>
         <button
           type="button"
           onClick={() => onChange(clampMinutes(value + 5))}
-          className="py-2 rounded-2xl bg-white border border-black/[0.08] text-sm font-black text-[#1C1C1C] hover:bg-[#EAE4D3] active:scale-95 transition-all shadow-sm"
+          className="py-2 rounded-2xl bg-white border border-black/[0.08] text-sm font-black text-eco-dark hover:bg-[#EAE4D3] active:scale-95 transition-all shadow-sm"
         >
           +5
         </button>

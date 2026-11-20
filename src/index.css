@@ -20,6 +20,9 @@
     color: #1C1C1C;
     overscroll-behavior-y: none;
     overscroll-behavior-x: none;
+  }
+
+  button, [role="button"] {
     user-select: none;
     -webkit-user-select: none;
   }
@@ -27,6 +30,17 @@
   input, textarea, select {
     user-select: auto;
     -webkit-user-select: auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-pulse,
+  .animate-pulse-fast,
+  .animate-ping {
+    animation: none !important;
+  }
+  * {
+    scroll-behavior: auto !important;
   }
 }
 

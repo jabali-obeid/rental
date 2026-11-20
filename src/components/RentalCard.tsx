@@ -6,6 +6,7 @@ import { Phone, AlertTriangle, Clock, PlusCircle, BookmarkPlus, Printer, Play, X
 import { dataService } from '../services/dataService';
 import { soundService } from '../services/sound';
 import { printThermalTicket } from '../services/printerService';
+import { uiFeedback } from '../services/uiFeedback';
 
 interface Props {
   rental: Rental;
@@ -15,7 +16,7 @@ interface Props {
   onReserveClick?: (rental: Rental) => void;
 }
 
-export const RentalCard: React.FC<Props> = ({
+export const RentalCard: React.FC<Props> = React.memo(({
   rental,
   category,
   unit,
@@ -75,11 +76,11 @@ export const RentalCard: React.FC<Props> = ({
     progressColor = 'bg-[#F59E0B]';
     statusText = 'POR VENCER';
   } else {
-    // RED: Intermittent alert
-    cardStyles = 'border-rose-500 bg-white shadow-xl ring-2 ring-rose-500 animate-pulse-fast';
+    // RED: Overdue alert (clean high-contrast border without competing animations)
+    cardStyles = 'border-rose-500 bg-white shadow-xl ring-2 ring-rose-500/80';
     badgeStyles = 'bg-[#FEE2E2] text-[#991B1B] font-extrabold border border-[#FCA5A5]';
     timeBoxStyles = 'bg-[#1C1C1C] border-rose-500 text-white';
-    timeStyles = 'text-rose-400 font-black animate-pulse';
+    timeStyles = 'text-rose-400 font-black';
     progressColor = 'bg-rose-600';
     statusText = 'TIEMPO CUMPLIDO';
   }
@@ -114,14 +115,13 @@ export const RentalCard: React.FC<Props> = ({
         {/* Center Countdown Display (Staffwyn Schedule / Dark Accent Card Style) */}
         <div className={`my-2 sm:my-2.5 rounded-2xl p-2.5 sm:p-3.5 border flex items-center justify-between shadow-sm ${timeBoxStyles}`}>
           <div className="min-w-0">
-            <span className={`text-[9px] sm:text-[10px] uppercase font-semibold block tracking-wider truncate ${
-              trafficLight === 'GREEN' || trafficLight === 'RED' ? 'text-white/65' : 'text-[#1C1C1C]/70'
-            }`}>
+            <span className={`text-[9px] sm:text-[10px] uppercase font-semibold block tracking-wider truncate ${trafficLight === 'GREEN' || trafficLight === 'RED' ? 'text-white/65' : 'text-[#1C1C1C]/70'
+              }`}>
               {isWaitingStart
                 ? 'Tiempo Contratado'
                 : isExpired
-                ? 'Demora transcurrida'
-                : 'Tiempo Restante'}
+                  ? 'Demora transcurrida'
+                  : 'Tiempo Restante'}
             </span>
             <div className="flex items-baseline gap-1.5 sm:gap-2">
               <span className={`font-mono text-2xl sm:text-3xl tracking-tight ${timeStyles}`}>
@@ -146,20 +146,20 @@ export const RentalCard: React.FC<Props> = ({
               type="button"
               onClick={handleLaunchTimer}
               title="Iniciar cuenta regresiva ahora"
-              className="flex items-center gap-1 sm:gap-1.5 px-3 sm:px-4 py-2 sm:py-2.5 rounded-full bg-[#1C1C1C] hover:bg-[#333333] active:scale-95 transition-all text-white font-black text-xs shadow-md shrink-0"
+              className="flex items-center gap-1 sm:gap-1.5 px-3.5 sm:px-4 min-h-[44px] rounded-full bg-[#1C1C1C] hover:bg-[#333333] active:scale-95 transition-all text-white font-black text-xs shadow-md shrink-0"
             >
               <Play className="w-3.5 h-3.5 fill-current text-[#F7D147]" />
               <span>INICIAR</span>
             </button>
           ) : (
             <button
+              type="button"
               onClick={handleQuickExtend}
               title="Extender 15 minutos"
-              className={`flex flex-col items-center justify-center px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl border active:scale-95 transition-all shrink-0 ${
-                trafficLight === 'GREEN' || trafficLight === 'RED'
-                  ? 'bg-white/10 border-white/15 hover:bg-white/20 text-white'
-                  : 'bg-[#1C1C1C] border-[#1C1C1C] text-white'
-              }`}
+              className={`flex flex-col items-center justify-center px-2.5 sm:px-3 min-w-[44px] min-h-[44px] rounded-xl border active:scale-95 transition-all shrink-0 ${trafficLight === 'GREEN' || trafficLight === 'RED'
+                ? 'bg-white/10 border-white/15 hover:bg-white/20 text-white'
+                : 'bg-[#1C1C1C] border-[#1C1C1C] text-white'
+                }`}
             >
               <PlusCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#F7D147] mb-0.5" />
               <span className="text-[9px] sm:text-[10px] font-bold">+15 min</span>
@@ -178,17 +178,15 @@ export const RentalCard: React.FC<Props> = ({
         {/* Surcharge Notice if Red / Overdue */}
         {isExpired && (
           <div
-            className={`mb-3 p-2.5 rounded-2xl border flex items-center justify-between text-xs ${
-              suggestedPenalty > 0
-                ? 'bg-[#FEE2E2] border-[#FCA5A5] text-[#991B1B]'
-                : 'bg-[#FEF3C7] border-[#FDE68A] text-[#92400E]'
-            }`}
+            className={`mb-3 p-2.5 rounded-2xl border flex items-center justify-between text-xs ${suggestedPenalty > 0
+              ? 'bg-[#FEE2E2] border-[#FCA5A5] text-[#991B1B]'
+              : 'bg-[#FEF3C7] border-[#FDE68A] text-[#92400E]'
+              }`}
           >
             <div className="flex items-center gap-1.5 font-medium">
               <AlertTriangle
-                className={`w-4 h-4 shrink-0 ${
-                  suggestedPenalty > 0 ? 'text-rose-600' : 'text-amber-600'
-                }`}
+                className={`w-4 h-4 shrink-0 ${suggestedPenalty > 0 ? 'text-rose-600' : 'text-amber-600'
+                  }`}
               />
               <span>
                 Demora: <strong>{delayMinutes} min</strong>{' '}
@@ -246,6 +244,7 @@ export const RentalCard: React.FC<Props> = ({
               </div>
               <button
                 type="button"
+                aria-label="Reimprimir ticket de reserva"
                 onClick={() => {
                   printThermalTicket({
                     type: 'RESERVA',
@@ -264,10 +263,10 @@ export const RentalCard: React.FC<Props> = ({
                     createdAt: pendingReservation.createdAt,
                   });
                 }}
-                className="p-2 rounded-full bg-white hover:bg-[#1C1C1C] hover:text-white border border-black/10 text-[#1C1C1C] active:scale-95 transition-all"
+                className="w-11 h-11 flex items-center justify-center rounded-full bg-white hover:bg-[#1C1C1C] hover:text-white border border-black/10 text-[#1C1C1C] active:scale-95 transition-all shrink-0"
                 title="Reimprimir ticket de reserva"
               >
-                <Printer className="w-3.5 h-3.5" />
+                <Printer className="w-4 h-4" />
               </button>
             </div>
           )}
@@ -280,7 +279,7 @@ export const RentalCard: React.FC<Props> = ({
           <button
             type="button"
             onClick={handleLaunchTimer}
-            className="flex-1 py-3.5 px-4 rounded-full bg-[#1C1C1C] hover:bg-[#333333] text-white font-black text-xs sm:text-sm tracking-wider transition-all shadow-md active:scale-[0.98] flex items-center justify-center gap-2"
+            className="flex-1 min-h-[44px] py-3 px-4 rounded-full bg-[#1C1C1C] hover:bg-[#333333] text-white font-black text-xs sm:text-sm tracking-wider transition-all shadow-md active:scale-[0.98] flex items-center justify-center gap-2"
           >
             <Play className="w-4 h-4 fill-current text-[#F7D147]" />
             <span>INICIAR TIEMPO ({rental.durationMinutes} MIN)</span>
@@ -288,13 +287,21 @@ export const RentalCard: React.FC<Props> = ({
 
           <button
             type="button"
-            onClick={() => {
-              if (window.confirm(`¿Cancelar este alquiler pendiente de ${rental.customerName} y liberar la unidad ${unitCode}?`)) {
+            aria-label="Cancelar salida y liberar unidad"
+            onClick={async () => {
+              const confirmed = await uiFeedback.confirm({
+                title: 'Cancelar salida pendiente',
+                message: `¿Cancelar este alquiler pendiente de ${rental.customerName} y liberar la unidad ${unitCode}?`,
+                confirmLabel: 'Sí, cancelar',
+                destructive: true,
+              });
+              if (confirmed) {
                 dataService.cancelRental(rental.id);
+                uiFeedback.toast(`Unidad ${unitCode} liberada.`, 'info');
               }
             }}
             title="Cancelar salida y liberar unidad"
-            className="py-3.5 px-3.5 rounded-full bg-[#F6F3EA] hover:bg-[#FEE2E2] text-[#71706B] hover:text-[#991B1B] border border-black/[0.06] transition-all active:scale-95"
+            className="min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full bg-[#F6F3EA] hover:bg-[#FEE2E2] text-[#71706B] hover:text-[#991B1B] border border-black/[0.06] transition-all active:scale-95 shrink-0"
           >
             <XCircle className="w-4 h-4" />
           </button>
@@ -306,7 +313,7 @@ export const RentalCard: React.FC<Props> = ({
             <button
               type="button"
               onClick={() => onReserveClick && onReserveClick(rental)}
-              className="py-3 px-3 rounded-full bg-[#F7D147] hover:bg-[#f0c62d] text-[#1C1C1C] font-extrabold text-xs tracking-wide transition-all shadow-sm active:scale-[0.98] flex items-center justify-center gap-1.5"
+              className="min-h-[44px] py-3 px-3 rounded-full bg-[#F7D147] hover:bg-[#f0c62d] text-[#1C1C1C] font-extrabold text-xs tracking-wide transition-all shadow-sm active:scale-[0.98] flex items-center justify-center gap-1.5"
             >
               <BookmarkPlus className="w-4 h-4 text-[#1C1C1C]" />
               <span>Reservar</span>
@@ -314,12 +321,18 @@ export const RentalCard: React.FC<Props> = ({
           ) : (
             <button
               type="button"
-              onClick={() => {
-                if (window.confirm(`¿Deseas despachar inmediatamente la reserva de ${pendingReservation.customerName}?`)) {
+              onClick={async () => {
+                const confirmed = await uiFeedback.confirm({
+                  title: 'Despachar reserva',
+                  message: `¿Deseas despachar inmediatamente la reserva de ${pendingReservation.customerName}?`,
+                  confirmLabel: 'Despachar',
+                });
+                if (confirmed) {
                   dataService.dispatchReservation(pendingReservation.id);
+                  uiFeedback.toast(`Reserva de ${pendingReservation.customerName} despachada.`, 'success');
                 }
               }}
-              className="py-3 px-3 rounded-full bg-[#DCFCE7] hover:bg-[#BBF7D0] text-[#166534] border border-[#86EFAC] font-extrabold text-xs tracking-wide transition-all shadow-sm active:scale-[0.98] flex items-center justify-center gap-1.5"
+              className="min-h-[44px] py-3 px-3 rounded-full bg-[#DCFCE7] hover:bg-[#BBF7D0] text-[#166534] border border-[#86EFAC] font-extrabold text-xs tracking-wide transition-all shadow-sm active:scale-[0.98] flex items-center justify-center gap-1.5"
             >
               <Play className="w-4 h-4" />
               <span>Despachar</span>
@@ -330,11 +343,10 @@ export const RentalCard: React.FC<Props> = ({
           <button
             type="button"
             onClick={() => onFinishClick(rental)}
-            className={`py-3 px-3 rounded-full font-extrabold text-xs tracking-wide transition-all shadow-sm active:scale-[0.98] flex items-center justify-center gap-1.5 ${
-              isExpired
-                ? 'bg-rose-600 hover:bg-rose-500 text-white animate-bounce'
-                : 'bg-[#1C1C1C] hover:bg-[#333333] text-white'
-            }`}
+            className={`min-h-[44px] py-3 px-3 rounded-full font-extrabold text-xs tracking-wide transition-all shadow-sm active:scale-[0.98] flex items-center justify-center gap-1.5 ${isExpired
+              ? 'bg-rose-600 hover:bg-rose-500 text-white ring-2 ring-rose-300'
+              : 'bg-[#1C1C1C] hover:bg-[#333333] text-white'
+              }`}
           >
             <Clock className="w-4 h-4 text-[#F7D147]" />
             <span>Finalizar</span>
@@ -343,4 +355,4 @@ export const RentalCard: React.FC<Props> = ({
       )}
     </div>
   );
-};
+});

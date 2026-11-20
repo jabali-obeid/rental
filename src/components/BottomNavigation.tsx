@@ -22,14 +22,14 @@ export const BottomNavigation: React.FC<Props> = ({
           onClick={() => onChangeTab('dashboard')}
           className={`relative flex flex-col items-center justify-center py-1.5 rounded-2xl transition-all ${
             activeTab === 'dashboard'
-              ? 'bg-[#1C1C1C] text-white font-extrabold shadow-sm'
-              : 'text-[#71706B] hover:text-[#1C1C1C]'
+              ? 'bg-eco-dark text-white font-extrabold shadow-sm'
+              : 'text-eco-creamMuted hover:text-eco-dark'
           }`}
         >
           <div className="relative">
             <Clock className="w-5 h-5 mb-0.5" />
             {activeRentalsCount > 0 && (
-              <span className="absolute -top-1.5 -right-2.5 px-1.5 py-0.2 rounded-full text-[10px] font-black bg-[#F7D147] text-[#1C1C1C] border border-black/10">
+              <span className="absolute -top-1.5 -right-2.5 px-1.5 py-0.2 rounded-full text-[10px] font-black bg-eco-gold text-eco-dark border border-black/10">
                 {activeRentalsCount}
               </span>
             )}
@@ -42,8 +42,8 @@ export const BottomNavigation: React.FC<Props> = ({
           onClick={() => onChangeTab('inventory')}
           className={`flex flex-col items-center justify-center py-1.5 rounded-2xl transition-all ${
             activeTab === 'inventory'
-              ? 'bg-[#1C1C1C] text-white font-extrabold shadow-sm'
-              : 'text-[#71706B] hover:text-[#1C1C1C]'
+              ? 'bg-eco-dark text-white font-extrabold shadow-sm'
+              : 'text-eco-creamMuted hover:text-eco-dark'
           }`}
         >
           <Bike className="w-5 h-5 mb-0.5" />
@@ -55,8 +55,8 @@ export const BottomNavigation: React.FC<Props> = ({
           onClick={() => onChangeTab('cash')}
           className={`flex flex-col items-center justify-center py-1.5 rounded-2xl transition-all ${
             activeTab === 'cash'
-              ? 'bg-[#1C1C1C] text-white font-extrabold shadow-sm'
-              : 'text-[#71706B] hover:text-[#1C1C1C]'
+              ? 'bg-eco-dark text-white font-extrabold shadow-sm'
+              : 'text-eco-creamMuted hover:text-eco-dark'
           }`}
         >
           <Banknote className="w-5 h-5 mb-0.5" />
@@ -68,8 +68,8 @@ export const BottomNavigation: React.FC<Props> = ({
           onClick={() => onChangeTab('stats')}
           className={`flex flex-col items-center justify-center py-1.5 rounded-2xl transition-all ${
             activeTab === 'stats'
-              ? 'bg-[#1C1C1C] text-white font-extrabold shadow-sm'
-              : 'text-[#71706B] hover:text-[#1C1C1C]'
+              ? 'bg-eco-dark text-white font-extrabold shadow-sm'
+              : 'text-eco-creamMuted hover:text-eco-dark'
           }`}
         >
           <BarChart3 className="w-5 h-5 mb-0.5" />

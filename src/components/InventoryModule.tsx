@@ -3,6 +3,8 @@ import { Unit, Category, UnitStatus } from '../types';
 import { dataService } from '../services/dataService';
 import { Plus, Wrench, CheckCircle, Ban, Trash2, X, PlusCircle, DollarSign, Check, Sliders } from 'lucide-react';
 import { soundService } from '../services/sound';
+import { useDialogA11y } from '../hooks/useDialogA11y';
+import { uiFeedback } from '../services/uiFeedback';
 
 interface Props {
   units: Unit[];
@@ -10,6 +12,8 @@ interface Props {
 }
 
 export const InventoryModule: React.FC<Props> = ({ units, categories }) => {
+  const addModalTitleId = useId();
+  const ratesModalTitleId = useId();
   const newCodeId = useId();
   const newNameId = useId();
   const newCatId = useId();
@@ -18,6 +22,9 @@ export const InventoryModule: React.FC<Props> = ({ units, categories }) => {
   const [selectedCategoryFilter, setSelectedCategoryFilter] = useState<string>('all');
   const [isAddModalOpen, setIsAddModalOpen] = useState<boolean>(false);
   const [isRatesModalOpen, setIsRatesModalOpen] = useState<boolean>(false);
+
+  const addDialogRef = useDialogA11y(isAddModalOpen, () => setIsAddModalOpen(false));
+  const ratesDialogRef = useDialogA11y(isRatesModalOpen, () => setIsRatesModalOpen(false));
 
   // New Unit Form State
   const [newCode, setNewCode] = useState<string>('');
@@ -66,7 +73,7 @@ export const InventoryModule: React.FC<Props> = ({ units, categories }) => {
   const handleCreateUnit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!newCode.trim() || !newName.trim()) {
-      alert('Completa el código y nombre de la unidad');
+      uiFeedback.toast('Completa el código y nombre de la unidad.', 'error');
       return;
     }
 
@@ -84,9 +91,16 @@ export const InventoryModule: React.FC<Props> = ({ units, categories }) => {
     setNewNotes('');
   };
 
-  const handleDeleteUnit = (unitId: string, unitCode: string) => {
-    if (window.confirm(`¿Seguro que deseas eliminar la unidad ${unitCode}?`)) {
+  const handleDeleteUnit = async (unitId: string, unitCode: string) => {
+    const confirmed = await uiFeedback.confirm({
+      title: `Eliminar unidad ${unitCode}`,
+      message: `¿Seguro que deseas eliminar la unidad ${unitCode}?`,
+      confirmLabel: 'Eliminar',
+      destructive: true,
+    });
+    if (confirmed) {
       dataService.deleteUnit(unitId);
+      uiFeedback.toast(`Unidad ${unitCode} eliminada.`, 'info');
     }
   };
 
@@ -109,23 +123,23 @@ export const InventoryModule: React.FC<Props> = ({ units, categories }) => {
   };
 
   return (
-    <div className="space-y-4 pb-24 text-[#1C1C1C]">
+    <div className="space-y-4 pb-24 text-eco-dark">
       {/* Fleet Summary Counters */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         <div className="p-4 rounded-[24px] bg-white border border-black/[0.05] shadow-[0_8px_30px_rgb(0,0,0,0.04)] text-center">
-          <div className="text-2xl font-bold text-[#1C1C1C]">{counts.disponible}</div>
+          <div className="text-2xl font-bold text-eco-dark">{counts.disponible}</div>
           <div className="text-[10px] font-bold text-[#166534] uppercase tracking-wider mt-0.5">Disponibles</div>
         </div>
         <div className="p-4 rounded-[24px] bg-white border border-black/[0.05] shadow-[0_8px_30px_rgb(0,0,0,0.04)] text-center">
-          <div className="text-2xl font-bold text-[#1C1C1C]">{counts.alquilado}</div>
+          <div className="text-2xl font-bold text-eco-dark">{counts.alquilado}</div>
           <div className="text-[10px] font-bold text-[#92400E] uppercase tracking-wider mt-0.5">Alquilados</div>
         </div>
         <div className="p-4 rounded-[24px] bg-white border border-black/[0.05] shadow-[0_8px_30px_rgb(0,0,0,0.04)] text-center">
           <div className="text-2xl font-bold text-[#D97706]">{counts.mantenimiento}</div>
           <div className="text-[10px] font-bold text-[#92400E] uppercase tracking-wider mt-0.5">Taller</div>
         </div>
-        <div className="p-4 rounded-[24px] bg-[#1C1C1C] text-white shadow-[0_8px_30px_rgb(0,0,0,0.06)] text-center">
-          <div className="text-2xl font-bold text-[#F7D147]">{counts.total}</div>
+        <div className="p-4 rounded-[24px] bg-eco-dark text-white shadow-[0_8px_30px_rgb(0,0,0,0.06)] text-center">
+          <div className="text-2xl font-bold text-eco-gold">{counts.total}</div>
           <div className="text-[10px] font-bold text-white/75 uppercase tracking-wider mt-0.5">Total Flota</div>
         </div>
       </div>
@@ -137,8 +151,8 @@ export const InventoryModule: React.FC<Props> = ({ units, categories }) => {
             onClick={() => setSelectedCategoryFilter('all')}
             className={`px-3.5 py-2 rounded-full text-xs font-bold shrink-0 transition-all ${
               selectedCategoryFilter === 'all'
-                ? 'bg-[#1C1C1C] text-white shadow-sm'
-                : 'bg-[#F6F3EA] text-[#52514E] border border-black/[0.05] hover:text-[#1C1C1C]'
+                ? 'bg-eco-dark text-white shadow-sm'
+                : 'bg-eco-surface text-eco-creamDark border border-black/[0.05] hover:text-eco-dark'
             }`}
           >
             Todas ({units.length})
@@ -149,8 +163,8 @@ export const InventoryModule: React.FC<Props> = ({ units, categories }) => {
               onClick={() => setSelectedCategoryFilter(c.id)}
               className={`px-3.5 py-2 rounded-full text-xs font-bold shrink-0 transition-all ${
                 selectedCategoryFilter === c.id
-                  ? 'bg-[#1C1C1C] text-white shadow-sm'
-                  : 'bg-[#F6F3EA] text-[#52514E] border border-black/[0.05] hover:text-[#1C1C1C]'
+                  ? 'bg-eco-dark text-white shadow-sm'
+                  : 'bg-eco-surface text-eco-creamDark border border-black/[0.05] hover:text-eco-dark'
               }`}
             >
               {c.name.split(' ')[0]}
@@ -176,17 +190,17 @@ export const InventoryModule: React.FC<Props> = ({ units, categories }) => {
               setRatesDraft(init);
               setIsRatesModalOpen(true);
             }}
-            className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#F7D147] text-[#1C1C1C] text-xs font-extrabold hover:bg-[#f0c62d] shrink-0 shadow-sm transition-all"
+            className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-eco-gold text-eco-dark text-xs font-extrabold hover:bg-[#f0c62d] shrink-0 shadow-sm transition-all"
           >
-            <Sliders className="w-3.5 h-3.5 text-[#1C1C1C]" />
+            <Sliders className="w-3.5 h-3.5 text-eco-dark" />
             <span>Editar Tarifas</span>
           </button>
 
           <button
             onClick={() => setIsAddModalOpen(true)}
-            className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#1C1C1C] text-white text-xs font-bold hover:bg-[#333333] shrink-0 shadow-sm transition-all"
+            className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-eco-dark text-white text-xs font-bold hover:bg-eco-forestLight shrink-0 shadow-sm transition-all"
           >
-            <Plus className="w-3.5 h-3.5 stroke-[3] text-[#F7D147]" />
+            <Plus className="w-3.5 h-3.5 stroke-[3] text-eco-gold" />
             <span>Nueva Unidad</span>
           </button>
         </div>
@@ -205,19 +219,19 @@ export const InventoryModule: React.FC<Props> = ({ units, categories }) => {
               {/* Left Details */}
               <div className="flex items-center gap-3">
                 <div className={`w-6 h-6 rounded-md flex items-center justify-center shrink-0 ${
-                  u.status === 'disponible' ? 'bg-[#F7D147] text-[#1C1C1C]' : 'bg-[#F6F3EA] border border-black/10 text-[#71706B]'
+                  u.status === 'disponible' ? 'bg-eco-gold text-eco-dark' : 'bg-eco-surface border border-black/10 text-eco-creamMuted'
                 }`}>
                   <Check className="w-3.5 h-3.5 stroke-[3]" />
                 </div>
 
-                <span className="w-11 h-11 rounded-full bg-[#1C1C1C] font-mono font-black text-xs text-white flex items-center justify-center shrink-0">
+                <span className="w-11 h-11 rounded-full bg-eco-dark font-mono font-black text-xs text-white flex items-center justify-center shrink-0">
                   {u.codeNumber}
                 </span>
 
                 <div>
                   <div className="flex items-center gap-2">
-                    <h4 className="text-sm font-bold text-[#1C1C1C] leading-tight">{u.name}</h4>
-                    <span className="text-[10px] px-2.5 py-0.5 rounded-full font-semibold bg-[#F6F3EA] text-[#52514E] border border-black/[0.06]">
+                    <h4 className="text-sm font-bold text-eco-dark leading-tight">{u.name}</h4>
+                    <span className="text-[10px] px-2.5 py-0.5 rounded-full font-semibold bg-eco-surface text-eco-creamDark border border-black/[0.06]">
                       {category?.name}
                     </span>
                   </div>
@@ -245,7 +259,7 @@ export const InventoryModule: React.FC<Props> = ({ units, categories }) => {
                       className={`px-3 py-1.5 rounded-full text-xs font-semibold flex items-center gap-1 transition-all ${
                         u.status === 'disponible'
                           ? 'bg-[#DCFCE7] text-[#166534] border border-[#86EFAC] font-bold'
-                          : 'bg-[#F6F3EA] text-[#71706B] border border-black/[0.05] hover:text-[#1C1C1C]'
+                          : 'bg-eco-surface text-eco-creamMuted border border-black/[0.05] hover:text-eco-dark'
                       }`}
                     >
                       <CheckCircle className="w-3.5 h-3.5" />
@@ -257,7 +271,7 @@ export const InventoryModule: React.FC<Props> = ({ units, categories }) => {
                       className={`px-3 py-1.5 rounded-full text-xs font-semibold flex items-center gap-1 transition-all ${
                         u.status === 'mantenimiento'
                           ? 'bg-[#FEF3C7] text-[#92400E] border border-[#FDE68A] font-bold'
-                          : 'bg-[#F6F3EA] text-[#71706B] border border-black/[0.05] hover:text-[#1C1C1C]'
+                          : 'bg-eco-surface text-eco-creamMuted border border-black/[0.05] hover:text-eco-dark'
                       }`}
                     >
                       <Wrench className="w-3.5 h-3.5" />
@@ -269,7 +283,7 @@ export const InventoryModule: React.FC<Props> = ({ units, categories }) => {
                       className={`px-2.5 py-1.5 rounded-full text-xs font-semibold flex items-center gap-1 transition-all ${
                         u.status === 'baja'
                           ? 'bg-[#FEE2E2] text-[#991B1B] border border-[#FCA5A5] font-bold'
-                          : 'bg-[#F6F3EA] text-[#71706B] border border-black/[0.05] hover:text-[#1C1C1C]'
+                          : 'bg-eco-surface text-eco-creamMuted border border-black/[0.05] hover:text-eco-dark'
                       }`}
                     >
                       <Ban className="w-3.5 h-3.5" />
@@ -278,7 +292,7 @@ export const InventoryModule: React.FC<Props> = ({ units, categories }) => {
 
                     <button
                       onClick={() => handleDeleteUnit(u.id, u.codeNumber)}
-                      className="p-1.5 rounded-full text-[#71706B] hover:text-rose-600 hover:bg-[#FEE2E2] transition-colors ml-1"
+                      className="p-1.5 rounded-full text-eco-creamMuted hover:text-rose-600 hover:bg-[#FEE2E2] transition-colors ml-1"
                       title="Eliminar de la base"
                     >
                       <Trash2 className="w-4 h-4" />
@@ -293,16 +307,30 @@ export const InventoryModule: React.FC<Props> = ({ units, categories }) => {
 
       {/* Add Unit Modal */}
       {isAddModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="w-full max-w-md rounded-[28px] bg-white border border-black/[0.08] shadow-2xl overflow-hidden text-[#1C1C1C]">
-            <div className="p-4 border-b border-black/[0.06] flex items-center justify-between bg-[#FAF6E8]">
-              <h3 className="text-sm font-bold text-[#1C1C1C] flex items-center gap-2">
-                <PlusCircle className="w-4 h-4 text-[#1C1C1C]" />
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby={addModalTitleId}
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setIsAddModalOpen(false);
+          }}
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-in fade-in duration-200"
+        >
+          <div
+            ref={addDialogRef}
+            tabIndex={-1}
+            className="w-full max-w-md rounded-[28px] bg-white border border-black/[0.08] shadow-2xl overflow-hidden text-eco-dark focus:outline-none"
+          >
+            <div className="p-4 border-b border-black/[0.06] flex items-center justify-between bg-eco-cream">
+              <h3 id={addModalTitleId} className="text-sm font-bold text-eco-dark flex items-center gap-2">
+                <PlusCircle className="w-4 h-4 text-eco-dark" />
                 <span>Agregar Nueva Unidad - Eco Aventura</span>
               </h3>
               <button
+                type="button"
+                aria-label="Cerrar"
                 onClick={() => setIsAddModalOpen(false)}
-                className="p-1.5 rounded-full text-[#71706B] hover:text-[#1C1C1C] hover:bg-white"
+                className="p-1.5 rounded-full text-eco-creamMuted hover:text-eco-dark hover:bg-white"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -310,15 +338,15 @@ export const InventoryModule: React.FC<Props> = ({ units, categories }) => {
 
             <form onSubmit={handleCreateUnit} className="p-5 space-y-3.5">
               <div>
-                <label htmlFor={newCatId} className="text-xs font-bold text-[#52514E] block mb-1">Categoría</label>
+                <label htmlFor={newCatId} className="text-xs font-bold text-eco-creamDark block mb-1">Categoría</label>
                 <select
                   id={newCatId}
                   value={newCategoryId}
                   onChange={(e) => setNewCategoryId(e.target.value)}
-                  className="w-full bg-[#F6F3EA] border border-black/[0.08] rounded-xl px-3 py-2.5 text-xs text-[#1C1C1C] focus:outline-none focus:border-[#1C1C1C]"
+                  className="w-full bg-eco-surface border border-black/[0.08] rounded-xl px-3 py-2.5 text-xs text-eco-dark focus:outline-none focus:border-eco-dark"
                 >
                   {categories.map((c) => (
-                    <option key={c.id} value={c.id} className="bg-white text-[#1C1C1C]">
+                    <option key={c.id} value={c.id} className="bg-white text-eco-dark">
                       {c.name}
                     </option>
                   ))}
@@ -326,7 +354,7 @@ export const InventoryModule: React.FC<Props> = ({ units, categories }) => {
               </div>
 
               <div>
-                <label htmlFor={newCodeId} className="text-xs font-bold text-[#52514E] block mb-1">
+                <label htmlFor={newCodeId} className="text-xs font-bold text-eco-creamDark block mb-1">
                   Código de Identificación (ej: K-05, KY-04, MP-05) *
                 </label>
                 <input
@@ -336,12 +364,12 @@ export const InventoryModule: React.FC<Props> = ({ units, categories }) => {
                   placeholder="K-05"
                   value={newCode}
                   onChange={(e) => setNewCode(e.target.value)}
-                  className="w-full bg-[#F6F3EA] border border-black/[0.08] rounded-xl px-3 py-2.5 text-xs font-mono font-bold text-[#1C1C1C] focus:outline-none focus:border-[#1C1C1C] uppercase"
+                  className="w-full bg-eco-surface border border-black/[0.08] rounded-xl px-3 py-2.5 text-xs font-mono font-bold text-eco-dark focus:outline-none focus:border-eco-dark uppercase"
                 />
               </div>
 
               <div>
-                <label htmlFor={newNameId} className="text-xs font-bold text-[#52514E] block mb-1">
+                <label htmlFor={newNameId} className="text-xs font-bold text-eco-creamDark block mb-1">
                   Nombre descriptivo *
                 </label>
                 <input
@@ -351,12 +379,12 @@ export const InventoryModule: React.FC<Props> = ({ units, categories }) => {
                   placeholder="Ej: Karting Negro Safari Edition"
                   value={newName}
                   onChange={(e) => setNewName(e.target.value)}
-                  className="w-full bg-[#F6F3EA] border border-black/[0.08] rounded-xl px-3 py-2.5 text-xs text-[#1C1C1C] focus:outline-none focus:border-[#1C1C1C]"
+                  className="w-full bg-eco-surface border border-black/[0.08] rounded-xl px-3 py-2.5 text-xs text-eco-dark focus:outline-none focus:border-eco-dark"
                 />
               </div>
 
               <div>
-                <label htmlFor={newNotesId} className="text-xs font-bold text-[#52514E] block mb-1">
+                <label htmlFor={newNotesId} className="text-xs font-bold text-eco-creamDark block mb-1">
                   Notas de mantenimiento (opcional)
                 </label>
                 <input
@@ -365,14 +393,14 @@ export const InventoryModule: React.FC<Props> = ({ units, categories }) => {
                   placeholder="Ej: Batería nueva comprada oct-2026"
                   value={newNotes}
                   onChange={(e) => setNewNotes(e.target.value)}
-                  className="w-full bg-[#F6F3EA] border border-black/[0.08] rounded-xl px-3 py-2.5 text-xs text-[#1C1C1C] focus:outline-none focus:border-[#1C1C1C]"
+                  className="w-full bg-eco-surface border border-black/[0.08] rounded-xl px-3 py-2.5 text-xs text-eco-dark focus:outline-none focus:border-eco-dark"
                 />
               </div>
 
               <div className="pt-2">
                 <button
                   type="submit"
-                  className="w-full py-3.5 rounded-full bg-[#1C1C1C] text-white font-black text-xs tracking-wider shadow-md active:scale-98 transition-all hover:bg-[#333333]"
+                  className="w-full py-3.5 rounded-full bg-eco-dark text-white font-black text-xs tracking-wider shadow-md active:scale-98 transition-all hover:bg-eco-forestLight"
                 >
                   GUARDAR UNIDAD EN INVENTARIO
                 </button>
@@ -384,23 +412,37 @@ export const InventoryModule: React.FC<Props> = ({ units, categories }) => {
 
       {/* Edit Rates Modal */}
       {isRatesModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-[28px] bg-white border border-black/[0.08] shadow-2xl text-[#1C1C1C]">
-            <div className="p-4 border-b border-black/[0.06] flex items-center justify-between sticky top-0 bg-[#FAF6E8]/95 backdrop-blur-md">
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby={ratesModalTitleId}
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setIsRatesModalOpen(false);
+          }}
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-in fade-in duration-200"
+        >
+          <div
+            ref={ratesDialogRef}
+            tabIndex={-1}
+            className="w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-[28px] bg-white border border-black/[0.08] shadow-2xl text-eco-dark focus:outline-none"
+          >
+            <div className="p-4 border-b border-black/[0.06] flex items-center justify-between sticky top-0 bg-eco-cream/95 backdrop-blur-md">
               <div className="flex items-center gap-2">
-                <DollarSign className="w-4 h-4 text-[#1C1C1C]" />
-                <h3 className="text-sm font-extrabold text-[#1C1C1C]">Configurar Tarifas y Precios</h3>
+                <DollarSign className="w-4 h-4 text-eco-dark" />
+                <h3 id={ratesModalTitleId} className="text-sm font-extrabold text-eco-dark">Configurar Tarifas y Precios</h3>
               </div>
               <button
+                type="button"
+                aria-label="Cerrar"
                 onClick={() => setIsRatesModalOpen(false)}
-                className="p-1.5 rounded-full text-[#71706B] hover:text-[#1C1C1C]"
+                className="p-1.5 rounded-full text-eco-creamMuted hover:text-eco-dark"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
             <form onSubmit={handleSaveRates} className="p-5 space-y-4">
-              <p className="text-xs text-[#71706B]">
+              <p className="text-xs text-eco-creamMuted">
                 Modifica aquí las tarifas base y recargos por demora. Se aplicarán de inmediato a los nuevos alquileres.
               </p>
 
@@ -414,10 +456,10 @@ export const InventoryModule: React.FC<Props> = ({ units, categories }) => {
                 };
 
                 return (
-                  <div key={c.id} className="p-4 rounded-2xl bg-[#F6F3EA] border border-black/[0.06] space-y-3">
-                    <div className="flex items-center justify-between font-bold text-xs text-[#1C1C1C]">
+                  <div key={c.id} className="p-4 rounded-2xl bg-eco-surface border border-black/[0.06] space-y-3">
+                    <div className="flex items-center justify-between font-bold text-xs text-eco-dark">
                       <span className="flex items-center gap-1.5">
-                        <span className="w-2.5 h-2.5 rounded-full bg-[#1C1C1C]"></span>
+                        <span className="w-2.5 h-2.5 rounded-full bg-eco-dark"></span>
                         <span className="font-extrabold">{c.name}</span>
                       </span>
                     </div>
@@ -429,7 +471,7 @@ export const InventoryModule: React.FC<Props> = ({ units, categories }) => {
                       </span>
                       <div className="grid grid-cols-2 gap-2 text-xs">
                         <div>
-                          <label className="text-[10px] text-[#71706B] block mb-0.5">Efectivo 30 min ($)</label>
+                          <label className="text-[10px] text-eco-creamMuted block mb-0.5">Efectivo 30 min ($)</label>
                           <input
                             type="number"
                             step="100"
@@ -441,11 +483,11 @@ export const InventoryModule: React.FC<Props> = ({ units, categories }) => {
                                 [c.id]: { ...currentVals, cash30m: Number(e.target.value) || 0 },
                               })
                             }
-                            className="w-full bg-white border border-black/[0.08] rounded-xl px-2.5 py-1.5 text-center font-bold text-[#1C1C1C] focus:outline-none focus:border-[#1C1C1C]"
+                            className="w-full bg-white border border-black/[0.08] rounded-xl px-2.5 py-1.5 text-center font-bold text-eco-dark focus:outline-none focus:border-eco-dark"
                           />
                         </div>
                         <div>
-                          <label className="text-[10px] text-[#71706B] block mb-0.5">Efectivo 1 hora ($)</label>
+                          <label className="text-[10px] text-eco-creamMuted block mb-0.5">Efectivo 1 hora ($)</label>
                           <input
                             type="number"
                             step="100"
@@ -457,7 +499,7 @@ export const InventoryModule: React.FC<Props> = ({ units, categories }) => {
                                 [c.id]: { ...currentVals, cash60m: Number(e.target.value) || 0 },
                               })
                             }
-                            className="w-full bg-white border border-black/[0.08] rounded-xl px-2.5 py-1.5 text-center font-bold text-[#1C1C1C] focus:outline-none focus:border-[#1C1C1C]"
+                            className="w-full bg-white border border-black/[0.08] rounded-xl px-2.5 py-1.5 text-center font-bold text-eco-dark focus:outline-none focus:border-eco-dark"
                           />
                         </div>
                       </div>
@@ -465,12 +507,12 @@ export const InventoryModule: React.FC<Props> = ({ units, categories }) => {
 
                     {/* Precios Transferencia / Tarjeta */}
                     <div className="space-y-1 pt-2 border-t border-black/[0.06]">
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-[#52514E] flex items-center gap-1">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-eco-creamDark flex items-center gap-1">
                         📲 Tarifas Transferencia / Tarjeta:
                       </span>
                       <div className="grid grid-cols-2 gap-2 text-xs">
                         <div>
-                          <label className="text-[10px] text-[#71706B] block mb-0.5">Digital 30 min ($)</label>
+                          <label className="text-[10px] text-eco-creamMuted block mb-0.5">Digital 30 min ($)</label>
                           <input
                             type="number"
                             step="100"
@@ -482,11 +524,11 @@ export const InventoryModule: React.FC<Props> = ({ units, categories }) => {
                                 [c.id]: { ...currentVals, dig30m: Number(e.target.value) || 0 },
                               })
                             }
-                            className="w-full bg-white border border-black/[0.08] rounded-xl px-2.5 py-1.5 text-center font-bold text-[#1C1C1C] focus:outline-none focus:border-[#1C1C1C]"
+                            className="w-full bg-white border border-black/[0.08] rounded-xl px-2.5 py-1.5 text-center font-bold text-eco-dark focus:outline-none focus:border-eco-dark"
                           />
                         </div>
                         <div>
-                          <label className="text-[10px] text-[#71706B] block mb-0.5">Digital 1 hora ($)</label>
+                          <label className="text-[10px] text-eco-creamMuted block mb-0.5">Digital 1 hora ($)</label>
                           <input
                             type="number"
                             step="100"
@@ -498,7 +540,7 @@ export const InventoryModule: React.FC<Props> = ({ units, categories }) => {
                                 [c.id]: { ...currentVals, dig60m: Number(e.target.value) || 0 },
                               })
                             }
-                            className="w-full bg-white border border-black/[0.08] rounded-xl px-2.5 py-1.5 text-center font-bold text-[#1C1C1C] focus:outline-none focus:border-[#1C1C1C]"
+                            className="w-full bg-white border border-black/[0.08] rounded-xl px-2.5 py-1.5 text-center font-bold text-eco-dark focus:outline-none focus:border-eco-dark"
                           />
                         </div>
                       </div>
@@ -528,9 +570,9 @@ export const InventoryModule: React.FC<Props> = ({ units, categories }) => {
               <div className="pt-2">
                 <button
                   type="submit"
-                  className="w-full py-3.5 rounded-full bg-[#1C1C1C] text-white font-black text-xs tracking-wider shadow-md active:scale-98 transition-all hover:bg-[#333333] flex items-center justify-center gap-1.5"
+                  className="w-full py-3.5 rounded-full bg-eco-dark text-white font-black text-xs tracking-wider shadow-md active:scale-98 transition-all hover:bg-eco-forestLight flex items-center justify-center gap-1.5"
                 >
-                  <Check className="w-4 h-4 stroke-[3] text-[#F7D147]" />
+                  <Check className="w-4 h-4 stroke-[3] text-eco-gold" />
                   <span>GUARDAR TODAS LAS TARIFAS</span>
                 </button>
               </div>

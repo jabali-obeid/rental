@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { Rental, Category, Unit } from '../types';
 import { RentalCard } from './RentalCard';
 import { isRentalWaitingStart } from '../hooks/useRentalTimer';
+import { useSharedNow } from '../hooks/useSharedNow';
 import { Search, Plus, Bike, Clock, CheckCircle2 } from 'lucide-react';
 
 interface Props {
@@ -24,7 +25,7 @@ export const RentalDashboard: React.FC<Props> = ({
   const [search, setSearch] = useState<string>('');
   const [filterState, setFilterState] = useState<'all' | 'waiting' | 'green' | 'yellow' | 'red'>('all');
 
-  const now = Date.now();
+  const now = useSharedNow(rentals.length > 0);
 
   // Classify rentals for filtering
   const classifiedRentals = useMemo(() => {
@@ -56,27 +57,40 @@ export const RentalDashboard: React.FC<Props> = ({
   }, [classifiedRentals]);
 
   const fleetStats = useMemo(() => {
-    const totalUnits = Math.max(1, units.length);
+    const totalUnits = units.length;
     const availableUnits = units.filter((u) => u.status === 'disponible').length;
     const maintenanceUnits = units.filter((u) => u.status === 'mantenimiento' || u.status === 'baja').length;
     const activeOnTime = counts.green;
-    const activeAttention = counts.waiting + counts.yellow + counts.red;
+    const activeAttention = counts.waiting + counts.yellow;
+    const activeOverdue = counts.red;
 
-    const pActive = Math.max(12, Math.round((activeOnTime / totalUnits) * 100) || (rentals.length > 0 ? 45 : 65));
-    const pAttention = Math.max(10, Math.round((activeAttention / totalUnits) * 100) || 15);
-    const pAvail = Math.max(10, Math.round((availableUnits / totalUnits) * 100) || 15);
-    const pMaint = Math.max(5, 100 - Math.min(95, pActive + pAttention + pAvail));
+    if (totalUnits === 0) {
+      return {
+        availableUnits: 0,
+        maintenanceUnits: 0,
+        totalUnits: 0,
+        pActive: 25,
+        pAttention: 25,
+        pAvail: 25,
+        pOverdue: 25,
+      };
+    }
+
+    const pActive = Math.round((activeOnTime / totalUnits) * 100);
+    const pAttention = Math.round((activeAttention / totalUnits) * 100);
+    const pAvail = Math.round((availableUnits / totalUnits) * 100);
+    const pOverdue = Math.round((activeOverdue / totalUnits) * 100);
 
     return {
       availableUnits,
       maintenanceUnits,
-      totalUnits: units.length,
+      totalUnits,
       pActive,
       pAttention,
       pAvail,
-      pMaint,
+      pOverdue,
     };
-  }, [units, counts, rentals.length]);
+  }, [units, counts]);
 
   const filteredItems = useMemo(() => {
     const items = classifiedRentals.filter(({ rental, state }) => {
@@ -107,10 +121,10 @@ export const RentalDashboard: React.FC<Props> = ({
       <div className="pt-1 sm:pt-3 space-y-3 sm:space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 sm:gap-4 px-1">
           <div>
-            <p className="text-[11px] sm:text-xs font-semibold uppercase tracking-widest text-[#71706B] mb-0.5 sm:mb-1">
+            <p className="text-[11px] sm:text-xs font-semibold uppercase tracking-widest text-eco-creamMuted mb-0.5 sm:mb-1">
               Panel Operativo en Tiempo Real
             </p>
-            <h2 className="text-xl sm:text-4xl font-medium tracking-tight text-[#1C1C1C]">
+            <h2 className="text-xl sm:text-4xl font-medium tracking-tight text-eco-dark">
               Hola, Eco Aventura
             </h2>
           </div>
@@ -118,31 +132,31 @@ export const RentalDashboard: React.FC<Props> = ({
           {/* 3 Big Clean KPI Counters */}
           <div className="grid grid-cols-3 sm:flex items-center gap-3 sm:gap-10 bg-white/60 sm:bg-transparent p-2.5 sm:p-0 rounded-2xl border border-black/[0.04] sm:border-0">
             <div>
-              <div className="flex items-center gap-1 sm:gap-1.5 text-[10px] sm:text-[11px] font-medium text-[#71706B] mb-0.5">
+              <div className="flex items-center gap-1 sm:gap-1.5 text-[10px] sm:text-[11px] font-medium text-eco-creamMuted mb-0.5">
                 <Clock className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
                 <span>En pista</span>
               </div>
-              <div className="text-xl sm:text-4xl font-normal tracking-tight text-[#1C1C1C]">
+              <div className="text-xl sm:text-4xl font-normal tracking-tight text-eco-dark">
                 {counts.all}
               </div>
             </div>
 
             <div>
-              <div className="flex items-center gap-1 sm:gap-1.5 text-[10px] sm:text-[11px] font-medium text-[#71706B] mb-0.5">
+              <div className="flex items-center gap-1 sm:gap-1.5 text-[10px] sm:text-[11px] font-medium text-eco-creamMuted mb-0.5">
                 <CheckCircle2 className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
                 <span>Libres</span>
               </div>
-              <div className="text-xl sm:text-4xl font-normal tracking-tight text-[#1C1C1C]">
+              <div className="text-xl sm:text-4xl font-normal tracking-tight text-eco-dark">
                 {fleetStats.availableUnits}
               </div>
             </div>
 
             <div>
-              <div className="flex items-center gap-1 sm:gap-1.5 text-[10px] sm:text-[11px] font-medium text-[#71706B] mb-0.5">
+              <div className="flex items-center gap-1 sm:gap-1.5 text-[10px] sm:text-[11px] font-medium text-eco-creamMuted mb-0.5">
                 <Bike className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
                 <span>Flota</span>
               </div>
-              <div className="text-xl sm:text-4xl font-normal tracking-tight text-[#1C1C1C]">
+              <div className="text-xl sm:text-4xl font-normal tracking-tight text-eco-dark">
                 {fleetStats.totalUnits}
               </div>
             </div>
@@ -152,40 +166,48 @@ export const RentalDashboard: React.FC<Props> = ({
         {/* Staffwyn Segmented Rounded-Full Progress Bar */}
         <div className="space-y-1.5 px-1">
           <div className="flex items-center gap-1 sm:gap-1.5 w-full h-8 sm:h-10">
-            <div
-              style={{ width: `${fleetStats.pActive}%` }}
-              className="h-full rounded-full bg-[#1C1C1C] text-white text-[11px] sm:text-xs font-bold flex items-center justify-center px-1.5 sm:px-3 transition-all duration-500 shadow-sm truncate whitespace-nowrap overflow-hidden"
-              title={`${counts.green} en tiempo`}
-            >
-              <span className="sm:inline">{counts.green}</span>
-              <span className="hidden xs:inline ml-1">en tiempo</span>
-            </div>
-            <div
-              style={{ width: `${fleetStats.pAttention}%` }}
-              className="h-full rounded-full bg-[#F7D147] text-[#1C1C1C] text-[11px] sm:text-xs font-bold flex items-center justify-center px-1.5 sm:px-3 transition-all duration-500 shadow-sm truncate whitespace-nowrap overflow-hidden"
-              title={`${counts.waiting + counts.yellow} atención`}
-            >
-              <span className="sm:inline">{counts.waiting + counts.yellow}</span>
-              <span className="hidden xs:inline ml-1">atención</span>
-            </div>
-            <div
-              style={{ width: `${fleetStats.pAvail}%` }}
-              className="h-full rounded-full bg-diagonal-stripes border border-black/10 text-[#1C1C1C] text-[11px] sm:text-xs font-bold flex items-center justify-center px-1.5 sm:px-3 transition-all duration-500 truncate whitespace-nowrap overflow-hidden"
-              title={`${fleetStats.availableUnits} libres`}
-            >
-              <span className="sm:inline">{fleetStats.availableUnits}</span>
-              <span className="hidden xs:inline ml-1">libres</span>
-            </div>
-            <div
-              style={{ width: `${fleetStats.pMaint}%` }}
-              className="h-full rounded-full bg-[#EAE4D3] text-[#1C1C1C] text-[11px] sm:text-xs font-bold flex items-center justify-center px-1 sm:px-2.5 transition-all duration-500 truncate whitespace-nowrap overflow-hidden"
-              title={`${counts.red} mora`}
-            >
-              {counts.red}
-            </div>
+            {fleetStats.pActive > 0 && (
+              <div
+                style={{ width: `${fleetStats.pActive}%` }}
+                className="h-full min-w-[2.25rem] rounded-full bg-eco-dark text-white text-[11px] sm:text-xs font-bold flex items-center justify-center px-1.5 sm:px-3 transition-all duration-500 shadow-sm truncate whitespace-nowrap overflow-hidden"
+                title={`${counts.green} en tiempo`}
+              >
+                <span className="sm:inline">{counts.green}</span>
+                <span className="hidden xs:inline ml-1">en tiempo</span>
+              </div>
+            )}
+            {fleetStats.pAttention > 0 && (
+              <div
+                style={{ width: `${fleetStats.pAttention}%` }}
+                className="h-full min-w-[2.25rem] rounded-full bg-eco-gold text-eco-dark text-[11px] sm:text-xs font-bold flex items-center justify-center px-1.5 sm:px-3 transition-all duration-500 shadow-sm truncate whitespace-nowrap overflow-hidden"
+                title={`${counts.waiting + counts.yellow} por iniciar / vencer`}
+              >
+                <span className="sm:inline">{counts.waiting + counts.yellow}</span>
+                <span className="hidden xs:inline ml-1">atención</span>
+              </div>
+            )}
+            {(fleetStats.pAvail > 0 || (fleetStats.pActive === 0 && fleetStats.pAttention === 0 && fleetStats.pOverdue === 0)) && (
+              <div
+                style={{ width: `${Math.max(fleetStats.pAvail, fleetStats.pActive === 0 && fleetStats.pAttention === 0 && fleetStats.pOverdue === 0 ? 100 : 0)}%` }}
+                className="h-full min-w-[2.25rem] flex-1 rounded-full bg-diagonal-stripes border border-black/10 text-eco-dark text-[11px] sm:text-xs font-bold flex items-center justify-center px-1.5 sm:px-3 transition-all duration-500 truncate whitespace-nowrap overflow-hidden"
+                title={`${fleetStats.availableUnits} libres`}
+              >
+                <span className="sm:inline">{fleetStats.availableUnits}</span>
+                <span className="hidden xs:inline ml-1">libres</span>
+              </div>
+            )}
+            {fleetStats.pOverdue > 0 && (
+              <div
+                style={{ width: `${fleetStats.pOverdue}%` }}
+                className="h-full min-w-[2.25rem] rounded-full bg-[#FEE2E2] border border-[#FCA5A5] text-[#991B1B] text-[11px] sm:text-xs font-bold flex items-center justify-center px-1 sm:px-2.5 transition-all duration-500 truncate whitespace-nowrap overflow-hidden"
+                title={`${counts.red} en mora`}
+              >
+                {counts.red}
+              </div>
+            )}
           </div>
 
-          <div className="flex items-center gap-5 text-[11px] font-medium text-[#71706B] pl-2">
+          <div className="flex items-center gap-5 text-[11px] font-medium text-eco-creamMuted pl-2">
             <span>En Tiempo ({counts.green})</span>
             <span>Por Iniciar / Vencer ({counts.waiting + counts.yellow})</span>
             <span>Disponibles ({fleetStats.availableUnits})</span>
@@ -198,18 +220,18 @@ export const RentalDashboard: React.FC<Props> = ({
       <div className="bg-white/95 rounded-[28px] p-3.5 sm:p-4 border border-black/[0.05] shadow-[0_8px_30px_rgb(0,0,0,0.04)] space-y-3">
         {/* Search Input */}
         <div className="relative">
-          <Search className="w-4 h-4 text-[#71706B] absolute left-4 top-3.5" />
+          <Search className="w-4 h-4 text-eco-creamMuted absolute left-4 top-3.5" />
           <input
             type="text"
             placeholder="Buscar por cliente, unidad (K-01) o casillero..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full bg-[#F6F3EA] border border-black/[0.06] rounded-full pl-10 pr-4 py-3 text-xs text-[#1C1C1C] placeholder-[#71706B] focus:outline-none focus:border-[#1C1C1C] transition-all"
+            className="w-full bg-eco-surface border border-black/[0.06] rounded-full pl-10 pr-4 py-3 text-xs text-eco-dark placeholder-eco-creamMuted focus:outline-none focus:border-eco-dark transition-all"
           />
           {search && (
             <button
               onClick={() => setSearch('')}
-              className="absolute right-4 top-3 text-xs font-semibold text-[#71706B] hover:text-[#1C1C1C]"
+              className="absolute right-4 top-3 text-xs font-semibold text-eco-creamMuted hover:text-eco-dark"
             >
               Limpiar
             </button>
@@ -222,8 +244,8 @@ export const RentalDashboard: React.FC<Props> = ({
             onClick={() => setFilterState('all')}
             className={`px-4 py-2 rounded-full text-xs font-bold shrink-0 transition-all ${
               filterState === 'all'
-                ? 'bg-[#1C1C1C] text-white shadow-sm'
-                : 'bg-[#F6F3EA] text-[#52514E] border border-black/[0.05] hover:text-[#1C1C1C]'
+                ? 'bg-eco-dark text-white shadow-sm'
+                : 'bg-eco-surface text-eco-creamDark border border-black/[0.05] hover:text-eco-dark'
             }`}
           >
             Todos ({counts.all})
@@ -233,11 +255,11 @@ export const RentalDashboard: React.FC<Props> = ({
             onClick={() => setFilterState('waiting')}
             className={`px-4 py-2 rounded-full text-xs font-bold shrink-0 transition-all flex items-center gap-1.5 ${
               filterState === 'waiting'
-                ? 'bg-[#F7D147] text-[#1C1C1C] border border-black/10 shadow-sm'
-                : 'bg-[#F6F3EA] text-[#52514E] border border-black/[0.05] hover:text-[#1C1C1C]'
+                ? 'bg-eco-gold text-eco-dark border border-black/10 shadow-sm'
+                : 'bg-eco-surface text-eco-creamDark border border-black/[0.05] hover:text-eco-dark'
             }`}
           >
-            <span className="w-2 h-2 rounded-full bg-[#1C1C1C] animate-pulse"></span>
+            <span className="w-2 h-2 rounded-full bg-eco-dark animate-pulse"></span>
             <span>Por Iniciar ({counts.waiting})</span>
           </button>
 
@@ -246,10 +268,10 @@ export const RentalDashboard: React.FC<Props> = ({
             className={`px-4 py-2 rounded-full text-xs font-bold shrink-0 transition-all flex items-center gap-1.5 ${
               filterState === 'green'
                 ? 'bg-[#DCFCE7] text-[#166534] border border-[#86EFAC] shadow-sm'
-                : 'bg-[#F6F3EA] text-[#52514E] border border-black/[0.05] hover:text-[#166534]'
+                : 'bg-eco-surface text-eco-creamDark border border-black/[0.05] hover:text-[#166534]'
             }`}
           >
-            <span className="w-2 h-2 rounded-full bg-[#16A34A]"></span>
+            <span className="w-2 h-2 rounded-full bg-eco-leaf"></span>
             <span>En Tiempo ({counts.green})</span>
           </button>
 
@@ -258,7 +280,7 @@ export const RentalDashboard: React.FC<Props> = ({
             className={`px-4 py-2 rounded-full text-xs font-bold shrink-0 transition-all flex items-center gap-1.5 ${
               filterState === 'yellow'
                 ? 'bg-[#FEF3C7] text-[#92400E] border border-[#FDE68A] shadow-sm'
-                : 'bg-[#F6F3EA] text-[#52514E] border border-black/[0.05] hover:text-[#92400E]'
+                : 'bg-eco-surface text-eco-creamDark border border-black/[0.05] hover:text-[#92400E]'
             }`}
           >
             <span className="w-2 h-2 rounded-full bg-[#D97706]"></span>
@@ -270,7 +292,7 @@ export const RentalDashboard: React.FC<Props> = ({
             className={`px-4 py-2 rounded-full text-xs font-bold shrink-0 transition-all flex items-center gap-1.5 ${
               filterState === 'red'
                 ? 'bg-[#FEE2E2] text-[#991B1B] border border-[#FCA5A5] shadow-sm animate-pulse'
-                : 'bg-[#F6F3EA] text-[#52514E] border border-black/[0.05] hover:text-[#991B1B]'
+                : 'bg-eco-surface text-eco-creamDark border border-black/[0.05] hover:text-[#991B1B]'
             }`}
           >
             <span className="w-2 h-2 rounded-full bg-[#DC2626] animate-ping"></span>
@@ -282,13 +304,13 @@ export const RentalDashboard: React.FC<Props> = ({
       {/* RENTALS GRID */}
       {filteredItems.length === 0 ? (
         <div className="py-14 text-center rounded-[28px] bg-white/95 border border-black/[0.05] p-6 flex flex-col items-center justify-center shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
-          <div className="w-16 h-16 rounded-2xl bg-[#F6F3EA] border border-black/[0.06] flex items-center justify-center text-3xl mb-3">
+          <div className="w-16 h-16 rounded-2xl bg-eco-surface border border-black/[0.06] flex items-center justify-center text-3xl mb-3">
             {rentals.length === 0 ? '🌿' : '🔍'}
           </div>
-          <h3 className="text-base font-bold text-[#1C1C1C] mb-1">
+          <h3 className="text-base font-bold text-eco-dark mb-1">
             {rentals.length === 0 ? 'No hay unidades en alquiler activo' : 'No se encontraron resultados'}
           </h3>
-          <p className="text-xs text-[#71706B] max-w-xs mb-5">
+          <p className="text-xs text-eco-creamMuted max-w-xs mb-5">
             {rentals.length === 0
               ? 'Todas las unidades de Eco Aventura están disponibles en base o parque cerrado.'
               : 'Prueba cambiando los filtros o el término de búsqueda.'}
@@ -296,9 +318,9 @@ export const RentalDashboard: React.FC<Props> = ({
           {rentals.length === 0 && (
             <button
               onClick={onOpenNewRental}
-              className="px-6 py-3 rounded-full bg-[#1C1C1C] text-white font-bold text-xs tracking-wide shadow-md active:scale-95 transition-all flex items-center gap-2 hover:bg-[#333333]"
+              className="px-6 py-3 rounded-full bg-eco-dark text-white font-bold text-xs tracking-wide shadow-md active:scale-95 transition-all flex items-center gap-2 hover:bg-eco-forestLight"
             >
-              <Plus className="w-4 h-4 stroke-[3] text-[#F7D147]" />
+              <Plus className="w-4 h-4 stroke-[3] text-eco-gold" />
               <span>NUEVO ALQUILER ECO AVENTURA</span>
             </button>
           )}

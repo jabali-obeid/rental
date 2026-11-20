@@ -1,144 +1,20 @@
-import { Category, Unit, Rental, CashMovement, CashShiftSummary, RentalCategoryBreakdownItem, UnitStatus, DailyClosing, Reservation, PaymentMethod } from '../types';
+import { Category, Unit, Rental, CashMovement, CashShiftSummary, RentalCategoryBreakdownItem, UnitStatus, DailyClosing, Reservation, PaymentMethod, DailyTicketCounters } from '../types';
 import { getSupabase, isSupabaseConfigured } from './supabaseClient';
 import { googleSheetsService } from './googleSheetsService';
-
-const STORAGE_KEY_CATEGORIES = 'rentflow_data_categories';
-const STORAGE_KEY_UNITS = 'rentflow_data_units';
-const STORAGE_KEY_RENTALS = 'rentflow_data_rentals';
-const STORAGE_KEY_CASH = 'rentflow_data_cash';
-const STORAGE_KEY_CLOSINGS = 'rentflow_data_daily_closings';
-const STORAGE_KEY_RESERVATIONS = 'rentflow_data_reservations';
-const STORAGE_KEY_DELETED_CASH = 'rentflow_data_deleted_cash_ids';
-
-// Seed Initial Data
-const INITIAL_CATEGORIES: Category[] = [
-  {
-    id: 'c-carritos-simples',
-    name: 'Carritos Familiares Simples (Chico)',
-    slug: 'carritos-simples',
-    icon: 'Users',
-    color: '#10b981',
-    defaultRate30m: 18000,
-    defaultRate60m: 32000,
-    cashRate30m: 18000,
-    cashRate60m: 32000,
-    digitalRate30m: 20000,
-    digitalRate60m: 36000,
-    penaltyRate10Min: 6000,
-    penaltyRatePerMin: 600,
-    isActive: true,
-  },
-  {
-    id: 'c-carritos-dobles',
-    name: 'Carritos Familiares Dobles (Grande)',
-    slug: 'carritos-dobles',
-    icon: 'Users',
-    color: '#eab308',
-    defaultRate30m: 24000,
-    defaultRate60m: 42000,
-    cashRate30m: 24000,
-    cashRate60m: 42000,
-    digitalRate30m: 26000,
-    digitalRate60m: 46000,
-    penaltyRate10Min: 8000,
-    penaltyRatePerMin: 800,
-    isActive: true,
-  },
-  {
-    id: 'c-kartings',
-    name: 'Kartings a Pedal',
-    slug: 'kartings',
-    icon: 'Car',
-    color: '#f97316',
-    defaultRate30m: 16000,
-    defaultRate60m: 28000,
-    cashRate30m: 16000,
-    cashRate60m: 28000,
-    digitalRate30m: 18000,
-    digitalRate60m: 32000,
-    penaltyRate10Min: 5500,
-    penaltyRatePerMin: 550,
-    isActive: true,
-  },
-  {
-    id: 'c-monopatines',
-    name: 'Monopatines Eléctricos',
-    slug: 'monopatines',
-    icon: 'Zap',
-    color: '#8b5cf6',
-    defaultRate30m: 20000,
-    defaultRate60m: 36000,
-    cashRate30m: 20000,
-    cashRate60m: 36000,
-    digitalRate30m: 22000,
-    digitalRate60m: 40000,
-    penaltyRate10Min: 7000,
-    penaltyRatePerMin: 700,
-    isActive: true,
-  },
-  {
-    id: 'c-kayaks-simples',
-    name: 'Kayaks Simples',
-    slug: 'kayaks-simples',
-    icon: 'Ship',
-    color: '#06b6d4',
-    defaultRate30m: 10000,
-    defaultRate60m: 20000,
-    cashRate30m: 10000,
-    cashRate60m: 20000,
-    digitalRate30m: 10000,
-    digitalRate60m: 20000,
-    penaltyRate10Min: 4000,
-    penaltyRatePerMin: 400,
-    isActive: true,
-  },
-  {
-    id: 'c-kayaks-dobles',
-    name: 'Kayaks Dobles',
-    slug: 'kayaks-dobles',
-    icon: 'Ship',
-    color: '#0284c7',
-    defaultRate30m: 20000,
-    defaultRate60m: 40000,
-    cashRate30m: 20000,
-    cashRate60m: 40000,
-    digitalRate30m: 20000,
-    digitalRate60m: 40000,
-    penaltyRate10Min: 7000,
-    penaltyRatePerMin: 700,
-    isActive: true,
-  },
-];
-
-const INITIAL_UNITS: Unit[] = [
-  // Kartings ($18.000 / 30m)
-  { id: 'u-k1', categoryId: 'c-kartings', codeNumber: 'K-01', name: 'Karting Rojo GT', status: 'disponible', currentRentalId: null },
-  { id: 'u-k2', categoryId: 'c-kartings', codeNumber: 'K-02', name: 'Karting Azul Pro', status: 'disponible', currentRentalId: null },
-  { id: 'u-k3', categoryId: 'c-kartings', codeNumber: 'K-03', name: 'Karting Amarillo Sport', status: 'disponible', currentRentalId: null },
-  { id: 'u-k4', categoryId: 'c-kartings', codeNumber: 'K-04', name: 'Karting Verde Turbo', status: 'disponible', currentRentalId: null },
-
-  // Carritos Simples ($22.000 / 30m)
-  { id: 'u-cs1', categoryId: 'c-carritos-simples', codeNumber: 'CS-01', name: 'Carrito Simple 1', status: 'disponible', currentRentalId: null },
-  { id: 'u-cs2', categoryId: 'c-carritos-simples', codeNumber: 'CS-02', name: 'Carrito Simple 2', status: 'disponible', currentRentalId: null },
-  { id: 'u-cs3', categoryId: 'c-carritos-simples', codeNumber: 'CS-03', name: 'Carrito Simple 3', status: 'disponible', currentRentalId: null },
-
-  // Monopatines Eléctricos ($22.000 / 30m)
-  { id: 'u-mp1', categoryId: 'c-monopatines', codeNumber: 'MP-01', name: 'Xiaomi Mi Pro #1', status: 'disponible', currentRentalId: null },
-  { id: 'u-mp2', categoryId: 'c-monopatines', codeNumber: 'MP-02', name: 'Xiaomi Mi Pro #2', status: 'disponible', currentRentalId: null },
-  { id: 'u-mp3', categoryId: 'c-monopatines', codeNumber: 'MP-03', name: 'Segway Ninebot Max', status: 'disponible', currentRentalId: null },
-
-  // Carritos Dobles ($28.000 / 30m)
-  { id: 'u-cd1', categoryId: 'c-carritos-dobles', codeNumber: 'CD-01', name: 'Carrito Doble 1', status: 'disponible', currentRentalId: null },
-  { id: 'u-cd2', categoryId: 'c-carritos-dobles', codeNumber: 'CD-02', name: 'Carrito Doble 2', status: 'disponible', currentRentalId: null },
-
-  // Kayaks Simples & Dobles
-  { id: 'u-ky1', categoryId: 'c-kayaks-dobles', codeNumber: 'KY-01', name: 'Kayak Doble Laguna', status: 'disponible', currentRentalId: null },
-  { id: 'u-ky2', categoryId: 'c-kayaks-simples', codeNumber: 'KY-02', name: 'Kayak Simple Delta', status: 'disponible', currentRentalId: null },
-  { id: 'u-ky3', categoryId: 'c-kayaks-dobles', codeNumber: 'KY-03', name: 'Kayak Doble Explorer', status: 'disponible', currentRentalId: null },
-];
-
-const INITIAL_RENTALS: Rental[] = [];
-const INITIAL_CASH: CashMovement[] = [];
+import {
+  STORAGE_KEY_CATEGORIES,
+  STORAGE_KEY_UNITS,
+  STORAGE_KEY_RENTALS,
+  STORAGE_KEY_CASH,
+  STORAGE_KEY_CLOSINGS,
+  STORAGE_KEY_RESERVATIONS,
+  STORAGE_KEY_DELETED_CASH,
+  STORAGE_KEY_TICKET_COUNTERS,
+  INITIAL_CATEGORIES,
+  INITIAL_UNITS,
+  INITIAL_RENTALS,
+  INITIAL_CASH,
+} from './seedData';
 
 class DataService {
   private listeners: Set<() => void> = new Set();
@@ -1087,6 +963,7 @@ class DataService {
     // 2. Limpiar actividades del día en local (caja a cero)
     localStorage.setItem(STORAGE_KEY_CASH, JSON.stringify([]));
     localStorage.removeItem(STORAGE_KEY_DELETED_CASH);
+    this.resetTicketCountersInternal();
 
     // Mantener solo los alquileres que aún estén activos en curso para no cortar servicios
     const activeRentals = rentals.filter((r) => r.status === 'activo');
@@ -1132,6 +1009,7 @@ class DataService {
     localStorage.setItem(STORAGE_KEY_CLOSINGS, JSON.stringify([]));
     localStorage.setItem(STORAGE_KEY_RESERVATIONS, JSON.stringify([]));
     localStorage.removeItem(STORAGE_KEY_DELETED_CASH);
+    this.resetTicketCountersInternal();
     this.notify();
 
     // Limpiar también en Supabase para que la sincronización en la nube no vuelva a traer el historial viejo
@@ -1461,6 +1339,45 @@ class DataService {
 
   public getCategory(categoryId: string): Category | undefined {
     return this.getCategories().find((c) => c.id === categoryId);
+  }
+
+  // Daily Ticket Counters (Bungee & Palestra) — reset when closing cash shift
+  public getTicketCounters(): DailyTicketCounters {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY_TICKET_COUNTERS);
+      if (raw) {
+        const parsed = JSON.parse(raw) as Partial<DailyTicketCounters>;
+        return {
+          bungee: Math.max(0, Number(parsed.bungee) || 0),
+          palestra: Math.max(0, Number(parsed.palestra) || 0),
+          updatedAt: parsed.updatedAt || new Date().toISOString(),
+        };
+      }
+    } catch {
+      /* ignore parse errors */
+    }
+    return { bungee: 0, palestra: 0, updatedAt: new Date().toISOString() };
+  }
+
+  public adjustTicketCounter(type: 'bungee' | 'palestra', delta: 1 | -1): DailyTicketCounters {
+    const current = this.getTicketCounters();
+    const next: DailyTicketCounters = {
+      ...current,
+      [type]: Math.max(0, current[type] + delta),
+      updatedAt: new Date().toISOString(),
+    };
+    localStorage.setItem(STORAGE_KEY_TICKET_COUNTERS, JSON.stringify(next));
+    this.notify();
+    return next;
+  }
+
+  private resetTicketCountersInternal(): void {
+    const empty: DailyTicketCounters = {
+      bungee: 0,
+      palestra: 0,
+      updatedAt: new Date().toISOString(),
+    };
+    localStorage.setItem(STORAGE_KEY_TICKET_COUNTERS, JSON.stringify(empty));
   }
 }
 

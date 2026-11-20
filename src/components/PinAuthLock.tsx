@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Lock, ShieldCheck, Delete, ArrowRight } from 'lucide-react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { Lock, ShieldCheck, Delete } from 'lucide-react';
 import { soundService } from '../services/sound';
 
 interface Props {
@@ -29,8 +29,46 @@ export const PinAuthLock: React.FC<Props> = ({ onUnlock }) => {
   const [pin, setPin] = useState<string>('');
   const [isError, setIsError] = useState<boolean>(false);
   const [isVerifying, setIsVerifying] = useState<boolean>(false);
+  const pinRef = useRef<string>('');
+  const verifyingRef = useRef<boolean>(false);
 
-  // Handle typing from keyboard
+  const handleAddDigit = useCallback(async (digit: string) => {
+    if (pinRef.current.length >= 4 || verifyingRef.current) return;
+    const nextPin = pinRef.current + digit;
+    pinRef.current = nextPin;
+    setPin(nextPin);
+    setIsError(false);
+
+    if (nextPin.length === 4) {
+      verifyingRef.current = true;
+      setIsVerifying(true);
+      const isValid = await verifyPin(nextPin);
+      if (isValid) {
+        soundService.playSuccess();
+        sessionStorage.setItem('rentflow_pin_authorized', 'true');
+        onUnlock();
+      } else {
+        soundService.playWarningBeep();
+        setIsError(true);
+        verifyingRef.current = false;
+        setIsVerifying(false);
+        setTimeout(() => {
+          pinRef.current = '';
+          setPin('');
+        }, 600);
+      }
+    }
+  }, [onUnlock]);
+
+  const handleBackspace = useCallback(() => {
+    if (verifyingRef.current) return;
+    const nextPin = pinRef.current.slice(0, -1);
+    pinRef.current = nextPin;
+    setPin(nextPin);
+    setIsError(false);
+  }, []);
+
+  // Handle typing from keyboard without re-subscribing per keystroke
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key >= '0' && e.key <= '9') {
@@ -41,37 +79,7 @@ export const PinAuthLock: React.FC<Props> = ({ onUnlock }) => {
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [pin]);
-
-  const handleAddDigit = async (digit: string) => {
-    if (pin.length >= 4 || isVerifying) return;
-    const nextPin = pin + digit;
-    setPin(nextPin);
-    setIsError(false);
-
-    if (nextPin.length === 4) {
-      setIsVerifying(true);
-      const isValid = await verifyPin(nextPin);
-      if (isValid) {
-        soundService.playSuccess();
-        sessionStorage.setItem('rentflow_pin_authorized', 'true');
-        onUnlock();
-      } else {
-        soundService.playWarningBeep();
-        setIsError(true);
-        setIsVerifying(false);
-        setTimeout(() => {
-          setPin('');
-        }, 600);
-      }
-    }
-  };
-
-  const handleBackspace = () => {
-    if (isVerifying) return;
-    setPin((prev) => prev.slice(0, -1));
-    setIsError(false);
-  };
+  }, [handleAddDigit, handleBackspace]);
 
   return (
     <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-gradient-to-br from-[#FCFBF7] via-[#FAF5E4] to-[#F4E6BA] animate-in fade-in duration-300">
@@ -79,18 +87,18 @@ export const PinAuthLock: React.FC<Props> = ({ onUnlock }) => {
         
         {/* Brand Icon */}
         <div className="relative">
-          <div className="w-16 h-16 rounded-2xl bg-[#1C1C1C] flex items-center justify-center shadow-md">
-            <Lock className="w-8 h-8 text-[#F7D147]" />
+          <div className="w-16 h-16 rounded-2xl bg-eco-dark flex items-center justify-center shadow-md">
+            <Lock className="w-8 h-8 text-eco-gold" />
           </div>
-          <div className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-[#F7D147] border-2 border-white flex items-center justify-center">
-            <ShieldCheck className="w-3.5 h-3.5 text-[#1C1C1C]" />
+          <div className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-eco-gold border-2 border-white flex items-center justify-center">
+            <ShieldCheck className="w-3.5 h-3.5 text-eco-dark" />
           </div>
         </div>
 
         {/* Title */}
         <div className="space-y-1">
-          <h2 className="text-xl font-black text-[#1C1C1C] tracking-tight">Eco Aventura</h2>
-          <p className="text-xs text-[#71706B]">Ingresá el PIN de seguridad para acceder al sistema</p>
+          <h2 className="text-xl font-black text-eco-dark tracking-tight">Eco Aventura</h2>
+          <p className="text-xs text-eco-creamMuted">Ingresá el PIN de seguridad para acceder al sistema</p>
         </div>
 
         {/* Dots Indicator */}
@@ -102,10 +110,10 @@ export const PinAuthLock: React.FC<Props> = ({ onUnlock }) => {
                 key={index}
                 className={`w-4 h-4 rounded-full transition-all duration-200 ${
                   isError
-                    ? 'bg-rose-500 border border-rose-400 scale-110 animate-bounce'
+                    ? 'bg-rose-500 border border-rose-400 scale-110 ring-2 ring-rose-300'
                     : isFilled
-                    ? 'bg-[#1C1C1C] border border-[#1C1C1C] scale-110 shadow-sm'
-                    : 'bg-[#F6F3EA] border border-black/15'
+                    ? 'bg-eco-dark border border-eco-dark scale-110 shadow-sm'
+                    : 'bg-eco-surface border border-black/15'
                 }`}
               />
             );
@@ -127,7 +135,7 @@ export const PinAuthLock: React.FC<Props> = ({ onUnlock }) => {
               type="button"
               disabled={isVerifying}
               onClick={() => handleAddDigit(digit)}
-              className="h-14 rounded-2xl bg-[#F6F3EA] hover:bg-[#F7D147] border border-black/[0.06] text-xl font-extrabold text-[#1C1C1C] shadow-sm active:scale-95 transition-all flex items-center justify-center"
+              className="h-14 rounded-2xl bg-eco-surface hover:bg-eco-gold border border-black/[0.06] text-xl font-extrabold text-eco-dark shadow-sm active:scale-95 transition-all flex items-center justify-center"
             >
               {digit}
             </button>
@@ -136,8 +144,11 @@ export const PinAuthLock: React.FC<Props> = ({ onUnlock }) => {
           <button
             type="button"
             disabled={isVerifying || pin.length === 0}
-            onClick={() => setPin('')}
-            className="h-14 rounded-2xl bg-[#F6F3EA] hover:bg-[#EAE4D3] border border-black/[0.06] text-xs font-bold text-[#71706B] shadow-sm active:scale-95 transition-all flex items-center justify-center disabled:opacity-30"
+            onClick={() => {
+              pinRef.current = '';
+              setPin('');
+            }}
+            className="h-14 rounded-2xl bg-eco-surface hover:bg-[#EAE4D3] border border-black/[0.06] text-xs font-bold text-eco-creamMuted shadow-sm active:scale-95 transition-all flex items-center justify-center disabled:opacity-30"
           >
             Borrar
           </button>
@@ -146,7 +157,7 @@ export const PinAuthLock: React.FC<Props> = ({ onUnlock }) => {
             type="button"
             disabled={isVerifying}
             onClick={() => handleAddDigit('0')}
-            className="h-14 rounded-2xl bg-[#F6F3EA] hover:bg-[#F7D147] border border-black/[0.06] text-xl font-extrabold text-[#1C1C1C] shadow-sm active:scale-95 transition-all flex items-center justify-center"
+            className="h-14 rounded-2xl bg-eco-surface hover:bg-eco-gold border border-black/[0.06] text-xl font-extrabold text-eco-dark shadow-sm active:scale-95 transition-all flex items-center justify-center"
           >
             0
           </button>
@@ -155,13 +166,13 @@ export const PinAuthLock: React.FC<Props> = ({ onUnlock }) => {
             type="button"
             disabled={isVerifying || pin.length === 0}
             onClick={handleBackspace}
-            className="h-14 rounded-2xl bg-[#F6F3EA] hover:bg-[#EAE4D3] border border-black/[0.06] text-[#1C1C1C] shadow-sm active:scale-95 transition-all flex items-center justify-center disabled:opacity-30"
+            className="h-14 rounded-2xl bg-eco-surface hover:bg-[#EAE4D3] border border-black/[0.06] text-eco-dark shadow-sm active:scale-95 transition-all flex items-center justify-center disabled:opacity-30"
           >
-            <Delete className="w-5 h-5 text-[#1C1C1C]" />
+            <Delete className="w-5 h-5 text-eco-dark" />
           </button>
         </div>
 
-        <div className="text-[11px] text-[#71706B] font-mono">
+        <div className="text-[11px] text-eco-creamMuted font-mono">
           🔒 Acceso protegido con cifrado SHA-256
         </div>
       </div>
