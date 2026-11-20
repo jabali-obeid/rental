@@ -1231,7 +1231,20 @@ class DataService {
           notes: r.notes || undefined,
           createdAt: r.created_at,
         }));
-        localStorage.setItem(STORAGE_KEY_RENTALS, JSON.stringify(remoteRentals));
+
+        // Preserve local park ticket timers (Bungee/Palestra) that aren't in remote rentals
+        const remoteIds = new Set(remoteRentals.map((r) => r.id));
+        const localTicketRentals = this.getRentals().filter(
+          (r) =>
+            !remoteIds.has(r.id) &&
+            r.status === 'activo' &&
+            (r.id.startsWith('r-ticket-') || r.notes?.includes('[TICKET_PARQUE]'))
+        );
+
+        localStorage.setItem(
+          STORAGE_KEY_RENTALS,
+          JSON.stringify([...localTicketRentals, ...remoteRentals])
+        );
         hasChanges = true;
       }
 
@@ -1437,7 +1450,6 @@ class DataService {
       const rentals = this.getRentals();
       rentals.unshift(ticketRental);
       localStorage.setItem(STORAGE_KEY_RENTALS, JSON.stringify(rentals));
-      this.pushRentalToSupabase(ticketRental);
 
       if (price > 0) {
         this.addCashMovement({
@@ -1445,7 +1457,6 @@ class DataService {
           category: categoryLabel,
           amount: price,
           paymentMethod,
-          rentalId,
           description: `Ticket ${categoryLabel} #${nextCount} ($${price.toLocaleString()})`,
           registeredBy: 'Operador',
         });
