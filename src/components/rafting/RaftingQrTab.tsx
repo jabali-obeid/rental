@@ -2,16 +2,16 @@ import React from 'react';
 import { Wifi, RefreshCw } from 'lucide-react';
 import {
   BridgeLiveState,
-  RaftingBridgeConfig,
+  WhatsappBridgeConfig,
   raftingWhatsappService,
 } from '../../services/raftingWhatsappService';
 
 interface RaftingQrTabProps {
   bridgeState: BridgeLiveState;
-  bridgeConfig: RaftingBridgeConfig;
+  bridgeConfig: WhatsappBridgeConfig;
   isCheckingQr: boolean;
   onRefreshQr: () => void;
-  onChangeBridgeConfig: (config: RaftingBridgeConfig) => void;
+  onChangeBridgeConfig: (config: WhatsappBridgeConfig) => void;
   onSaveBridgeSettings: (e: React.FormEvent) => void;
 }
 

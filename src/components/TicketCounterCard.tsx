@@ -5,6 +5,7 @@ interface TicketCounterCardProps {
   title: string;
   subtitle: string;
   count: number;
+  price: number;
   onIncrement: () => void;
   onDecrement: () => void;
 }
@@ -19,6 +20,7 @@ export const TicketCounterCard: React.FC<TicketCounterCardProps> = ({
   title,
   subtitle,
   count,
+  price,
   onIncrement,
   onDecrement,
 }) => {
@@ -26,11 +28,12 @@ export const TicketCounterCard: React.FC<TicketCounterCardProps> = ({
   const tickOuterR = 90;
   const tickInnerR = 76;
   const litTicks = count === 0 ? 0 : ((count - 1) % TOTAL_TICKS) + 1;
+  const totalAmount = count * price;
 
   return (
     <section className="rounded-[28px] bg-white border border-black/[0.08] p-4 shadow-[0_8px_30px_rgb(0,0,0,0.05)] space-y-3.5">
       {/* Card Header */}
-      <div className="flex items-center justify-between gap-2 px-1">
+      <div className="flex items-start justify-between gap-2 px-1">
         <div>
           <h3 className="text-sm font-black tracking-tight text-eco-dark leading-none">
             {title}
@@ -39,9 +42,14 @@ export const TicketCounterCard: React.FC<TicketCounterCardProps> = ({
             {subtitle}
           </p>
         </div>
-        <span className="px-2.5 py-1 rounded-full bg-eco-surface border border-black/[0.06] text-[10px] font-bold text-eco-creamDark uppercase tracking-wider">
-          Hoy
-        </span>
+        <div className="text-right shrink-0">
+          <span className="inline-block px-2.5 py-1 rounded-full bg-eco-surface border border-black/[0.06] text-[10px] font-bold font-mono text-eco-dark">
+            ${price.toLocaleString()} c/u
+          </span>
+          <div className="text-[11px] font-mono font-extrabold text-[#166534] mt-1">
+            ${totalAmount.toLocaleString()}
+          </div>
+        </div>
       </div>
 
       {/* Circular Dial Display */}
@@ -86,7 +94,7 @@ export const TicketCounterCard: React.FC<TicketCounterCardProps> = ({
             <span className="text-5xl font-black tracking-tight text-white leading-none tabular-nums">
               {count}
             </span>
-            <span className="text-xs font-semibold text-white/60 mt-1.5">
+            <span className="text-xs font-semibold text-white/75 mt-1.5">
               {count === 1 ? 'ticket' : 'tickets'}
             </span>
           </div>

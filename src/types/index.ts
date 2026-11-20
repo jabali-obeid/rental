@@ -133,3 +133,8 @@ export interface DailyTicketCounters {
   updatedAt: string;
 }
 
+export interface TicketPrices {
+  bungee: number;
+  palestra: number;
+}
+

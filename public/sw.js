@@ -26,6 +26,11 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
+  // Never intercept Vite dev server / localhost requests
+  if (self.location.hostname === 'localhost' || self.location.hostname === '127.0.0.1') {
+    return;
+  }
+
   // Navigation fallback to cache or network
   if (event.request.mode === 'navigate') {
     event.respondWith(

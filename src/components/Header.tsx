@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Volume2, VolumeX, Plus, Settings, Compass, Clock, Bike, Banknote, BarChart3, Send } from 'lucide-react';
+import { Volume2, VolumeX, Plus, Settings, Compass, Clock, Bike, Banknote, BarChart3, Send, DollarSign } from 'lucide-react';
 import { soundService } from '../services/sound';
 import { dataService } from '../services/dataService';
 import { ActiveTab } from './BottomNavigation';
@@ -9,6 +9,7 @@ interface Props {
   onOpenNewRental: () => void;
   onOpenSettings: () => void;
   onOpenRafting: () => void;
+  onOpenPrices: () => void;
   activeTab?: ActiveTab;
   onChangeTab?: (tab: ActiveTab) => void;
 }
@@ -18,6 +19,7 @@ export const Header: React.FC<Props> = ({
   onOpenNewRental,
   onOpenSettings,
   onOpenRafting,
+  onOpenPrices,
   activeTab = 'dashboard',
   onChangeTab,
 }) => {
@@ -137,6 +139,18 @@ export const Header: React.FC<Props> = ({
           >
             <Send className="w-3.5 h-3.5 stroke-[2.5]" />
             <span className="hidden xs:inline">Info </span><span>Rafting</span>
+          </button>
+
+          {/* Prices Panel Button */}
+          <button
+            type="button"
+            onClick={onOpenPrices}
+            aria-label="Panel de precios"
+            title="Cambiar precios de todos los productos"
+            className="w-11 h-11 sm:w-auto sm:px-3.5 rounded-full border border-black/[0.08] bg-white text-eco-dark hover:bg-eco-surface flex items-center justify-center gap-1.5 transition-all shadow-sm shrink-0 active:scale-95"
+          >
+            <DollarSign className="w-4 h-4" />
+            <span className="hidden sm:inline text-xs font-extrabold">Precios</span>
           </button>
 
           {/* Sound Toggle (Circular White Button) */}

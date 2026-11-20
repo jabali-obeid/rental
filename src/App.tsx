@@ -32,6 +32,9 @@ const SettingsModal = lazy(() =>
 const RaftingWhatsappModal = lazy(() =>
   import('./components/RaftingWhatsappModal').then((m) => ({ default: m.RaftingWhatsappModal }))
 );
+const PricesPanelModal = lazy(() =>
+  import('./components/PricesPanelModal').then((m) => ({ default: m.PricesPanelModal }))
+);
 
 export function App() {
   const [, setVersion] = useState<number>(0);
@@ -46,6 +49,7 @@ export function App() {
   const [reserveRentalTarget, setReserveRentalTarget] = useState<Rental | null>(null);
   const [isSettingsOpen, setIsSettingsOpen] = useState<boolean>(false);
   const [isRaftingOpen, setIsRaftingOpen] = useState<boolean>(false);
+  const [isPricesOpen, setIsPricesOpen] = useState<boolean>(false);
   const [raftingInitialTab, setRaftingInitialTab] = useState<'send' | 'steps' | 'qr' | 'history'>('send');
 
   // Subscribe to real-time data mutations
@@ -62,6 +66,7 @@ export function App() {
   const activeRentals = dataService.getActiveRentals();
   const cashMovements = dataService.getCashMovements();
   const ticketCounters = dataService.getTicketCounters();
+  const ticketPrices = dataService.getTicketPrices();
 
   const handleOpenNewRental = useCallback(() => {
     setIsNewRentalOpen(true);
@@ -90,6 +95,7 @@ export function App() {
         activeCount={activeRentals.length}
         onOpenNewRental={() => setIsNewRentalOpen(true)}
         onOpenSettings={() => setIsSettingsOpen(true)}
+        onOpenPrices={() => setIsPricesOpen(true)}
         onOpenRafting={() => {
           setRaftingInitialTab('send');
           setIsRaftingOpen(true);
@@ -189,10 +195,25 @@ export function App() {
             initialTab={raftingInitialTab}
           />
         )}
+
+        {isPricesOpen && (
+          <PricesPanelModal
+            isOpen={isPricesOpen}
+            onClose={() => setIsPricesOpen(false)}
+            categories={categories}
+            ticketPrices={ticketPrices}
+          />
+        )}
       </Suspense>
 
-      {/* Right-to-Left Slide-Over Drawer for Bungee & Palestra Tickets */}
-      <TicketsDrawer counters={ticketCounters} />
+      {/* Right-to-Left Slide-Over Drawer for Bungee & Palestra Tickets (hidden while PIN locked) */}
+      {!isLocked && (
+        <TicketsDrawer
+          counters={ticketCounters}
+          prices={ticketPrices}
+          onOpenPrices={() => setIsPricesOpen(true)}
+        />
+      )}
 
       {/* Screen Blur PIN Security Lock */}
       {isLocked && (

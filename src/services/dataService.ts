@@ -1,4 +1,4 @@
-import { Category, Unit, Rental, CashMovement, CashShiftSummary, RentalCategoryBreakdownItem, UnitStatus, DailyClosing, Reservation, PaymentMethod, DailyTicketCounters } from '../types';
+import { Category, Unit, Rental, CashMovement, CashShiftSummary, RentalCategoryBreakdownItem, UnitStatus, DailyClosing, Reservation, PaymentMethod, DailyTicketCounters, TicketPrices } from '../types';
 import { getSupabase, isSupabaseConfigured } from './supabaseClient';
 import { googleSheetsService } from './googleSheetsService';
 import {
@@ -10,6 +10,8 @@ import {
   STORAGE_KEY_RESERVATIONS,
   STORAGE_KEY_DELETED_CASH,
   STORAGE_KEY_TICKET_COUNTERS,
+  STORAGE_KEY_TICKET_PRICES,
+  DEFAULT_TICKET_PRICES,
   INITIAL_CATEGORIES,
   INITIAL_UNITS,
   INITIAL_RENTALS,
@@ -1341,7 +1343,34 @@ class DataService {
     return this.getCategories().find((c) => c.id === categoryId);
   }
 
-  // Daily Ticket Counters (Bungee & Palestra) — reset when closing cash shift
+  // Ticket Prices (Bungee & Palestra)
+  public getTicketPrices(): TicketPrices {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY_TICKET_PRICES);
+      if (raw) {
+        const parsed = JSON.parse(raw) as Partial<TicketPrices>;
+        return {
+          bungee: Math.max(0, Number(parsed.bungee) || DEFAULT_TICKET_PRICES.bungee),
+          palestra: Math.max(0, Number(parsed.palestra) || DEFAULT_TICKET_PRICES.palestra),
+        };
+      }
+    } catch {
+      /* ignore parse errors */
+    }
+    return { ...DEFAULT_TICKET_PRICES };
+  }
+
+  public updateTicketPrices(prices: TicketPrices): TicketPrices {
+    const next: TicketPrices = {
+      bungee: Math.max(0, Math.round(Number(prices.bungee) || 0)),
+      palestra: Math.max(0, Math.round(Number(prices.palestra) || 0)),
+    };
+    localStorage.setItem(STORAGE_KEY_TICKET_PRICES, JSON.stringify(next));
+    this.notify();
+    return next;
+  }
+
+  // Daily Ticket Counters (Bungee & Palestra) — synced with Cash Register & reset on closing
   public getTicketCounters(): DailyTicketCounters {
     try {
       const raw = localStorage.getItem(STORAGE_KEY_TICKET_COUNTERS);
@@ -1359,15 +1388,98 @@ class DataService {
     return { bungee: 0, palestra: 0, updatedAt: new Date().toISOString() };
   }
 
-  public adjustTicketCounter(type: 'bungee' | 'palestra', delta: 1 | -1): DailyTicketCounters {
+  public adjustTicketCounter(
+    type: 'bungee' | 'palestra',
+    delta: 1 | -1,
+    paymentMethod: PaymentMethod = 'efectivo'
+  ): DailyTicketCounters {
     const current = this.getTicketCounters();
+    const nextCount = Math.max(0, current[type] + delta);
+    if (nextCount === current[type]) return current;
+
+    const categoryLabel = type === 'bungee' ? 'Bungee' : 'Palestra';
+    const categoryId = type === 'bungee' ? 'c-bungee' : 'c-palestra';
+    const unitId = type === 'bungee' ? 'u-bungee' : 'u-palestra';
+    const price = this.getTicketPrices()[type];
+    const durationMinutes = 10;
+
     const next: DailyTicketCounters = {
       ...current,
-      [type]: Math.max(0, current[type] + delta),
+      [type]: nextCount,
       updatedAt: new Date().toISOString(),
     };
     localStorage.setItem(STORAGE_KEY_TICKET_COUNTERS, JSON.stringify(next));
-    this.notify();
+
+    if (delta === 1) {
+      const now = new Date();
+      const rentalId = `r-ticket-${type}-${now.getTime()}`;
+      const expectedEnd = new Date(now.getTime() + durationMinutes * 60 * 1000);
+      const ticketRental: Rental = {
+        id: rentalId,
+        unitId,
+        categoryId,
+        customerName: `Ticket ${categoryLabel} #${nextCount}`,
+        startTime: now.toISOString(),
+        durationMinutes,
+        expectedEndTime: expectedEnd.toISOString(),
+        status: 'activo',
+        docType: 'Otro',
+        docLocker: 'Ticket de Parque',
+        basePrice: price,
+        penaltyPrice: 0,
+        discount: 0,
+        totalPrice: price,
+        paymentMethod,
+        notes: '[ESPERANDO_INICIO] [TICKET_PARQUE]',
+        createdAt: now.toISOString(),
+      };
+
+      const rentals = this.getRentals();
+      rentals.unshift(ticketRental);
+      localStorage.setItem(STORAGE_KEY_RENTALS, JSON.stringify(rentals));
+      this.pushRentalToSupabase(ticketRental);
+
+      if (price > 0) {
+        this.addCashMovement({
+          type: 'ingreso_alquiler',
+          category: categoryLabel,
+          amount: price,
+          paymentMethod,
+          rentalId,
+          description: `Ticket ${categoryLabel} #${nextCount} ($${price.toLocaleString()})`,
+          registeredBy: 'Operador',
+        });
+      } else {
+        this.notify();
+      }
+    } else if (delta === -1) {
+      const movements = this.getCashMovements();
+      const targetMovement = movements.find(
+        (m) => m.type === 'ingreso_alquiler' && m.category === categoryLabel
+      );
+
+      // Cancel the matching active ticket timer if present
+      const rentals = this.getRentals();
+      const targetRentalId =
+        targetMovement?.rentalId ||
+        rentals.find((r) => r.status === 'activo' && r.categoryId === categoryId)?.id;
+
+      if (targetRentalId) {
+        const updatedRentals = rentals.map((r) =>
+          r.id === targetRentalId ? { ...r, status: 'cancelado' as const } : r
+        );
+        localStorage.setItem(STORAGE_KEY_RENTALS, JSON.stringify(updatedRentals));
+      }
+
+      if (targetMovement) {
+        void this.deleteCashMovement(targetMovement.id);
+      } else {
+        this.notify();
+      }
+    } else {
+      this.notify();
+    }
+
     return next;
   }
 

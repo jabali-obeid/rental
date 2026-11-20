@@ -100,7 +100,11 @@ export const RentalDashboard: React.FC<Props> = ({
         const query = search.toLowerCase();
         const unit = units.find((u) => u.id === rental.unitId);
         const matchCustomer = rental.customerName.toLowerCase().includes(query);
-        const matchUnit = unit?.codeNumber.toLowerCase().includes(query) || unit?.name.toLowerCase().includes(query);
+        const virtualCode = rental.categoryId === 'c-bungee' ? 'bun bungee' : rental.categoryId === 'c-palestra' ? 'pal palestra' : '';
+        const matchUnit =
+          unit?.codeNumber.toLowerCase().includes(query) ||
+          unit?.name.toLowerCase().includes(query) ||
+          virtualCode.includes(query);
         const matchLocker = rental.docLocker.toLowerCase().includes(query);
         if (!matchCustomer && !matchUnit && !matchLocker) return false;
       }

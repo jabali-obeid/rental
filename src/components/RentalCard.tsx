@@ -85,8 +85,11 @@ export const RentalCard: React.FC<Props> = React.memo(({
     statusText = 'TIEMPO CUMPLIDO';
   }
 
-  const categoryName = category?.name || 'Unidad';
-  const unitCode = unit?.codeNumber || 'U-00';
+  const isBungee = rental.categoryId === 'c-bungee';
+  const isPalestra = rental.categoryId === 'c-palestra';
+  const categoryName = category?.name || (isBungee ? 'Bungee' : isPalestra ? 'Palestra' : 'Unidad');
+  const categoryIcon = category?.icon || (isBungee ? 'Zap' : isPalestra ? 'Users' : 'Bike');
+  const unitCode = unit?.codeNumber || (isBungee ? 'BUN' : isPalestra ? 'PAL' : 'U-00');
 
   return (
     <div
@@ -101,7 +104,7 @@ export const RentalCard: React.FC<Props> = React.memo(({
             </span>
             <div className="flex items-center gap-1 sm:gap-1.5 text-xs text-[#52514E] font-semibold min-w-0">
               <span className="text-[#1C1C1C] shrink-0">
-                <CategoryIcon name={category?.icon || 'Bike'} className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                <CategoryIcon name={categoryIcon} className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
               </span>
               <span className="truncate max-w-[100px] sm:max-w-[140px]">{categoryName}</span>
             </div>
