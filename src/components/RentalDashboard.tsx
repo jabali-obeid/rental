@@ -3,7 +3,7 @@ import { Rental, Category, Unit } from '../types';
 import { RentalCard } from './RentalCard';
 import { isRentalWaitingStart } from '../hooks/useRentalTimer';
 import { useSharedNow } from '../hooks/useSharedNow';
-import { Search, Plus, Bike, Clock, CheckCircle2 } from 'lucide-react';
+import { IconSearch, IconPlus } from './EcoIcons';
 
 interface Props {
   rentals: Rental[];
@@ -121,50 +121,23 @@ export const RentalDashboard: React.FC<Props> = ({
 
   return (
     <div className="space-y-5 pb-24">
-      {/* STAFFWYN HERO HEADER: Greeting + Big Right KPIs + Segmented Pill Progress Bar */}
+      {/* HERO HEADER: Greeting + Real Fleet Status Sentence + Segmented Pill Progress Bar */}
       <div className="pt-1 sm:pt-3 space-y-3 sm:space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 sm:gap-4 px-1">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-2 sm:gap-4 px-1">
           <div>
             <p className="text-[11px] sm:text-xs font-semibold uppercase tracking-widest text-eco-creamMuted mb-0.5 sm:mb-1">
-              Panel Operativo en Tiempo Real
+              Panel Operativo
             </p>
-            <h2 className="text-xl sm:text-4xl font-medium tracking-tight text-eco-dark">
+            <h2 className="text-xl sm:text-4xl font-bold tracking-tight text-eco-dark">
               Hola, Eco Aventura
             </h2>
           </div>
 
-          {/* 3 Big Clean KPI Counters */}
-          <div className="grid grid-cols-3 sm:flex items-center gap-3 sm:gap-10 bg-white/60 sm:bg-transparent p-2.5 sm:p-0 rounded-2xl border border-black/[0.04] sm:border-0">
-            <div>
-              <div className="flex items-center gap-1 sm:gap-1.5 text-[10px] sm:text-[11px] font-medium text-eco-creamMuted mb-0.5">
-                <Clock className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
-                <span>En pista</span>
-              </div>
-              <div className="text-xl sm:text-4xl font-normal tracking-tight text-eco-dark">
-                {counts.all}
-              </div>
-            </div>
-
-            <div>
-              <div className="flex items-center gap-1 sm:gap-1.5 text-[10px] sm:text-[11px] font-medium text-eco-creamMuted mb-0.5">
-                <CheckCircle2 className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
-                <span>Libres</span>
-              </div>
-              <div className="text-xl sm:text-4xl font-normal tracking-tight text-eco-dark">
-                {fleetStats.availableUnits}
-              </div>
-            </div>
-
-            <div>
-              <div className="flex items-center gap-1 sm:gap-1.5 text-[10px] sm:text-[11px] font-medium text-eco-creamMuted mb-0.5">
-                <Bike className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
-                <span>Flota</span>
-              </div>
-              <div className="text-xl sm:text-4xl font-normal tracking-tight text-eco-dark">
-                {fleetStats.totalUnits}
-              </div>
-            </div>
-          </div>
+          <p className="text-xs sm:text-sm font-medium text-eco-creamDark bg-white/70 sm:bg-transparent px-3 py-2 sm:p-0 rounded-2xl border border-black/[0.04] sm:border-0">
+            {counts.all > 0
+              ? `${counts.all} ${counts.all === 1 ? 'unidad en pista' : 'unidades en pista'} ahora · ${fleetStats.availableUnits} libres de ${fleetStats.totalUnits} en flota.`
+              : `Toda la flota (${fleetStats.totalUnits} unidades) disponible en base para salir.`}
+          </p>
         </div>
 
         {/* Staffwyn Segmented Rounded-Full Progress Bar */}
@@ -224,7 +197,7 @@ export const RentalDashboard: React.FC<Props> = ({
       <div className="bg-white/95 rounded-[28px] p-3.5 sm:p-4 border border-black/[0.05] shadow-[0_8px_30px_rgb(0,0,0,0.04)] space-y-3">
         {/* Search Input */}
         <div className="relative">
-          <Search className="w-4 h-4 text-eco-creamMuted absolute left-4 top-3.5" />
+          <IconSearch className="w-4 h-4 text-eco-creamMuted absolute left-4 top-3.5" />
           <input
             type="text"
             placeholder="Buscar por cliente, unidad (K-01) o casillero..."
@@ -263,7 +236,7 @@ export const RentalDashboard: React.FC<Props> = ({
                 : 'bg-eco-surface text-eco-creamDark border border-black/[0.05] hover:text-eco-dark'
             }`}
           >
-            <span className="w-2 h-2 rounded-full bg-eco-dark animate-pulse"></span>
+            <span className="w-2 h-2 rounded-full bg-eco-dark"></span>
             <span>Por Iniciar ({counts.waiting})</span>
           </button>
 
@@ -295,11 +268,11 @@ export const RentalDashboard: React.FC<Props> = ({
             onClick={() => setFilterState('red')}
             className={`px-4 py-2 rounded-full text-xs font-bold shrink-0 transition-all flex items-center gap-1.5 ${
               filterState === 'red'
-                ? 'bg-[#FEE2E2] text-[#991B1B] border border-[#FCA5A5] shadow-sm animate-pulse'
+                ? 'bg-[#FEE2E2] text-[#991B1B] border border-[#FCA5A5] shadow-sm'
                 : 'bg-eco-surface text-eco-creamDark border border-black/[0.05] hover:text-[#991B1B]'
             }`}
           >
-            <span className="w-2 h-2 rounded-full bg-[#DC2626] animate-ping"></span>
+            <span className="w-2 h-2 rounded-full bg-[#DC2626]"></span>
             <span>En Mora ({counts.red})</span>
           </button>
         </div>
@@ -324,7 +297,7 @@ export const RentalDashboard: React.FC<Props> = ({
               onClick={onOpenNewRental}
               className="px-6 py-3 rounded-full bg-eco-dark text-white font-bold text-xs tracking-wide shadow-md active:scale-95 transition-all flex items-center gap-2 hover:bg-eco-forestLight"
             >
-              <Plus className="w-4 h-4 stroke-[3] text-eco-gold" />
+              <IconPlus className="w-4 h-4 text-eco-gold" />
               <span>NUEVO ALQUILER ECO AVENTURA</span>
             </button>
           )}

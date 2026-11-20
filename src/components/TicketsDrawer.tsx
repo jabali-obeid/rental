@@ -1,5 +1,5 @@
 import React, { useId, useRef, useState } from 'react';
-import { Ticket, X, ChevronLeft, Banknote, Smartphone, CreditCard, DollarSign } from 'lucide-react';
+import { IconTicket, IconClose, IconChevronLeft, IconPrice } from './EcoIcons';
 import { DailyTicketCounters, PaymentMethod, TicketPrices } from '../types';
 import { dataService } from '../services/dataService';
 import { soundService } from '../services/sound';
@@ -72,8 +72,8 @@ export const TicketsDrawer: React.FC<TicketsDrawerProps> = ({
           style={{ touchAction: 'pan-y' }}
           className="fixed right-0 top-1/2 -translate-y-1/2 z-30 flex flex-col items-center gap-1.5 py-3 pl-2.5 pr-2 rounded-l-2xl bg-eco-dark text-white border border-r-0 border-black/15 shadow-[-6px_4px_20px_rgb(0,0,0,0.16)] hover:bg-eco-forestLight active:scale-95 transition-all"
         >
-          <ChevronLeft className="w-4 h-4 text-eco-gold" />
-          <Ticket className="w-4 h-4 text-eco-gold" />
+          <IconChevronLeft className="w-4 h-4 text-eco-gold" />
+          <IconTicket className="w-4 h-4 text-eco-gold" />
           <span className="text-[10px] font-black tracking-wider uppercase [writing-mode:vertical-rl] rotate-180">
             Tickets
           </span>
@@ -114,7 +114,7 @@ export const TicketsDrawer: React.FC<TicketsDrawerProps> = ({
         <div className="px-4 py-3.5 border-b border-black/[0.06] bg-white/95 backdrop-blur-md flex items-center justify-between gap-2 pt-safe">
           <div className="flex items-center gap-2.5 min-w-0">
             <div className="w-10 h-10 rounded-full bg-eco-dark text-eco-gold flex items-center justify-center shrink-0">
-              <Ticket className="w-5 h-5" />
+              <IconTicket className="w-5 h-5" />
             </div>
             <div className="min-w-0">
               <div className="flex items-center gap-2">
@@ -142,7 +142,7 @@ export const TicketsDrawer: React.FC<TicketsDrawerProps> = ({
               title="Cambiar precios"
               className="min-h-[44px] px-3 rounded-full bg-eco-surface hover:bg-[#EAE4D3] border border-black/[0.08] text-eco-dark text-xs font-extrabold flex items-center gap-1 active:scale-95 transition-all"
             >
-              <DollarSign className="w-3.5 h-3.5" />
+              <IconPrice className="w-3.5 h-3.5" />
               <span>Precios</span>
             </button>
 
@@ -152,7 +152,7 @@ export const TicketsDrawer: React.FC<TicketsDrawerProps> = ({
               onClick={() => setIsOpen(false)}
               className="w-11 h-11 rounded-full bg-eco-surface hover:bg-[#EAE4D3] border border-black/[0.08] text-eco-dark flex items-center justify-center active:scale-95 transition-all"
             >
-              <X className="w-5 h-5" />
+              <IconClose className="w-5 h-5" />
             </button>
           </div>
         </div>
@@ -169,7 +169,6 @@ export const TicketsDrawer: React.FC<TicketsDrawerProps> = ({
                   : 'text-eco-creamDark hover:text-eco-dark'
               }`}
             >
-              <Banknote className="w-3.5 h-3.5" />
               <span>Efectivo</span>
             </button>
             <button
@@ -181,7 +180,6 @@ export const TicketsDrawer: React.FC<TicketsDrawerProps> = ({
                   : 'text-eco-creamDark hover:text-eco-dark'
               }`}
             >
-              <Smartphone className="w-3.5 h-3.5" />
               <span>Transf.</span>
             </button>
             <button
@@ -193,7 +191,6 @@ export const TicketsDrawer: React.FC<TicketsDrawerProps> = ({
                   : 'text-eco-creamDark hover:text-eco-dark'
               }`}
             >
-              <CreditCard className="w-3.5 h-3.5" />
               <span>Tarjeta</span>
             </button>
           </div>

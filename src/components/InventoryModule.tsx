@@ -249,7 +249,7 @@ export const InventoryModule: React.FC<Props> = ({ units, categories }) => {
               <div className="flex items-center gap-1.5 w-full sm:w-auto justify-end pt-1 sm:pt-0">
                 {u.status === 'alquilado' ? (
                   <span className="px-3.5 py-1.5 rounded-full bg-[#FEF3C7] border border-[#FDE68A] text-[#92400E] font-bold text-xs flex items-center gap-1.5">
-                    <span className="w-2 h-2 rounded-full bg-[#D97706] animate-pulse"></span>
+                    <span className="w-2 h-2 rounded-full bg-[#D97706]"></span>
                     <span>En Alquiler</span>
                   </span>
                 ) : (

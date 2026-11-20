@@ -325,7 +325,7 @@ export const RaftingWhatsappModal: React.FC<Props> = ({
                     }`}
                 >
                   <span
-                    className={`w-1.5 h-1.5 rounded-full ${bridgeState.whatsappReady ? 'bg-eco-leaf animate-pulse' : 'bg-[#D97706]'
+                    className={`w-1.5 h-1.5 rounded-full ${bridgeState.whatsappReady ? 'bg-eco-leaf' : 'bg-[#D97706]'
                       }`}
                   />
                   <span>{bridgeState.whatsappReady ? 'QR Activo' : 'Conectar QR'}</span>
@@ -451,7 +451,7 @@ export const RaftingWhatsappModal: React.FC<Props> = ({
 
                 {/* Live Progress Bar while sending */}
                 {isSending && progress && (
-                  <div className="p-4 rounded-2xl bg-[#FEF3C7] border border-[#FDE68A] space-y-2.5 animate-pulse">
+                  <div className="p-4 rounded-2xl bg-[#FEF3C7] border border-[#FDE68A] space-y-2.5">
                     <div className="flex items-center justify-between text-xs font-extrabold text-eco-dark">
                       <span className="flex items-center gap-2">
                         <RefreshCw className="w-4 h-4 text-eco-dark animate-spin" />

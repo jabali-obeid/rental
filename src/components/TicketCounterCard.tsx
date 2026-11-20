@@ -1,5 +1,5 @@
 import React from 'react';
-import { Minus, Plus } from 'lucide-react';
+import { IconMinus, IconPlus } from './EcoIcons';
 
 interface TicketCounterCardProps {
   title: string;
@@ -110,7 +110,7 @@ export const TicketCounterCard: React.FC<TicketCounterCardProps> = ({
           aria-label={`Restar 1 ticket de ${title}`}
           className="min-h-[48px] rounded-2xl bg-eco-surface hover:bg-[#EAE4D3] border border-black/[0.08] text-eco-dark font-black text-base shadow-sm active:scale-95 transition-all flex items-center justify-center gap-1.5 disabled:opacity-35 disabled:pointer-events-none"
         >
-          <Minus className="w-4 h-4 stroke-[2.8]" />
+          <IconMinus className="w-4 h-4" />
           <span>1</span>
         </button>
 
@@ -120,7 +120,7 @@ export const TicketCounterCard: React.FC<TicketCounterCardProps> = ({
           aria-label={`Sumar 1 ticket de ${title}`}
           className="min-h-[48px] rounded-2xl bg-eco-gold hover:bg-[#f0c62d] border border-black/[0.1] text-eco-dark font-black text-base shadow-sm active:scale-95 transition-all flex items-center justify-center gap-1.5"
         >
-          <Plus className="w-4 h-4 stroke-[2.8]" />
+          <IconPlus className="w-4 h-4" />
           <span>1</span>
         </button>
       </div>

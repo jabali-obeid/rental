@@ -22,6 +22,10 @@
     overscroll-behavior-x: none;
   }
 
+  h1, h2, h3 {
+    font-family: theme('fontFamily.display');
+  }
+
   button, [role="button"] {
     user-select: none;
     -webkit-user-select: none;

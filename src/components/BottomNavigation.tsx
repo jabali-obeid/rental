@@ -1,5 +1,5 @@
 import React from 'react';
-import { Clock, Bike, Banknote, BarChart3 } from 'lucide-react';
+import { IconClock, IconFleet, IconCash, IconMetrics } from './EcoIcons';
 
 export type ActiveTab = 'dashboard' | 'inventory' | 'cash' | 'stats';
 
@@ -27,7 +27,7 @@ export const BottomNavigation: React.FC<Props> = ({
           }`}
         >
           <div className="relative">
-            <Clock className="w-5 h-5 mb-0.5" />
+            <IconClock className="w-5 h-5 mb-0.5" />
             {activeRentalsCount > 0 && (
               <span className="absolute -top-1.5 -right-2.5 px-1.5 py-0.2 rounded-full text-[10px] font-black bg-eco-gold text-eco-dark border border-black/10">
                 {activeRentalsCount}
@@ -46,7 +46,7 @@ export const BottomNavigation: React.FC<Props> = ({
               : 'text-eco-creamMuted hover:text-eco-dark'
           }`}
         >
-          <Bike className="w-5 h-5 mb-0.5" />
+          <IconFleet className="w-5 h-5 mb-0.5" />
           <span className="text-[10px] tracking-tight">Flota</span>
         </button>
 
@@ -59,7 +59,7 @@ export const BottomNavigation: React.FC<Props> = ({
               : 'text-eco-creamMuted hover:text-eco-dark'
           }`}
         >
-          <Banknote className="w-5 h-5 mb-0.5" />
+          <IconCash className="w-5 h-5 mb-0.5" />
           <span className="text-[10px] tracking-tight">Caja</span>
         </button>
 
@@ -72,7 +72,7 @@ export const BottomNavigation: React.FC<Props> = ({
               : 'text-eco-creamMuted hover:text-eco-dark'
           }`}
         >
-          <BarChart3 className="w-5 h-5 mb-0.5" />
+          <IconMetrics className="w-5 h-5 mb-0.5" />
           <span className="text-[10px] tracking-tight">Métricas</span>
         </button>
       </div>

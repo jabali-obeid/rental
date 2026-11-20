@@ -211,7 +211,7 @@ export const SettingsModal: React.FC<Props> = ({ isOpen, onClose, onOpenRaftingC
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2 font-bold">
                     {isConnected ? (
-                      <Wifi className="w-4 h-4 text-eco-leaf animate-pulse" />
+                      <Wifi className="w-4 h-4 text-eco-leaf" />
                     ) : (
                       <Database className="w-4 h-4 text-[#D97706]" />
                     )}

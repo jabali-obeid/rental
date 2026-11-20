@@ -89,7 +89,7 @@ export function App() {
     : undefined;
 
   return (
-    <div className="min-h-full w-full max-w-full overflow-x-hidden bg-gradient-to-br from-[#FCFBF7] via-[#FAF5E4] to-[#F4E6BA] text-eco-dark flex flex-col font-['Plus_Jakarta_Sans',sans-serif]">
+    <div className="min-h-full w-full max-w-full overflow-x-hidden bg-gradient-to-br from-[#FCFBF7] via-[#FAF5E4] to-[#F4E6BA] text-eco-dark flex flex-col font-sans">
       {/* Header with responsive desktop nav */}
       <Header
         activeCount={activeRentals.length}

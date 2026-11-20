@@ -1,5 +1,17 @@
 import React, { useState } from 'react';
-import { Volume2, VolumeX, Plus, Settings, Compass, Clock, Bike, Banknote, BarChart3, Send, DollarSign } from 'lucide-react';
+import {
+  IconSoundOn,
+  IconSoundOff,
+  IconPlus,
+  IconGear,
+  IconCompass,
+  IconClock,
+  IconFleet,
+  IconCash,
+  IconMetrics,
+  IconSend,
+  IconPrice,
+} from './EcoIcons';
 import { soundService } from '../services/sound';
 import { dataService } from '../services/dataService';
 import { ActiveTab } from './BottomNavigation';
@@ -38,7 +50,7 @@ export const Header: React.FC<Props> = ({
         <div className="flex items-center gap-1.5 min-w-0 shrink">
           <div className="flex items-center gap-2 bg-white/95 border border-black/[0.06] rounded-full pl-1.5 sm:pl-2 pr-2.5 sm:pr-3.5 py-1 sm:py-1.5 shadow-[0_2px_10px_rgb(0,0,0,0.03)] min-w-0">
             <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-eco-dark flex items-center justify-center text-eco-gold shrink-0">
-              <Compass className="w-4 h-4 stroke-[2.2]" />
+              <IconCompass className="w-4 h-4" />
             </div>
             <div className="min-w-0">
               <div className="flex items-center gap-1 sm:gap-1.5">
@@ -54,12 +66,12 @@ export const Header: React.FC<Props> = ({
                       : 'bg-[#FEF3C7] text-[#92400E] border-[#FDE68A]'
                   }`}
                 >
-                  <span className={`w-1.5 h-1.5 rounded-full ${isCloud ? 'bg-eco-leaf animate-pulse' : 'bg-[#D97706]'}`}></span>
+                  <span className={`w-1.5 h-1.5 rounded-full ${isCloud ? 'bg-eco-leaf' : 'bg-[#D97706]'}`}></span>
                   <span className="hidden xs:inline">{isCloud ? 'Nube' : 'Local'}</span>
                 </button>
               </div>
               <div className="flex items-center gap-1 sm:gap-1.5 mt-0.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-eco-leaf animate-pulse shrink-0"></span>
+                <span className="w-1.5 h-1.5 rounded-full bg-eco-leaf shrink-0"></span>
                 <span className="text-[10px] font-medium text-eco-creamMuted truncate">
                   {activeCount} {activeCount === 1 ? 'activo' : 'activos'}
                 </span>
@@ -79,7 +91,7 @@ export const Header: React.FC<Props> = ({
                   : 'text-eco-creamDark hover:text-eco-dark hover:bg-eco-surface'
               }`}
             >
-              <Clock className="w-3.5 h-3.5" />
+              <IconClock className="w-3.5 h-3.5" />
               <span>Alquileres</span>
               {activeCount > 0 && (
                 <span className={`px-1.5 py-0.2 rounded-full text-[10px] font-black ${
@@ -98,7 +110,7 @@ export const Header: React.FC<Props> = ({
                   : 'text-eco-creamDark hover:text-eco-dark hover:bg-eco-surface'
               }`}
             >
-              <Bike className="w-3.5 h-3.5" />
+              <IconFleet className="w-3.5 h-3.5" />
               <span>Flota</span>
             </button>
 
@@ -110,7 +122,7 @@ export const Header: React.FC<Props> = ({
                   : 'text-eco-creamDark hover:text-eco-dark hover:bg-eco-surface'
               }`}
             >
-              <Banknote className="w-3.5 h-3.5" />
+              <IconCash className="w-3.5 h-3.5" />
               <span>Caja</span>
             </button>
 
@@ -122,7 +134,7 @@ export const Header: React.FC<Props> = ({
                   : 'text-eco-creamDark hover:text-eco-dark hover:bg-eco-surface'
               }`}
             >
-              <BarChart3 className="w-3.5 h-3.5" />
+              <IconMetrics className="w-3.5 h-3.5" />
               <span>Métricas</span>
             </button>
           </nav>
@@ -137,7 +149,7 @@ export const Header: React.FC<Props> = ({
             title="Enviar Pack de Info Rafting (Pomelos Tour) por WhatsApp"
             className="flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3.5 min-h-[44px] rounded-full bg-eco-gold hover:bg-[#f0c62d] border border-black/[0.08] text-eco-dark font-extrabold text-[11px] sm:text-xs shadow-sm active:scale-95 transition-all shrink-0"
           >
-            <Send className="w-3.5 h-3.5 stroke-[2.5]" />
+            <IconSend className="w-3.5 h-3.5" />
             <span className="hidden xs:inline">Info </span><span>Rafting</span>
           </button>
 
@@ -149,7 +161,7 @@ export const Header: React.FC<Props> = ({
             title="Cambiar precios de todos los productos"
             className="w-11 h-11 sm:w-auto sm:px-3.5 rounded-full border border-black/[0.08] bg-white text-eco-dark hover:bg-eco-surface flex items-center justify-center gap-1.5 transition-all shadow-sm shrink-0 active:scale-95"
           >
-            <DollarSign className="w-4 h-4" />
+            <IconPrice className="w-4 h-4" />
             <span className="hidden sm:inline text-xs font-extrabold">Precios</span>
           </button>
 
@@ -165,7 +177,7 @@ export const Header: React.FC<Props> = ({
             }`}
             title={soundEnabled ? 'Alertas sonoras activas' : 'Alertas silenciadas'}
           >
-            {soundEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
+            {soundEnabled ? <IconSoundOn className="w-4 h-4" /> : <IconSoundOff className="w-4 h-4" />}
           </button>
 
           {/* Settings Modal Button (Circular White Button) */}
@@ -175,7 +187,7 @@ export const Header: React.FC<Props> = ({
             aria-label="Configuración y base de datos"
             className="w-11 h-11 rounded-full border border-black/[0.08] bg-white text-eco-dark hover:bg-eco-surface flex items-center justify-center transition-all shadow-sm shrink-0"
           >
-            <Settings className="w-4 h-4" />
+            <IconGear className="w-4 h-4" />
           </button>
 
           {/* Quick New Rental Button (Solid Charcoal Pill) */}
@@ -184,7 +196,7 @@ export const Header: React.FC<Props> = ({
             onClick={onOpenNewRental}
             className="flex items-center gap-1 sm:gap-1.5 px-3 sm:px-4 min-h-[44px] rounded-full bg-eco-dark text-white font-bold text-xs sm:text-sm shadow-md active:scale-95 transition-all hover:bg-eco-forestLight shrink-0"
           >
-            <Plus className="w-3.5 h-3.5 sm:w-4 sm:h-4 stroke-[3] text-eco-gold" />
+            <IconPlus className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-eco-gold" />
             <span>Alquilar</span>
           </button>
         </div>

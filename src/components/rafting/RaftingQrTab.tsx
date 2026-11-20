@@ -36,7 +36,7 @@ export const RaftingQrTab: React.FC<RaftingQrTabProps> = ({
           <div className="flex items-center gap-2.5">
             <Wifi
               className={`w-5 h-5 ${
-                bridgeState.whatsappReady ? 'text-eco-leaf animate-pulse' : 'text-[#D97706]'
+                bridgeState.whatsappReady ? 'text-eco-leaf' : 'text-[#D97706]'
               }`}
             />
             <div>

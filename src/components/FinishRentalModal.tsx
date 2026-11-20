@@ -256,7 +256,7 @@ export const FinishRentalModal: React.FC<Props> = ({
                   <Banknote className="w-4 h-4 text-[#92400E]" />
                   <span>Método de Pago para la Mora (${penaltyPrice.toLocaleString()})</span>
                 </label>
-                <span className="text-[10px] text-[#92400E] font-mono font-bold animate-pulse">A Cobrar</span>
+                <span className="text-[10px] text-[#92400E] font-mono font-bold">A Cobrar</span>
               </div>
 
               <div className="grid grid-cols-3 gap-2">

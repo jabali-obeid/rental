@@ -56,7 +56,7 @@ export const RentalCard: React.FC<Props> = React.memo(({
 
   if (trafficLight === 'WAITING') {
     cardStyles = 'border-[#F7D147] bg-white shadow-[0_8px_30px_rgb(0,0,0,0.05)] ring-1 ring-[#F7D147]/60';
-    badgeStyles = 'bg-[#F7D147] text-[#1C1C1C] font-extrabold animate-pulse';
+    badgeStyles = 'bg-[#F7D147] text-[#1C1C1C] font-extrabold';
     timeBoxStyles = 'bg-[#F9E27D]/55 border-[#F7D147] text-[#1C1C1C]';
     timeStyles = 'text-[#1C1C1C] font-black';
     progressColor = 'bg-[#F7D147]';
@@ -70,7 +70,7 @@ export const RentalCard: React.FC<Props> = React.memo(({
     statusText = 'EN TIEMPO';
   } else if (trafficLight === 'YELLOW') {
     cardStyles = 'border-[#F7D147] bg-white shadow-[0_8px_30px_rgb(0,0,0,0.05)] ring-1 ring-[#F7D147]';
-    badgeStyles = 'bg-[#FEF3C7] text-[#92400E] border border-[#FDE68A] animate-pulse';
+    badgeStyles = 'bg-[#FEF3C7] text-[#92400E] border border-[#FDE68A]';
     timeBoxStyles = 'bg-[#F9E27D] border-[#F7D147] text-[#1C1C1C]';
     timeStyles = 'text-[#1C1C1C] font-extrabold';
     progressColor = 'bg-[#F59E0B]';

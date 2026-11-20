@@ -6,6 +6,10 @@ export default {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ['"Hanken Grotesk"', 'sans-serif'],
+        display: ['"Fraunces"', 'Georgia', 'serif'],
+      },
       colors: {
         eco: {
           dark: '#1C1C1C',      // Charcoal Black from Staffwyn palette
