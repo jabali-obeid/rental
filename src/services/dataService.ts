@@ -1502,6 +1502,7 @@ class DataService {
       const rentals = this.getRentals();
       rentals.unshift(ticketRental);
       localStorage.setItem(STORAGE_KEY_RENTALS, JSON.stringify(rentals));
+      googleSheetsService.syncRentalCreate(ticketRental);
 
       if (price > 0) {
         this.addCashMovement({
@@ -1528,10 +1529,18 @@ class DataService {
         rentals.find((r) => r.status === 'activo' && r.categoryId === categoryId)?.id;
 
       if (targetRentalId) {
-        const updatedRentals = rentals.map((r) =>
-          r.id === targetRentalId ? { ...r, status: 'cancelado' as const } : r
-        );
+        let canceledRental: Rental | undefined;
+        const updatedRentals = rentals.map((r) => {
+          if (r.id === targetRentalId) {
+            canceledRental = { ...r, status: 'cancelado' as const };
+            return canceledRental;
+          }
+          return r;
+        });
         localStorage.setItem(STORAGE_KEY_RENTALS, JSON.stringify(updatedRentals));
+        if (canceledRental) {
+          googleSheetsService.syncRentalCancel(canceledRental);
+        }
       }
 
       if (targetMovement) {

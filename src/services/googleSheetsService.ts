@@ -52,10 +52,24 @@ function normalizeText(value?: string): string {
     .replace(/[\u0300-\u036f]/g, '');
 }
 
-export function resolveSheetTarget(category?: Category): SheetTarget {
+export function resolveSheetTarget(category?: Category, rental?: Rental): SheetTarget {
   const slug = normalizeText(category?.slug);
-  const id = normalizeText(category?.id);
+  const id = normalizeText(category?.id || rental?.categoryId);
   const name = normalizeText(category?.name);
+
+  if (id.includes('bungee') || name.includes('bungee')) {
+    return {
+      sheetName: 'OTROS',
+      tipoLabel: 'Bungee',
+    };
+  }
+
+  if (id.includes('palestra') || name.includes('palestra')) {
+    return {
+      sheetName: 'OTROS',
+      tipoLabel: 'Palestra',
+    };
+  }
 
   if (slug.includes('carrito') || id.includes('carrito') || name.includes('carrito')) {
     const isDoble = slug.includes('doble') || id.includes('doble') || name.includes('doble');
@@ -125,7 +139,7 @@ async function sendToAppsScript(payload: Record<string, unknown>): Promise<boole
 export const googleSheetsService = {
   syncRentalCreate(rental: Rental, category?: Category, quantity = 1, totalAmount?: number): void {
     if (!isGoogleSheetsConfigured()) return;
-    const target = resolveSheetTarget(category);
+    const target = resolveSheetTarget(category, rental);
     const { ef, mp } = mapPaymentColumns(rental.paymentMethod);
 
     const startIso = rental.startTime || rental.createdAt;
@@ -157,7 +171,7 @@ export const googleSheetsService = {
 
   syncRentalUpdateTimes(rental: Rental, category?: Category): void {
     if (!isGoogleSheetsConfigured()) return;
-    const target = resolveSheetTarget(category);
+    const target = resolveSheetTarget(category, rental);
 
     void sendToAppsScript({
       action: 'update_times',
@@ -171,7 +185,7 @@ export const googleSheetsService = {
   syncRentalFinish(rental: Rental, category?: Category): void {
     if (!isGoogleSheetsConfigured()) return;
     if (rental.notes?.includes('[BATCH_MEMBER]')) return;
-    const target = resolveSheetTarget(category);
+    const target = resolveSheetTarget(category, rental);
     const { ef, mp } = mapPaymentColumns(rental.paymentMethod);
 
     const batchMatch = rental.notes?.match(/\[BATCH_TOTAL:(\d+)\]/);
@@ -193,7 +207,7 @@ export const googleSheetsService = {
 
   syncRentalCancel(rental: Rental, category?: Category): void {
     if (!isGoogleSheetsConfigured()) return;
-    const target = resolveSheetTarget(category);
+    const target = resolveSheetTarget(category, rental);
 
     void sendToAppsScript({
       action: 'cancel',

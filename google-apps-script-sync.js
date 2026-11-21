@@ -153,6 +153,7 @@ function findSheetByNameFlexible(ss, targetName) {
     CARROS: ['CARROS', 'CARRO', 'CARRITOS'],
     KARTING: ['KARTING', 'KARTINGS'],
     KAYAK: ['KAYAK', 'KAYAKS'],
+    OTROS: ['OTROS', 'OTRO', 'VARIOS'],
   };
   const candidates = aliases[targetKey] || [targetKey];
 
