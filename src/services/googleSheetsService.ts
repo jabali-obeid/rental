@@ -45,10 +45,17 @@ function formatTimeHHMM(isoDate?: string): string {
   return `${hours}:${mins}`;
 }
 
+function normalizeText(value?: string): string {
+  return (value || '')
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '');
+}
+
 export function resolveSheetTarget(category?: Category): SheetTarget {
-  const slug = (category?.slug || '').toLowerCase();
-  const id = (category?.id || '').toLowerCase();
-  const name = (category?.name || '').toLowerCase();
+  const slug = normalizeText(category?.slug);
+  const id = normalizeText(category?.id);
+  const name = normalizeText(category?.name);
 
   if (slug.includes('carrito') || id.includes('carrito') || name.includes('carrito')) {
     const isDoble = slug.includes('doble') || id.includes('doble') || name.includes('doble');

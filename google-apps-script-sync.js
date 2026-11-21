@@ -25,7 +25,7 @@ function doPost(e) {
 
     const ss = SpreadsheetApp.getActiveSpreadsheet();
     const sheetName = data.sheetName || 'CARROS';
-    const sheet = ss.getSheetByName(sheetName);
+    const sheet = findSheetByNameFlexible(ss, sheetName);
     if (!sheet) {
       return jsonResponse({ ok: false, error: 'Pestaña no encontrada: ' + sheetName });
     }
@@ -129,6 +129,41 @@ function findRowByRentalId(sheet, rentalId) {
     }
   }
   return -1;
+}
+
+function normalizeSheetKey(name) {
+  return String(name || '')
+    .trim()
+    .toUpperCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '');
+}
+
+/**
+ * Busca la pestaña de forma flexible: coincidencia exacta, sin tildes/mayúsculas,
+ * o variantes singular/plural (ej. MONOPATIN <-> MONOPATINES).
+ */
+function findSheetByNameFlexible(ss, targetName) {
+  const exact = ss.getSheetByName(targetName);
+  if (exact) return exact;
+
+  const targetKey = normalizeSheetKey(targetName);
+  const aliases = {
+    MONOPATIN: ['MONOPATIN', 'MONOPATINES', 'MONOPATIN ELECTRICO', 'MONOPATINES ELECTRICOS'],
+    CARROS: ['CARROS', 'CARRO', 'CARRITOS'],
+    KARTING: ['KARTING', 'KARTINGS'],
+    KAYAK: ['KAYAK', 'KAYAKS'],
+  };
+  const candidates = aliases[targetKey] || [targetKey];
+
+  const sheets = ss.getSheets();
+  for (let i = 0; i < sheets.length; i++) {
+    const key = normalizeSheetKey(sheets[i].getName());
+    if (candidates.indexOf(key) !== -1) {
+      return sheets[i];
+    }
+  }
+  return null;
 }
 
 function jsonResponse(obj) {
