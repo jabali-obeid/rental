@@ -68,21 +68,24 @@ class DataService {
     } else {
       if (!localStorage.getItem(STORAGE_KEY_CATEGORIES)) {
         localStorage.setItem(STORAGE_KEY_CATEGORIES, JSON.stringify(INITIAL_CATEGORIES));
-      } else if (!localStorage.getItem('rentflow_kayak_rates_v2')) {
+      } else if (!localStorage.getItem('rentflow_rates_v3')) {
         try {
           const raw = localStorage.getItem(STORAGE_KEY_CATEGORIES);
           const cats: Category[] = raw ? JSON.parse(raw) : [];
           const updated = cats.map((c) => {
+            if (c.id === 'c-carritos-simples' || c.slug === 'carritos-simples') {
+              return { ...c, defaultRate30m: 20000, cashRate30m: 20000, digitalRate30m: 22000 };
+            }
             if (c.id === 'c-kayaks-simples' || c.slug === 'kayaks-simples') {
-              return { ...c, defaultRate30m: 10000, defaultRate60m: 20000, cashRate30m: 10000, cashRate60m: 20000, digitalRate30m: 10000, digitalRate60m: 20000 };
+              return { ...c, defaultRate60m: 25000, cashRate60m: 25000, digitalRate60m: 25000 };
             }
             if (c.id === 'c-kayaks-dobles' || c.slug === 'kayaks-dobles') {
-              return { ...c, defaultRate30m: 20000, defaultRate60m: 40000, cashRate30m: 20000, cashRate60m: 40000, digitalRate30m: 20000, digitalRate60m: 40000 };
+              return { ...c, defaultRate60m: 45000, cashRate60m: 45000, digitalRate60m: 45000 };
             }
             return c;
           });
           localStorage.setItem(STORAGE_KEY_CATEGORIES, JSON.stringify(updated));
-          localStorage.setItem('rentflow_kayak_rates_v2', '1');
+          localStorage.setItem('rentflow_rates_v3', '1');
         } catch {}
       }
       if (!localStorage.getItem(STORAGE_KEY_UNITS)) {
