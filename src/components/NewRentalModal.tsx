@@ -15,7 +15,9 @@ import {
   Smartphone,
   CreditCard,
   ShieldCheck,
-  Check
+  Check,
+  Minus,
+  Plus
 } from 'lucide-react';
 
 interface Props {
@@ -47,13 +49,26 @@ export const NewRentalModal: React.FC<Props> = ({ isOpen, onClose }) => {
     return stockMap;
   }, [categories, units]);
 
-  // Selected Unit
+  // Selected Unit & Quantity
   const availableUnitsForSelected = categoryStock[selectedCategoryId] || [];
   const [selectedUnitId, setSelectedUnitId] = useState<string>('');
+  const [quantity, setQuantity] = useState<number>(1);
+
+  const maxQuantity = Math.max(1, availableUnitsForSelected.length);
+  const safeQuantity = Math.min(quantity, maxQuantity);
 
   const activeUnitId = selectedUnitId && availableUnitsForSelected.some(u => u.id === selectedUnitId)
     ? selectedUnitId
     : (availableUnitsForSelected[0]?.id || '');
+
+  const selectedUnitIds = useMemo(() => {
+    if (!activeUnitId) return [];
+    const ordered = [
+      ...availableUnitsForSelected.filter((u) => u.id === activeUnitId),
+      ...availableUnitsForSelected.filter((u) => u.id !== activeUnitId),
+    ];
+    return ordered.slice(0, safeQuantity).map((u) => u.id);
+  }, [activeUnitId, availableUnitsForSelected, safeQuantity]);
 
   // Duration
   const [durationMinutes, setDurationMinutes] = useState<number>(30);
@@ -63,9 +78,9 @@ export const NewRentalModal: React.FC<Props> = ({ isOpen, onClose }) => {
   // Payment
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('efectivo');
 
-  // Price Calculation according to paymentMethod (Cash vs Digital rates)
+  // Price Calculation according to paymentMethod (Cash vs Digital rates) * quantity
   const suggestedPrice = useMemo(() => {
-    if (!activeCategory) return 3500;
+    if (!activeCategory) return 3500 * safeQuantity;
     const isCash = paymentMethod === 'efectivo';
     const rate30 = isCash
       ? (activeCategory.cashRate30m ?? activeCategory.defaultRate30m)
@@ -74,10 +89,15 @@ export const NewRentalModal: React.FC<Props> = ({ isOpen, onClose }) => {
       ? (activeCategory.cashRate60m ?? activeCategory.defaultRate60m)
       : (activeCategory.digitalRate60m ?? activeCategory.defaultRate60m);
 
-    if (durationMinutes === 30) return rate30;
-    if (durationMinutes === 60) return rate60;
-    return Math.round((rate30 / 30) * durationMinutes);
-  }, [activeCategory, durationMinutes, paymentMethod]);
+    const unitRate =
+      durationMinutes === 30
+        ? rate30
+        : durationMinutes === 60
+        ? rate60
+        : Math.round((rate30 / 30) * durationMinutes);
+
+    return unitRate * safeQuantity;
+  }, [activeCategory, durationMinutes, paymentMethod, safeQuantity]);
 
   const [customPrice, setCustomPrice] = useState<number | null>(null);
   const finalPrice = customPrice !== null ? customPrice : suggestedPrice;
@@ -88,10 +108,10 @@ export const NewRentalModal: React.FC<Props> = ({ isOpen, onClose }) => {
     setCustomPrice(null);
   };
 
-  // Reset custom price when duration or category changes
+  // Reset custom price when duration, category or quantity changes
   useEffect(() => {
     setCustomPrice(null);
-  }, [selectedCategoryId, durationMinutes]);
+  }, [selectedCategoryId, durationMinutes, safeQuantity]);
 
   // Customer & Guarantee info
   const [customerName, setCustomerName] = useState<string>('');
@@ -116,22 +136,25 @@ export const NewRentalModal: React.FC<Props> = ({ isOpen, onClose }) => {
     const now = new Date();
     const expectedEnd = new Date(now.getTime() + durationMinutes * 60 * 1000);
 
-    dataService.startRental({
-      unitId: activeUnitId,
-      categoryId: selectedCategoryId,
-      customerName: customerName.trim(),
-      customerPhone: customerPhone.trim(),
-      startTime: now.toISOString(),
-      durationMinutes,
-      expectedEndTime: expectedEnd.toISOString(),
-      docType: 'Otro',
-      docLocker: guaranteeItem.trim(),
-      basePrice: finalPrice,
-      penaltyPrice: 0,
-      discount: 0,
-      totalPrice: finalPrice,
-      paymentMethod,
-    });
+    dataService.startBatchRentals(
+      selectedUnitIds,
+      {
+        categoryId: selectedCategoryId,
+        customerName: customerName.trim(),
+        customerPhone: customerPhone.trim(),
+        startTime: now.toISOString(),
+        durationMinutes,
+        expectedEndTime: expectedEnd.toISOString(),
+        docType: 'Otro',
+        docLocker: guaranteeItem.trim(),
+        basePrice: finalPrice,
+        penaltyPrice: 0,
+        discount: 0,
+        totalPrice: finalPrice,
+        paymentMethod,
+      },
+      finalPrice
+    );
 
     soundService.playSuccess();
     onClose();
@@ -140,6 +163,7 @@ export const NewRentalModal: React.FC<Props> = ({ isOpen, onClose }) => {
     setCustomerPhone('');
     setGuaranteeItem('');
     setCustomPrice(null);
+    setQuantity(1);
   };
 
   if (!isOpen) return null;
@@ -200,6 +224,7 @@ export const NewRentalModal: React.FC<Props> = ({ isOpen, onClose }) => {
                     onClick={() => {
                       setSelectedCategoryId(cat.id);
                       setSelectedUnitId('');
+                      setQuantity(1);
                       setCustomPrice(null);
                     }}
                     className={`relative p-3.5 rounded-2xl border text-left transition-all flex flex-col justify-between ${
@@ -244,15 +269,41 @@ export const NewRentalModal: React.FC<Props> = ({ isOpen, onClose }) => {
             </div>
           </div>
 
-          {/* STEP 2: AVAILABLE UNIT CHIPS */}
+          {/* STEP 2: AVAILABLE UNIT CHIPS + QUANTITY STEPPER */}
           <div>
-            <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center justify-between gap-2 mb-2">
               <label className="text-xs font-bold uppercase tracking-wider text-eco-creamMuted">
                 2. Unidad Disponible ({availableUnitsForSelected.length})
               </label>
-              <span className="text-[11px] text-eco-creamDark font-semibold">
-                Toca para seleccionar
-              </span>
+
+              {availableUnitsForSelected.length > 0 && (
+                <div className="flex items-center gap-1.5 bg-eco-surface border border-black/[0.08] rounded-full p-1">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-eco-creamDark pl-2 pr-0.5">
+                    Cant.
+                  </span>
+                  <button
+                    type="button"
+                    aria-label="Restar cantidad de unidades"
+                    disabled={safeQuantity <= 1}
+                    onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                    className="w-7 h-7 rounded-full bg-white hover:bg-[#EAE4D3] border border-black/[0.08] text-eco-dark flex items-center justify-center active:scale-95 disabled:opacity-35"
+                  >
+                    <Minus className="w-3.5 h-3.5" />
+                  </button>
+                  <span className="min-w-[1.25rem] text-center text-xs font-black font-mono text-eco-dark tabular-nums">
+                    {safeQuantity}
+                  </span>
+                  <button
+                    type="button"
+                    aria-label="Sumar cantidad de unidades"
+                    disabled={safeQuantity >= maxQuantity}
+                    onClick={() => setQuantity((q) => Math.min(maxQuantity, q + 1))}
+                    className="w-7 h-7 rounded-full bg-eco-gold hover:bg-[#f0c62d] border border-black/[0.08] text-eco-dark flex items-center justify-center active:scale-95 disabled:opacity-35"
+                  >
+                    <Plus className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              )}
             </div>
 
             {availableUnitsForSelected.length === 0 ? (
@@ -262,7 +313,7 @@ export const NewRentalModal: React.FC<Props> = ({ isOpen, onClose }) => {
             ) : (
               <div className="flex flex-wrap gap-2">
                 {availableUnitsForSelected.map((u) => {
-                  const isUnitSelected = activeUnitId === u.id;
+                  const isUnitSelected = selectedUnitIds.includes(u.id);
                   return (
                     <button
                       key={u.id}

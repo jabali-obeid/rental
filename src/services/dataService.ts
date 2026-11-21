@@ -308,11 +308,14 @@ class DataService {
     return this.getRentals().filter((r) => r.status === 'activo');
   }
 
-  public startRental(newRentalData: Omit<Rental, 'id' | 'createdAt' | 'status'>): Rental {
+  public startRental(
+    newRentalData: Omit<Rental, 'id' | 'createdAt' | 'status'>,
+    options?: { skipSheetsSync?: boolean }
+  ): Rental {
     const rentals = this.getRentals();
     const units = this.getUnits();
 
-    const id = 'r-' + Date.now();
+    const id = 'r-' + Date.now() + '-' + Math.random().toString(36).slice(2, 6);
     const initialNotes = newRentalData.notes
       ? `[ESPERANDO_INICIO] ${newRentalData.notes}`
       : '[ESPERANDO_INICIO]';
@@ -350,9 +353,50 @@ class DataService {
     });
 
     this.pushRentalToSupabase(rental);
-    googleSheetsService.syncRentalCreate(rental, rentalCategory);
+    if (!options?.skipSheetsSync) {
+      googleSheetsService.syncRentalCreate(rental, rentalCategory);
+    }
     this.notify();
     return rental;
+  }
+
+  public startBatchRentals(
+    unitIds: string[],
+    baseData: Omit<Rental, 'id' | 'createdAt' | 'status' | 'unitId'>,
+    totalBatchPrice: number
+  ): Rental[] {
+    if (unitIds.length <= 1) {
+      const single = this.startRental({
+        ...baseData,
+        unitId: unitIds[0],
+        basePrice: totalBatchPrice,
+        totalPrice: totalBatchPrice,
+      });
+      return [single];
+    }
+
+    const qty = unitIds.length;
+    const perUnit = Math.floor(totalBatchPrice / qty);
+    const remainder = totalBatchPrice - perUnit * qty;
+
+    const created: Rental[] = [];
+    unitIds.forEach((unitId, idx) => {
+      const unitPrice = idx === 0 ? perUnit + remainder : perUnit;
+      const r = this.startRental(
+        {
+          ...baseData,
+          unitId,
+          basePrice: unitPrice,
+          totalPrice: unitPrice,
+        },
+        { skipSheetsSync: true }
+      );
+      created.push(r);
+    });
+
+    const category = this.getCategories().find((c) => c.id === baseData.categoryId);
+    googleSheetsService.syncRentalCreate(created[0], category, qty, totalBatchPrice);
+    return created;
   }
 
   public launchRentalTimer(rentalId: string): void {

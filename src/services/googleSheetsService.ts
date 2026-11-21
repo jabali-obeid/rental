@@ -123,7 +123,7 @@ async function sendToAppsScript(payload: Record<string, unknown>): Promise<boole
 }
 
 export const googleSheetsService = {
-  syncRentalCreate(rental: Rental, category?: Category): void {
+  syncRentalCreate(rental: Rental, category?: Category, quantity = 1, totalAmount?: number): void {
     if (!isGoogleSheetsConfigured()) return;
     const target = resolveSheetTarget(category);
     const { ef, mp } = mapPaymentColumns(rental.paymentMethod);
@@ -133,16 +133,23 @@ export const googleSheetsService = {
       rental.expectedEndTime ||
       new Date(new Date(startIso).getTime() + rental.durationMinutes * 60 * 1000).toISOString();
 
+    const tipo =
+      quantity > 1
+        ? target.tipoLabel === 'x1'
+          ? `x${quantity}`
+          : `${target.tipoLabel} x${quantity}`
+        : target.tipoLabel;
+
     void sendToAppsScript({
       action: 'create',
       rentalId: rental.id,
       sheetName: target.sheetName,
       fecha: formatDateDDMM(startIso),
       nombre: rental.customerName || '-',
-      tipo: target.tipoLabel,
+      tipo,
       desde: formatTimeHHMM(startIso),
       hasta: formatTimeHHMM(endIso),
-      monto: rental.basePrice,
+      monto: totalAmount ?? rental.basePrice,
       ef,
       mp,
     });
