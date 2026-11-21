@@ -382,9 +382,12 @@ class DataService {
     const created: Rental[] = [];
     unitIds.forEach((unitId, idx) => {
       const unitPrice = idx === 0 ? perUnit + remainder : perUnit;
+      const batchNote = idx === 0 ? `[BATCH_TOTAL:${totalBatchPrice}]` : `[BATCH_MEMBER]`;
+      const combinedNotes = baseData.notes ? `${batchNote} ${baseData.notes}` : batchNote;
       const r = this.startRental(
         {
           ...baseData,
+          notes: combinedNotes,
           unitId,
           basePrice: unitPrice,
           totalPrice: unitPrice,
@@ -701,6 +704,8 @@ class DataService {
     localStorage.setItem(STORAGE_KEY_UNITS, JSON.stringify(updatedUnits));
 
     this.pushRentalToSupabase(rental);
+    const rentalCategory = this.getCategories().find((c) => c.id === rental.categoryId);
+    googleSheetsService.syncRentalCreate(rental, rentalCategory);
     this.notify();
     return rental;
   }

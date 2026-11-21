@@ -170,15 +170,21 @@ export const googleSheetsService = {
 
   syncRentalFinish(rental: Rental, category?: Category): void {
     if (!isGoogleSheetsConfigured()) return;
+    if (rental.notes?.includes('[BATCH_MEMBER]')) return;
     const target = resolveSheetTarget(category);
     const { ef, mp } = mapPaymentColumns(rental.paymentMethod);
+
+    const batchMatch = rental.notes?.match(/\[BATCH_TOTAL:(\d+)\]/);
+    const finalMonto = batchMatch
+      ? Math.max(0, Number(batchMatch[1]) + (rental.penaltyPrice || 0) - (rental.discount || 0))
+      : rental.totalPrice;
 
     void sendToAppsScript({
       action: 'finish',
       rentalId: rental.id,
       sheetName: target.sheetName,
       hasta: formatTimeHHMM(rental.actualEndTime || new Date().toISOString()),
-      monto: rental.totalPrice,
+      monto: finalMonto,
       ef,
       mp,
       paintPink: true,
